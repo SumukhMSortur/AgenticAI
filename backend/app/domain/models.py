@@ -2,9 +2,10 @@
 
 from datetime import date, datetime
 from operator import add
-from typing import Annotated, Any, Literal, TypedDict
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
+from typing_extensions import TypedDict
 
 
 class BBox(BaseModel):
@@ -221,16 +222,30 @@ class Scorecard(BaseModel):
     summary: str = ""
 
 
-class GraphState(TypedDict):
+def merge_step_counts(
+    current: dict[str, int], update: dict[str, int]
+) -> dict[str, int]:
+    """Accumulate successful node executions without discarding prior counters."""
+    merged = dict(current)
+    for node, count in update.items():
+        if count < 0:
+            raise ValueError("step-count increments must not be negative")
+        merged[node] = merged.get(node, 0) + count
+    return merged
+
+
+class GraphState(TypedDict, total=False):
     """Typed LangGraph state schema with append-only accumulation reducers."""
 
     job_id: str
     tenant_id: str
     thread_id: str
     assessment_date: date
+    query: str
     route: Literal["retrieval_only", "full_analysis", "out_of_scope"]
+    intent: str
     documents: list[DocumentRef]
-    redacted_pages: list[RedactedPage]
+    redacted_pages: Annotated[list[RedactedPage], add]
     fields: Annotated[list[ExtractedField], add]
     evidence: Annotated[list[EvidenceItem], add]
     claims: Annotated[list[Claim], add]
@@ -238,4 +253,11 @@ class GraphState(TypedDict):
     risk: RiskForecast | None
     escalation: EscalationState | None
     scorecard: Scorecard | None
-    step_counts: dict[str, int]
+    verification_context: VerificationContext
+    retrieved_context: Annotated[list[dict[str, Any]], add]
+    review_decision: dict[str, str] | None
+    explanation: str
+    prompt_version: str
+    audit_event_id: str
+    audit_events: Annotated[list[dict[str, Any]], add]
+    step_counts: Annotated[dict[str, int], merge_step_counts]

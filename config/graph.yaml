@@ -1,0 +1,6 @@
+max_node_attempts: 3
+recursion_limit: 32
+risk_reaudit_threshold: 0.85
+risk_review_threshold: 0.90
+risk_critical_threshold: 0.95
+prompt_version: ecochain-explainer-v1
