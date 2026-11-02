@@ -1,4 +1,4 @@
-.PHONY: setup check test test-int lint fmt data train eval up down infra-up infra-down infra-reset seed demo
+.PHONY: setup check test test-int lint fmt data train eval openapi build up down infra-up infra-down infra-reset seed demo
 
 PYTHON ?= .venv/bin/python
 ifeq ($(OS),Windows_NT)
@@ -15,7 +15,7 @@ endif
 setup:
 	uv pip install -r requirements.txt --python $(PYTHON)
 
-check: lint test
+check: lint test openapi
 
 test:
 	$(PYTEST) backend/tests -v --cov=backend/app --cov-report=term-missing
@@ -37,6 +37,11 @@ train:
 
 eval:
 	$(PYTHON) scripts/run_evaluations.py
+
+openapi:
+	$(PYTHON) -m scripts.export_openapi
+
+build: openapi
 
 up:
 	docker compose up -d

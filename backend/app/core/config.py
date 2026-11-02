@@ -33,6 +33,13 @@ class Settings(BaseSettings):
     TEST_DATABASE_URL: str = Field(default="")
     REDIS_URL: str = Field(default="redis://localhost:6379/0")
     CHROMA_PERSIST_DIRECTORY: Path = Field(default=Path("data/chroma_db"))
+    UPLOAD_DIRECTORY: Path = Field(default=Path("data/uploads"))
+    MAX_UPLOAD_SIZE_BYTES: int = Field(default=10 * 1024 * 1024, gt=0)
+    MAX_UPLOAD_FILES: int = Field(default=10, gt=0)
+    MAX_UPLOAD_PAGES: int = Field(default=100, gt=0)
+    API_RATE_LIMIT_REQUESTS: int = Field(default=120, gt=0)
+    API_RATE_LIMIT_WINDOW_SECONDS: int = Field(default=60, gt=0)
+    WORKFLOW_SERVICES_FACTORY: str = Field(default="")
 
     # Cloud LLM (Gemini) - Model name must come from environment, never hardcoded
     GEMINI_API_KEY: str = Field(default="")

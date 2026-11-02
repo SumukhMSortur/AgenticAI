@@ -72,6 +72,30 @@ To run service-backed integration tests, configure `TEST_DATABASE_URL` in
 The script executes only tests marked `integration`. It does not silently
 replace unavailable services with mocks.
 
+## API and worker
+
+The API and worker use the configured PostgreSQL and Redis services. Start them
+in separate PowerShell terminals after applying migrations:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --reload
+.\.venv\Scripts\celery.exe -A backend.app.workers.celery_app:celery_app worker --pool=solo --loglevel=INFO
+```
+
+`WORKFLOW_SERVICES_FACTORY` must name a real `module:factory` callable that
+returns the graph's production `WorkflowServices`. No production assembly is
+currently included in this checkout; leave it unset rather than substituting a
+test fake. Readiness, job submissions, and review decisions return 503 until
+the production factory is supplied.
+
+Export the API schema for frontend type generation with:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.export_openapi
+# Or, when GNU Make is installed:
+make build
+```
+
 ## Quick quality gate
 
 ```powershell

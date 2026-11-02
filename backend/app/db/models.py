@@ -12,6 +12,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    UniqueConstraint,
     event,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -30,6 +31,7 @@ class Tenant(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    live_lookup_enabled: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     users: Mapped[list["User"]] = relationship(
         back_populates="tenant", cascade="all, delete-orphan"
@@ -70,6 +72,9 @@ class Factory(Base):
 
 class Document(Base):
     __tablename__ = "documents"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "doc_hash", name="uq_documents_tenant_doc_hash"),
+    )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     tenant_id: Mapped[str] = mapped_column(
@@ -87,6 +92,13 @@ class Document(Base):
 
 class Job(Base):
     __tablename__ = "jobs"
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id",
+            "submission_hash",
+            name="uq_jobs_tenant_submission_hash",
+        ),
+    )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     tenant_id: Mapped[str] = mapped_column(
@@ -95,7 +107,9 @@ class Job(Base):
     thread_id: Mapped[str] = mapped_column(String(64), nullable=False, unique=True, index=True)
     status: Mapped[str] = mapped_column(String(50), default="pending", index=True)
     assessment_date: Mapped[str] = mapped_column(String(10), nullable=False)  # ISO YYYY-MM-DD
+    query: Mapped[str] = mapped_column(Text, nullable=False, default="Assess uploaded documents.")
     route: Mapped[str] = mapped_column(String(50), default="full_analysis")
+    submission_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     risk_score: Mapped[float | None] = mapped_column(Float, nullable=True)
     scorecard_data: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
@@ -132,6 +146,21 @@ class Review(Base):
     resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     job: Mapped["Job"] = relationship(back_populates="reviews")
+
+
+class JobDocument(Base):
+    __tablename__ = "job_documents"
+
+    job_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("jobs.id", ondelete="CASCADE"), primary_key=True
+    )
+    document_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("documents.id", ondelete="CASCADE"), primary_key=True
+    )
+    tenant_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tenants.id"), nullable=False, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
 class ExternalSource(Base):
@@ -200,6 +229,9 @@ class RegulationUpdateProposal(Base):
     __tablename__ = "regulation_update_proposals"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    tenant_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("tenants.id"), nullable=True, index=True
+    )
     source: Mapped[str] = mapped_column(String(100), nullable=False)
     detected_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     candidate_version_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
