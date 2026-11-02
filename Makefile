@@ -1,4 +1,4 @@
-.PHONY: setup check test lint fmt data train eval up down seed demo
+.PHONY: setup check test test-int lint fmt data train eval up down infra-up infra-down infra-reset seed demo
 
 PYTHON ?= .venv/bin/python
 ifeq ($(OS),Windows_NT)
@@ -43,6 +43,19 @@ up:
 
 down:
 	docker compose down
+
+infra-up:
+	docker compose --env-file .env -f docker/compose.dev.yml up -d --wait
+
+infra-down:
+	docker compose --env-file .env -f docker/compose.dev.yml down
+
+infra-reset:
+	docker compose --env-file .env -f docker/compose.dev.yml down --volumes --remove-orphans
+	docker compose --env-file .env -f docker/compose.dev.yml up -d --wait
+
+test-int:
+	$(PYTHON) -m pytest backend/tests -m integration -v
 
 seed:
 	$(PYTHON) scripts/seed_database.py

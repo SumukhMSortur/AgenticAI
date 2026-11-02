@@ -30,6 +30,7 @@ class Settings(BaseSettings):
 
     # Databases
     DATABASE_URL: str = Field(default="sqlite+pysqlite:///./test_ecochain.db")
+    TEST_DATABASE_URL: str = Field(default="")
     REDIS_URL: str = Field(default="redis://localhost:6379/0")
     CHROMA_PERSIST_DIRECTORY: Path = Field(default=Path("data/chroma_db"))
 

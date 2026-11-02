@@ -5,6 +5,7 @@ import os
 import pytest
 from langgraph.checkpoint.postgres import PostgresSaver
 
+from backend.app.core.config import settings
 from backend.app.graph.workflow import (
     ExplanationContext,
     ReviewDecision,
@@ -57,9 +58,11 @@ def _services() -> WorkflowServices:
 
 @pytest.mark.integration
 def test_postgres_checkpoint_survives_saver_restart_and_resumes_hitl() -> None:
-    connection_string = os.environ.get("ECOCHAIN_TEST_POSTGRES_URL")
+    connection_string = (
+        os.environ.get("ECOCHAIN_TEST_POSTGRES_URL") or settings.TEST_DATABASE_URL
+    )
     if not connection_string:
-        pytest.skip("Set ECOCHAIN_TEST_POSTGRES_URL to run durable PostgreSQL resume coverage.")
+        pytest.skip("Set TEST_DATABASE_URL or ECOCHAIN_TEST_POSTGRES_URL for PostgreSQL coverage.")
 
     import json
 
