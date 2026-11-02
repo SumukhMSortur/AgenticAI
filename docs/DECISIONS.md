@@ -40,3 +40,21 @@ This document tracks all locked design decisions, conflict resolutions, and depe
 - **Action:** Added `PyJWT`, `argon2-cffi`, `ruff`, `mypy`, `pytest-cov`, and `pre-commit` to `requirements.in`.
 - **Recompilation:** Recompiled via `uv pip compile requirements.in --python-version 3.12 --universal --no-annotate -o requirements.txt` and installed into `.venv`.
 - **Verification:** All tools tested and validated against Python 3.12.10.
+
+---
+
+## 3. Live External Data Decisions (Addendum A)
+
+### ADR-007: Live External Data Strategy & Architecture
+- **Context:** EcoChain Copilot requires external compliance validation (facility directory matching via Open Supply Hub, official sanctions/watchlists from EU/OFAC, and EUR-Lex regulatory changes).
+- **Decision:**
+  1. **Snapshot-First Local Verification:** External registries and watchlists are ingested into local database snapshots (`external_snapshots`, `external_records`). Lookups occur strictly locally inside the boundary to avoid leaking business supplier relationships.
+  2. **Opt-in Live Calls Guarded:** Direct external API calls are tenant opt-in only, governed by `ExternalCallPolicy` in `OutboundGuard` enforcing per-provider field allowlists (e.g. facility name, country only). Raw PII, vault values, pseudonym maps, or images are prohibited from external egress.
+  3. **Pure Verifier:** The Deterministic Verifier never initiates network calls; external evidence is fetched upstream by the `enrich` node and supplied as standard `EvidenceItem` inputs.
+  4. **Human-in-the-Loop for Regulation Updates:** Regulatory changes detected from official gazettes are stored in `regulation_update_proposals` and require explicit human reviewer authorization before ingestion into the active RAG vector index.
+  5. **No LSTM Contamination:** External watchlist and directory matches serve as rule-based escalation/fail triggers and UI context; they are strictly excluded as features in the predictive risk LSTM.
+- **Provider Registry & Terms (Verified Build-Time):**
+  - **Open Supply Hub (OS Hub):** Default local snapshot. Live endpoint `https://opensupplyhub.org/api/docs/` (`v1/production-locations`), CC-BY-SA 4.0 / ODbL terms, rate-limited and token-authenticated.
+  - **EU Consolidated Financial Sanctions (FSF):** XML/CSV bulk snapshot from European External Action Service (EEAS) official portal. Public sector reuse license. Local matching only.
+  - **OFAC Consolidated Sanctions (SDN & Non-SDN):** XML/CSV bulk snapshot from U.S. Treasury OFAC official portal. U.S. government public domain. Local matching only.
+  - **EUR-Lex Regulatory Feed:** Official EU Publications Office RSS/ATOM feed for CSDDD/ESPR legal acts. Local candidate ingestion via proposal review.

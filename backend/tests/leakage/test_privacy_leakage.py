@@ -40,6 +40,34 @@ def test_no_direct_llm_imports_outside_llm_module() -> None:
     )
 
 
+def test_no_direct_network_calls_outside_integrations_and_llm() -> None:
+    """Security audit test: Enforces that httpx/requests are only imported inside integrations/ and llm/ (R2)."""
+    backend_root = Path("backend/app")
+    network_imports = [
+        re.compile(r"^\s*(?:import\s+httpx|from\s+httpx\b)"),
+        re.compile(r"^\s*(?:import\s+requests|from\s+requests\b)"),
+        re.compile(r"^\s*(?:import\s+urllib\.request|from\s+urllib\s+import\s+request\b)"),
+    ]
+
+    violations: list[str] = []
+
+    for py_file in backend_root.rglob("*.py"):
+        # Allow inside integrations, llm, or local privacy checker (ollama)
+        parts = py_file.parts
+        if "integrations" in parts or "llm" in parts or py_file.name == "llama_checker.py":
+            continue
+
+        with open(py_file, encoding="utf-8") as f:
+            for line_no, line in enumerate(f, 1):
+                for pat in network_imports:
+                    if pat.search(line):
+                        violations.append(f"{py_file}:{line_no}: {line.strip()}")
+
+    assert not violations, (
+        "Direct network library imports found outside integrations/ and llm/:\n" + "\n".join(violations)
+    )
+
+
 def test_zero_leakage_across_all_privacy_seeds() -> None:
     """Processes all annotated documents and asserts zero seeded PII escapes through OutboundGuard."""
     assert ANNOTATIONS_PATH.exists(), "Annotations file missing. Run make data first."

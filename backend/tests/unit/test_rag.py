@@ -169,3 +169,26 @@ def test_entailment_checker_negative_case() -> None:
     _, confidence = checker.check(claim, citation)
     # Not necessarily False but confidence should be low
     assert confidence < 0.8, f"Unexpected high confidence={confidence} for non-overlapping texts."
+
+
+def test_regulation_ingestion_manager_proposal_flow() -> None:
+    """Verifies Addendum A - R3 idempotent proposal and approval workflow for regulation updates."""
+    from backend.app.rag.ingestion import RegulationIngestionManager
+
+    store = ChromaVectorStore(in_memory=True)
+    manager = RegulationIngestionManager(store=store, db=None)
+
+    proposal = manager.propose_update(
+        source="EUR-Lex Official Gazette",
+        candidate_version_id="EU-CSDDD-2027-V2",
+        candidate_data={"title": "Draft Amendment 2027"},
+        notes="Automated EUR-Lex feed detection",
+    )
+    assert proposal.status == "pending"
+    assert proposal.candidate_version_id == "EU-CSDDD-2027-V2"
+
+    # Ingest file idempotently
+    count1 = manager.ingest_file(REGULATIONS_FILE)
+    count2 = manager.ingest_file(REGULATIONS_FILE)
+    assert count1 == count2
+    assert store.count() == count1

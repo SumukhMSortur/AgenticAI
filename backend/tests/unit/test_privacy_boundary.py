@@ -75,3 +75,67 @@ def test_llama_checker_fail_closed() -> None:
     checker = FakeLlamaChecker(should_fail=True)
     with pytest.raises(PrivacyViolationError):
         checker.check_residual_pii("Some text")
+
+
+def test_external_call_policy_and_guard() -> None:
+    """Tests Addendum A - R2 ExternalCallPolicy enforcement in OutboundGuard."""
+    from backend.app.privacy.outbound_guard import ExternalCallPolicy
+
+    vault = TokenVault(master_key="external-call-test-key")
+    guard = OutboundGuard(vault=vault)
+    tenant = "tenant_ext_1"
+
+    policy_opted_in = ExternalCallPolicy(
+        tenant_opted_in=True,
+        provider="open_supply_hub",
+        allowlisted_fields={"facility_name", "country"},
+    )
+    policy_opted_out = ExternalCallPolicy(
+        tenant_opted_in=False,
+        provider="open_supply_hub",
+        allowlisted_fields={"facility_name", "country"},
+    )
+
+    # 1. Opted out tenant fails
+    with pytest.raises(PrivacyViolationError, match="has not opted in"):
+        guard.verify_and_log_external_call(
+            provider="open_supply_hub",
+            fields_payload={"facility_name": "Acme Mills", "country": "BD"},
+            policy=policy_opted_out,
+            tenant_id=tenant,
+        )
+
+    # 2. Disallowed fields fail
+    with pytest.raises(PrivacyViolationError, match="disallowed fields"):
+        guard.verify_and_log_external_call(
+            provider="open_supply_hub",
+            fields_payload={
+                "facility_name": "Acme Mills",
+                "country": "BD",
+                "internal_supplier_id": "SUPP-001",
+            },
+            policy=policy_opted_in,
+            tenant_id=tenant,
+        )
+
+    # 3. Leaked vault tokenized value in external call fails
+    vault.tokenize(tenant_id=tenant, entity_type="PERSON", raw_value="Sensitive Supplier Secret")
+    with pytest.raises(PrivacyViolationError, match="unredacted vault-known"):
+        guard.verify_and_log_external_call(
+            provider="open_supply_hub",
+            fields_payload={
+                "facility_name": "Sensitive Supplier Secret Mills",
+                "country": "BD",
+            },
+            policy=policy_opted_in,
+            tenant_id=tenant,
+        )
+
+    # 4. Valid allowlisted call succeeds
+    payload_hash = guard.verify_and_log_external_call(
+        provider="open_supply_hub",
+        fields_payload={"facility_name": "Generic Spinning Co", "country": "VN"},
+        policy=policy_opted_in,
+        tenant_id=tenant,
+    )
+    assert len(payload_hash) == 64

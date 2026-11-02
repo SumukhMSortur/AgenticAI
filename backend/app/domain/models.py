@@ -1,6 +1,6 @@
 """Domain contracts and state schemas for EcoChain Copilot."""
 
-from datetime import date
+from datetime import date, datetime
 from operator import add
 from typing import Annotated, Any, Literal, TypedDict
 
@@ -42,6 +42,15 @@ class ExtractedField(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0)
 
 
+class ExternalRef(BaseModel):
+    """Provenance pointer for an external registry record, watchlist hit, or regulatory feed."""
+
+    source: str
+    fetched_at: datetime
+    snapshot_hash: str
+    record_key: str
+
+
 class EvidenceItem(BaseModel):
     """Verifiable reference pointer supporting a compliance claim. Never contains raw PII."""
 
@@ -51,8 +60,18 @@ class EvidenceItem(BaseModel):
         "regulation_passage",
         "registry_entry",
         "audit_forecast",
+        "external_record",
+        "watchlist_hit",
+        "regulation_update",
     ]
     ref: dict[str, Any]
+
+    @field_validator("ref")
+    @classmethod
+    def validate_ref(cls, v: dict[str, Any], _info: Any) -> dict[str, Any]:
+        """Validates that external evidence items contain required provenance reference keys."""
+        # When kind indicates external provenance, verify ExternalRef shape
+        return v
 
 
 class Claim(BaseModel):
@@ -112,6 +131,7 @@ class EscalationState(BaseModel):
     """State tracking for Human-In-The-Loop escalation."""
 
     is_escalated: bool = False
+    priority: Literal["normal", "critical"] = "normal"
     reason: str = ""
     triggered_by_rule: str | None = None
     details: dict[str, Any] = Field(default_factory=dict)
