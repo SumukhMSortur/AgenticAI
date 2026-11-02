@@ -1,0 +1,620 @@
+{
+  "artifact": {
+    "path": "artifacts\\risk\\risk_model_v1.joblib",
+    "sha256": "a8984b1e4175e845e7e0206e24a7d28a8e1e390268b0b7ab257b0301c305c3d1",
+    "version": "1.0.0"
+  },
+  "compute_device": "cpu",
+  "config_sha256": "8036f70574a557bc9780663ad1ebc3beaa55d90865dd46c0f09ee153bdf1c14a",
+  "evaluation": "synthetic_factory_disjoint_risk",
+  "feature_names": [
+    "carbon_intensity",
+    "labor_violations",
+    "cert_lapse_days",
+    "corrective_action_backlog",
+    "safety_incidents"
+  ],
+  "feature_window_months": 12,
+  "features_exclude_targets_and_latent_labels": true,
+  "is_synthetic": true,
+  "limitations": [
+    "All outcomes and signals are synthetic and do not establish real-world validity.",
+    "Calibration is fitted on the factory-disjoint validation split only.",
+    "Promotion is selected on validation metrics; the test split is reporting-only."
+  ],
+  "lstm_training": {
+    "best_epoch": 100,
+    "best_val_loss": 0.022752754390239716,
+    "epochs_trained": 100
+  },
+  "models": {
+    "logreg": {
+      "test": {
+        "auroc": 1.0,
+        "brier_score": 0.00333052,
+        "ece": 0.01322996,
+        "pr_auc": 1.0,
+        "reliability_curve": [
+          {
+            "count": 33,
+            "lower": 0.0,
+            "mean_confidence": 0.00715785,
+            "observed_rate": 0.0,
+            "upper": 0.1
+          },
+          {
+            "count": 0,
+            "lower": 0.1,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.2
+          },
+          {
+            "count": 0,
+            "lower": 0.2,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.3
+          },
+          {
+            "count": 0,
+            "lower": 0.3,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.4
+          },
+          {
+            "count": 0,
+            "lower": 0.4,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.5
+          },
+          {
+            "count": 0,
+            "lower": 0.5,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.6
+          },
+          {
+            "count": 1,
+            "lower": 0.6,
+            "mean_confidence": 0.63192956,
+            "observed_rate": 1.0,
+            "upper": 0.7
+          },
+          {
+            "count": 1,
+            "lower": 0.7,
+            "mean_confidence": 0.71747103,
+            "observed_rate": 1.0,
+            "upper": 0.8
+          },
+          {
+            "count": 0,
+            "lower": 0.8,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.9
+          },
+          {
+            "count": 34,
+            "lower": 0.9,
+            "mean_confidence": 0.99923355,
+            "observed_rate": 1.0,
+            "upper": 1.0
+          }
+        ]
+      },
+      "test_confidence_intervals": {
+        "auroc": {
+          "lower_95": 0.9999999999999999,
+          "upper_95": 1.0,
+          "valid_replicates": 1000
+        },
+        "brier_score": {
+          "lower_95": 8.416943714840954e-05,
+          "upper_95": 0.008269406676087814,
+          "valid_replicates": 1000
+        },
+        "ece": {
+          "lower_95": 0.0028330788202455296,
+          "upper_95": 0.028393219408408065,
+          "valid_replicates": 1000
+        },
+        "pr_auc": {
+          "lower_95": 0.9999999999999998,
+          "upper_95": 1.0000000000000002,
+          "valid_replicates": 1000
+        }
+      },
+      "validation": {
+        "auroc": 1.0,
+        "brier_score": 0.00057879,
+        "ece": 0.00745114,
+        "pr_auc": 1.0,
+        "reliability_curve": [
+          {
+            "count": 32,
+            "lower": 0.0,
+            "mean_confidence": 0.00788413,
+            "observed_rate": 0.0,
+            "upper": 0.1
+          },
+          {
+            "count": 0,
+            "lower": 0.1,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.2
+          },
+          {
+            "count": 0,
+            "lower": 0.2,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.3
+          },
+          {
+            "count": 0,
+            "lower": 0.3,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.4
+          },
+          {
+            "count": 0,
+            "lower": 0.4,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.5
+          },
+          {
+            "count": 0,
+            "lower": 0.5,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.6
+          },
+          {
+            "count": 0,
+            "lower": 0.6,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.7
+          },
+          {
+            "count": 0,
+            "lower": 0.7,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.8
+          },
+          {
+            "count": 1,
+            "lower": 0.8,
+            "mean_confidence": 0.84649498,
+            "observed_rate": 1.0,
+            "upper": 0.9
+          },
+          {
+            "count": 34,
+            "lower": 0.9,
+            "mean_confidence": 0.99725209,
+            "observed_rate": 1.0,
+            "upper": 1.0
+          }
+        ]
+      }
+    },
+    "lstm": {
+      "test": {
+        "auroc": 1.0,
+        "brier_score": 0.01882551,
+        "ece": 0.02964156,
+        "pr_auc": 1.0,
+        "reliability_curve": [
+          {
+            "count": 33,
+            "lower": 0.0,
+            "mean_confidence": 0.01210458,
+            "observed_rate": 0.0,
+            "upper": 0.1
+          },
+          {
+            "count": 1,
+            "lower": 0.1,
+            "mean_confidence": 0.15549642,
+            "observed_rate": 1.0,
+            "upper": 0.2
+          },
+          {
+            "count": 1,
+            "lower": 0.2,
+            "mean_confidence": 0.24475732,
+            "observed_rate": 1.0,
+            "upper": 0.3
+          },
+          {
+            "count": 0,
+            "lower": 0.3,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.4
+          },
+          {
+            "count": 0,
+            "lower": 0.4,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.5
+          },
+          {
+            "count": 0,
+            "lower": 0.5,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.6
+          },
+          {
+            "count": 0,
+            "lower": 0.6,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.7
+          },
+          {
+            "count": 0,
+            "lower": 0.7,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.8
+          },
+          {
+            "count": 0,
+            "lower": 0.8,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.9
+          },
+          {
+            "count": 34,
+            "lower": 0.9,
+            "mean_confidence": 0.99864501,
+            "observed_rate": 1.0,
+            "upper": 1.0
+          }
+        ]
+      },
+      "test_confidence_intervals": {
+        "auroc": {
+          "lower_95": 0.9999999999999999,
+          "upper_95": 1.0,
+          "valid_replicates": 1000
+        },
+        "brier_score": {
+          "lower_95": 0.00012573042113217525,
+          "upper_95": 0.04791522361338139,
+          "valid_replicates": 1000
+        },
+        "ece": {
+          "lower_95": 0.005111852769429485,
+          "upper_95": 0.0655559426430019,
+          "valid_replicates": 1000
+        },
+        "pr_auc": {
+          "lower_95": 0.9999999999999998,
+          "upper_95": 1.0000000000000002,
+          "valid_replicates": 1000
+        }
+      },
+      "validation": {
+        "auroc": 1.0,
+        "brier_score": 0.00027827,
+        "ece": 0.00676171,
+        "pr_auc": 1.0,
+        "reliability_curve": [
+          {
+            "count": 32,
+            "lower": 0.0,
+            "mean_confidence": 0.00707877,
+            "observed_rate": 0.0,
+            "upper": 0.1
+          },
+          {
+            "count": 0,
+            "lower": 0.1,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.2
+          },
+          {
+            "count": 0,
+            "lower": 0.2,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.3
+          },
+          {
+            "count": 0,
+            "lower": 0.3,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.4
+          },
+          {
+            "count": 0,
+            "lower": 0.4,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.5
+          },
+          {
+            "count": 0,
+            "lower": 0.5,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.6
+          },
+          {
+            "count": 0,
+            "lower": 0.6,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.7
+          },
+          {
+            "count": 0,
+            "lower": 0.7,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.8
+          },
+          {
+            "count": 1,
+            "lower": 0.8,
+            "mean_confidence": 0.89412504,
+            "observed_rate": 1.0,
+            "upper": 0.9
+          },
+          {
+            "count": 34,
+            "lower": 0.9,
+            "mean_confidence": 0.9964518,
+            "observed_rate": 1.0,
+            "upper": 1.0
+          }
+        ]
+      }
+    },
+    "xgboost": {
+      "test": {
+        "auroc": 1.0,
+        "brier_score": 0.00022914,
+        "ece": 0.00694698,
+        "pr_auc": 1.0,
+        "reliability_curve": [
+          {
+            "count": 33,
+            "lower": 0.0,
+            "mean_confidence": 0.00749441,
+            "observed_rate": 0.0,
+            "upper": 0.1
+          },
+          {
+            "count": 0,
+            "lower": 0.1,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.2
+          },
+          {
+            "count": 0,
+            "lower": 0.2,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.3
+          },
+          {
+            "count": 0,
+            "lower": 0.3,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.4
+          },
+          {
+            "count": 0,
+            "lower": 0.4,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.5
+          },
+          {
+            "count": 0,
+            "lower": 0.5,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.6
+          },
+          {
+            "count": 0,
+            "lower": 0.6,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.7
+          },
+          {
+            "count": 0,
+            "lower": 0.7,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.8
+          },
+          {
+            "count": 0,
+            "lower": 0.8,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.9
+          },
+          {
+            "count": 36,
+            "lower": 0.9,
+            "mean_confidence": 0.99355483,
+            "observed_rate": 1.0,
+            "upper": 1.0
+          }
+        ]
+      },
+      "test_confidence_intervals": {
+        "auroc": {
+          "lower_95": 1.0,
+          "upper_95": 1.0,
+          "valid_replicates": 1000
+        },
+        "brier_score": {
+          "lower_95": 2.5364107386849355e-05,
+          "upper_95": 0.0005139868255355395,
+          "valid_replicates": 1000
+        },
+        "ece": {
+          "lower_95": 0.004163731562743044,
+          "upper_95": 0.010421550008670791,
+          "valid_replicates": 1000
+        },
+        "pr_auc": {
+          "lower_95": 0.9999999999999999,
+          "upper_95": 1.0,
+          "valid_replicates": 1000
+        }
+      },
+      "validation": {
+        "auroc": 1.0,
+        "brier_score": 0.00029796,
+        "ece": 0.00701898,
+        "pr_auc": 1.0,
+        "reliability_curve": [
+          {
+            "count": 32,
+            "lower": 0.0,
+            "mean_confidence": 0.00736383,
+            "observed_rate": 0.0,
+            "upper": 0.1
+          },
+          {
+            "count": 0,
+            "lower": 0.1,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.2
+          },
+          {
+            "count": 0,
+            "lower": 0.2,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.3
+          },
+          {
+            "count": 0,
+            "lower": 0.3,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.4
+          },
+          {
+            "count": 0,
+            "lower": 0.4,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.5
+          },
+          {
+            "count": 0,
+            "lower": 0.5,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.6
+          },
+          {
+            "count": 0,
+            "lower": 0.6,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.7
+          },
+          {
+            "count": 0,
+            "lower": 0.7,
+            "mean_confidence": null,
+            "observed_rate": null,
+            "upper": 0.8
+          },
+          {
+            "count": 1,
+            "lower": 0.8,
+            "mean_confidence": 0.87865525,
+            "observed_rate": 1.0,
+            "upper": 0.9
+          },
+          {
+            "count": 34,
+            "lower": 0.9,
+            "mean_confidence": 0.9966681,
+            "observed_rate": 1.0,
+            "upper": 1.0
+          }
+        ]
+      }
+    }
+  },
+  "promotion": {
+    "comparison_split": "validation",
+    "lstm_beats_each_baseline": {
+      "logreg": false,
+      "xgboost": false
+    },
+    "minimum_auroc_margin": 0.005,
+    "minimum_brier_improvement": 0.005,
+    "served_model": "xgboost",
+    "validation_metrics": {
+      "logreg": {
+        "auroc": 1.0,
+        "brier_score": 0.0005787874077295899
+      },
+      "lstm": {
+        "auroc": 1.0,
+        "brier_score": 0.0002782688243314624
+      },
+      "xgboost": {
+        "auroc": 1.0,
+        "brier_score": 0.0002979567216243595
+      }
+    }
+  },
+  "report_version": "1.0.0",
+  "seed": 42,
+  "source_git_sha": "bae57715b1f91c83f5c0dd67e8c26752958f6a8a",
+  "split_summary": {
+    "test": {
+      "dataset_sha256": "96c4df528b71e70078fa8b285a32ad99054ce083d45bec8ba9b07c9115c8ea8f",
+      "factory_count": 69,
+      "positive_count": 36,
+      "positive_rate": 0.52173913
+    },
+    "train": {
+      "dataset_sha256": "65b7f7fe547bf3a2714cf46cd88984b77e73bf2ad798b679e2640e25f8d7e602",
+      "factory_count": 314,
+      "positive_count": 165,
+      "positive_rate": 0.52547771
+    },
+    "validation": {
+      "dataset_sha256": "5cb1f055bcf4fa449b8d1a4f6d1ef5ee10f185a8464ff923157cf50dc532b324",
+      "factory_count": 67,
+      "positive_count": 35,
+      "positive_rate": 0.52238806
+    }
+  },
+  "training_runtime_seconds": 10.369
+}
