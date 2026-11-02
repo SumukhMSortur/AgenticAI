@@ -58,3 +58,9 @@ This document tracks all locked design decisions, conflict resolutions, and depe
   - **EU Consolidated Financial Sanctions (FSF):** XML/CSV bulk snapshot from European External Action Service (EEAS) official portal. Public sector reuse license. Local matching only.
   - **OFAC Consolidated Sanctions (SDN & Non-SDN):** XML/CSV bulk snapshot from U.S. Treasury OFAC official portal. U.S. government public domain. Local matching only.
   - **EUR-Lex Regulatory Feed:** Official EU Publications Office RSS/ATOM feed for CSDDD/ESPR legal acts. Local candidate ingestion via proposal review.
+
+### ADR-008: Canonical Verifier Verdict Contract
+- **Context:** The interrupted Phase 6 rule files used `VerdictLabel`, `label`, `rationale`, and `confidence`, but those names were not defined by the domain model. The existing `Verdict` model and domain tests use `claim_id`, `outcome`, `reason_code`, and structured `details`.
+- **Decision:** Keep the existing domain contract canonical, add `evidence_ids` to `Verdict`, and migrate every implemented rule to it. Rules require the claim and supporting evidence IDs; rationale and confidence remain structured detail values. Issuer checks receive an already-loaded registry so the rules themselves remain deterministic and perform no I/O.
+- **V-DATE-001:** An impossible range (`valid_from > valid_to`) escalates, as required by the recovery prompt; it is not treated as an ordinary compliance failure.
+- **Rationale:** This preserves the contract already consumed by the domain and scorecard tests, satisfies the required evidence trace, and avoids maintaining two competing verdict schemas.

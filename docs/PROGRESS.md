@@ -86,3 +86,15 @@ This document tracks progress across all phases, recording what was built, what 
 - **Deviations / Blockers:**
   - Template label words (`facility`, `supplier`, etc.) are filtered from entity tokenization to prevent template headers from colliding with sensitive entity checks.
 - **Next Phase:** Phase 4: Extraction (Base interface, LayoutLMv3, Heuristic extractor, normalizers, evaluation script).
+
+---
+
+## Recovery checkpoint and Phase 6 (2026-11-02)
+
+- **Recovery verified:** Repository is on `main`, seven commits ahead of `origin/main`, with tags through `phase-5-complete` and `addendum-a-complete`. The master prompt and live-data addendum referenced by the resume prompt are not present in the checkout, so their detailed rule tables and acceptance criteria remain unverified.
+- **Gate from the repository root:** Ruff passed; strict mypy passed with no issues across 52 source files; pytest passed (50 passed). The implemented verifier package has 100% statement coverage (158/158 statements); total application coverage is 92%.
+- **Phase 6 status:** Partial. Nine rule functions (V-EXP-001/002, V-DATE-001, V-ISS-001/002, V-SCOPE-001/002, V-XDOC-001/002) now produce the canonical evidence-linked `Verdict`; their boundary tests pass with 100% statement coverage. The mock issuer registry loader is implemented and emits a visible `MOCK` warning.
+- **Known Phase 6 gaps:** No verifier engine, V-PAGE-001, V-CONF-001, V-EXT-001/002/003/900, V-SANC-001/002, provider interface/fakes, golden-set report, or `reports/verifier.json` yet. The eight missing rules depend on specifications absent from this checkout.
+- **Contract decision:** ADR-008 records the canonical verdict shape and V-DATE-001 escalation behavior.
+- **Windows services checked:** Python 3.12.10, Node, and npm are available. Tesseract, Ollama, Redis CLI, PostgreSQL CLI, and Docker are not available on PATH; service-backed integration checks remain blocked.
+- **Next action:** Restore `ECOCHAIN_MASTER_PROMPT.md` and `ECOCHAIN_ADDENDUM_LIVE_DATA.md`, then implement and test the remaining verifier rules against those specifications.

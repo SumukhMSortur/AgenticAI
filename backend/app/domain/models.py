@@ -97,6 +97,7 @@ class Verdict(BaseModel):
     outcome: Literal["pass", "fail", "escalate"]
     reason_code: str
     details: dict[str, Any] = Field(default_factory=dict)
+    evidence_ids: list[str] = Field(default_factory=list)
 
 
 class RiskForecast(BaseModel):
