@@ -47,12 +47,16 @@ Programming, validation, and other deterministic errors are not retried.
 An escalated run pauses at `hitl_wait` with a LangGraph interrupt. Resume it with
 the same `thread_id` and a validated `ReviewDecision` (`approved`, `rejected`,
 or `more_evidence`). Durable restart/resume requires a PostgreSQL checkpointer:
-set `ECOCHAIN_TEST_POSTGRES_URL` to a test database URL and run:
+start the local Compose services and use the `TEST_DATABASE_URL` in `.env`
+(or set `ECOCHAIN_TEST_POSTGRES_URL` to the same local test database), then run:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest backend\tests\integration\test_graph_postgres_resume.py -q
 ```
 
-The integration test pauses a workflow, closes its checkpointer, opens a new
-one, and resumes the same thread. Without the environment variable it is
-skipped; in-memory workflow tests do not establish durable restart behavior.
+The integration tests launch a child process that pauses at HITL, terminate it,
+restart the PostgreSQL container, and resume the same thread in a new process.
+They verify the final scorecard, persisted audit row, and audit hash chain; a
+second test runs all 150 golden cases through PostgreSQL-backed workflows.
+Without either database URL setting, both tests are skipped. In-memory workflow
+tests do not establish durable restart behavior.

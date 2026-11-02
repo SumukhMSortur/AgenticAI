@@ -51,10 +51,10 @@ Apply migrations to the application database, then apply, roll back, and
 re-apply them on the isolated `ecochain_test` database:
 
 ```powershell
-$env:DATABASE_URL = "postgresql+psycopg://ecochain:ecochain_dev_only@localhost:5432/ecochain"
+$env:DATABASE_URL = "postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain"
 .\.venv\Scripts\python.exe -m alembic upgrade head
 
-$env:DATABASE_URL = "postgresql+psycopg://ecochain:ecochain_dev_only@localhost:5432/ecochain_test"
+$env:DATABASE_URL = "postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain_test"
 .\.venv\Scripts\python.exe -m alembic upgrade head
 .\.venv\Scripts\python.exe -m alembic downgrade base
 .\.venv\Scripts\python.exe -m alembic upgrade head
