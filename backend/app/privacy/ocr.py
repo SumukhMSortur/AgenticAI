@@ -40,7 +40,7 @@ class PyMuPdfOcrEngine(IOcrEngine):
     """Local PDF text extraction using PyMuPDF vector & text word coordinates."""
 
     def extract_document(self, file_path: Path) -> list[OcrPageResult]:
-        doc: Any = pymupdf.open(str(file_path))  # type: ignore[no-untyped-call]
+        doc: Any = pymupdf.open(str(file_path))
         results: list[OcrPageResult] = []
 
         try:

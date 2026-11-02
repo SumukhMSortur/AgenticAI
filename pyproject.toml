@@ -55,6 +55,13 @@ ignore_missing_imports = true
 disallow_untyped_calls = false
 disallow_untyped_defs = false
 
+[[tool.mypy.overrides]]
+module = [
+    "backend.app.extraction.*",
+    "backend.app.privacy.*",
+]
+disallow_untyped_calls = false
+
 [tool.pytest.ini_options]
 minversion = "8.0"
 testpaths = ["backend/tests"]

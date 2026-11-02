@@ -1,0 +1,59 @@
+{
+  "evaluation_name": "Document Layout & Extraction Evaluation",
+  "model_architecture": "Heuristic Layout Extractor (LayoutLMv3 Double)",
+  "held_out_documents_evaluated": 30,
+  "macro_f1": 0.987,
+  "overall_mean_bbox_iou": 0.336,
+  "per_field_metrics": {
+    "certificate_type": {
+      "precision": 0.8333,
+      "recall": 1.0,
+      "f1": 0.9091,
+      "mean_bbox_iou": 0.0918,
+      "support": 25
+    },
+    "issuer": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "mean_bbox_iou": 0.3468,
+      "support": 30
+    },
+    "valid_from": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "mean_bbox_iou": 0.4109,
+      "support": 30
+    },
+    "valid_to": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "mean_bbox_iou": 0.3648,
+      "support": 30
+    },
+    "scope_materials": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "mean_bbox_iou": 0.3537,
+      "support": 30
+    },
+    "facility_id": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "mean_bbox_iou": 0.3976,
+      "support": 30
+    },
+    "supplier_id": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "mean_bbox_iou": 0.3865,
+      "support": 30
+    }
+  },
+  "is_gate_passed": true
+}

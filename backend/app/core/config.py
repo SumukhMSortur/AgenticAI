@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     OLLAMA_BASE_URL: str = Field(default="http://localhost:11434")
     OLLAMA_MODEL: str = Field(default="llama3:8b-instruct-q4_K_M")
     TESSERACT_CMD: str = Field(default="")
+    LAYOUTLM_WEIGHTS_PATH: str = Field(default="")
 
     # Observability
     LANGSMITH_TRACING: bool = Field(default=False)
