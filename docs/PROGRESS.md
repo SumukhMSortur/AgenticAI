@@ -44,3 +44,23 @@ This document tracks progress across all phases, recording what was built, what 
 - **Deviations / Blockers:**
   - None. In-memory SQLite fixture provides fast unit test coverage while Alembic migrations support PostgreSQL in staging/production.
 - **Next Phase:** Phase 2: Data (Synthetic and Real).
+
+---
+
+## Phase 2: Data (Synthetic and Real)
+
+- **Status:** Complete (Gate Passed)
+- **What Was Built:**
+  - `scripts/generate_issuer_registry.py`: Approved mock certificate issuer registry (`data/registry/approved_issuers.csv`) covering Control Union, Ecocert, OEKO-TEX, SGS, Intertek, Bureau Veritas, and TÜV Rheinland.
+  - `scripts/generate_regulations.py`: Versioned legal texts in `data/regulations/csddd_regulations.json`, including the superseded Directive (EU) 2024/1760 and the in-force Omnibus I Directive (EU) 2026/470 and ESPR (EU) 2024/1781.
+  - `scripts/generate_audit_histories.py`: 450 factories generated with 36-month time series of numeric signals (`carbon_intensity`, `labor_violations`, `cert_lapse_days`, `corrective_action_backlog`, `safety_incidents`). Grounded in a latent hazard process with drift and seasonality. Stratified 70/15/15 train/val/test split by factory.
+  - `scripts/generate_documents.py`: 180 synthetic PDFs generated with PyMuPDF (120 clean, 60 adversarial spanning expired validity, unapproved/fuzzy issuers, and scope/facility mismatches), with normalized bounding boxes (0-1000) and embedded privacy seeds (`PERSON`, `EMAIL_ADDRESS`, `IBAN_CODE`, `PRICE`).
+  - `scripts/generate_golden_set.py`: 150 labeled end-to-end evaluation cases in `data/golden/golden_set.json` with expected verdicts and escalation flags.
+  - `scripts/generate_synthetic_data.py`: Master generation entrypoint and SHA-256 integrity validator outputting `data/MANIFEST.json`.
+- **What Was Measured:**
+  - `data/MANIFEST.json`: 7 files cryptographically hashed and verified byte-identical.
+  - Total test suite: 16 unit tests passing in 2.29s.
+  - Ruff linter & Mypy strict: green across all modules.
+- **Deviations / Blockers:**
+  - PDF binary outputs are gitignored to preserve repo compactness; generation is 100% deterministic from `SEED=42` and reproducible via `make data`.
+- **Next Phase:** Phase 3: Privacy Boundary (OCR, Presidio + regex redaction, Llama checker, Vault, OutboundGuard, Leakage suite).

@@ -1,0 +1,106 @@
+"""Unit tests for Phase 2 dataset integrity, schemas, and reproducibility."""
+
+import json
+from pathlib import Path
+
+from scripts.generate_synthetic_data import verify_manifest
+
+
+def test_manifest_reproducibility() -> None:
+    """Verifies that generated files byte-identically match data/MANIFEST.json."""
+    assert verify_manifest() is True
+
+
+def test_audit_histories_schema_and_split() -> None:
+    """Verifies 450 factories across splits with 36 months of sequence signals."""
+    train_path = Path("data/synthetic/audit_histories_train.json")
+    val_path = Path("data/synthetic/audit_histories_val.json")
+    test_path = Path("data/synthetic/audit_histories_test.json")
+
+    with open(train_path, encoding="utf-8") as f:
+        train_data = json.load(f)
+    with open(val_path, encoding="utf-8") as f:
+        val_data = json.load(f)
+    with open(test_path, encoding="utf-8") as f:
+        test_data = json.load(f)
+
+    total_factories = (
+        len(train_data["factories"]) + len(val_data["factories"]) + len(test_data["factories"])
+    )
+    assert total_factories == 450
+
+    # Test individual factory sequence structure
+    sample_factory = train_data["factories"][0]
+    assert "factory_id" in sample_factory
+    assert "will_fail_next_6m" in sample_factory
+    assert 0.0 <= sample_factory["p_fail_6m"] <= 1.0
+    assert len(sample_factory["history"]) == 36
+
+    sample_month = sample_factory["history"][0]
+    required_signals = [
+        "carbon_intensity",
+        "labor_violations",
+        "cert_lapse_days",
+        "corrective_action_backlog",
+        "safety_incidents",
+    ]
+    for sig in required_signals:
+        assert sig in sample_month
+
+
+def test_documents_and_annotations() -> None:
+    """Verifies generated documents contain valid bboxes and embedded privacy seeds."""
+    ann_path = Path("data/synthetic/documents/annotations.json")
+    with open(ann_path, encoding="utf-8") as f:
+        annotations = json.load(f)
+
+    assert len(annotations) == 180  # 120 clean + 60 adversarial
+
+    for doc in annotations:
+        assert doc["doc_hash"]
+        assert len(doc["fields"]) > 0
+        for f in doc["fields"]:
+            box = f["bbox"]
+            assert 0 <= box["x0"] <= box["x1"] <= 1000
+            assert 0 <= box["y0"] <= box["y1"] <= 1000
+            assert 0.0 <= f["confidence"] <= 1.0
+
+        # Privacy seeds must be present in every document
+        assert len(doc["privacy_seeds"]) >= 4
+        types = {seed["type"] for seed in doc["privacy_seeds"]}
+        assert "EMAIL_ADDRESS" in types
+        assert "IBAN_CODE" in types
+
+
+def test_regulations_corpus_versioning() -> None:
+    """Verifies that regulations include superseded and in-force texts with date metadata."""
+    reg_path = Path("data/regulations/csddd_regulations.json")
+    with open(reg_path, encoding="utf-8") as f:
+        regs = json.load(f)
+
+    versions = {r["version_id"]: r for r in regs}
+    assert "EU-CSDDD-2024-1760" in versions
+    assert "EU-CSDDD-2026-470" in versions
+
+    superseded = versions["EU-CSDDD-2024-1760"]
+    assert superseded["status"] == "superseded"
+    assert superseded["superseded_by"] == "EU-CSDDD-2026-470"
+
+    current = versions["EU-CSDDD-2026-470"]
+    assert current["status"] == "in_force"
+    assert current["effective_from"] == "2026-03-18"
+
+
+def test_golden_set_distribution() -> None:
+    """Verifies the 150 golden evaluation cases cover compliant and adversarial scenarios."""
+    golden_path = Path("data/golden/golden_set.json")
+    with open(golden_path, encoding="utf-8") as f:
+        data = json.load(f)
+
+    cases = data["cases"]
+    assert len(cases) == 150
+
+    outcomes = {c["expected_verdicts"][0]["expected_outcome"] for c in cases}
+    assert "pass" in outcomes
+    assert "fail" in outcomes
+    assert "escalate" in outcomes
