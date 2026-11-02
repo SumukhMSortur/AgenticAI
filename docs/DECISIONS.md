@@ -71,3 +71,10 @@ This document tracks all locked design decisions, conflict resolutions, and depe
 - **Escalation priority:** Critical risk at the configured high-risk threshold or a rule explicitly marked critical yields `critical`; other escalations yield `normal`. Verdict outcomes remain unchanged by this classification.
 - **Rationale:** These conservative semantics preserve the no-network verifier and do not claim details absent from the source spec.
 - **Limitation:** These are implementation assumptions, not verified Addendum A3 semantics. Before production provider wiring, compare every external/sanctions threshold and outcome with the restored addendum and record any reconciliation.
+
+### ADR-010: Validation-Only Risk Model Promotion
+- **Context:** Phase 7 requires comparable Logistic Regression, XGBoost, and CPU PyTorch LSTM models, validation-only calibration, test confidence intervals, and a versioned served artifact.
+- **Decision:** Normalize sequence and engineered features using training-split statistics only. Fit Platt calibrators on the factory-disjoint validation split; select promotion using validation AUROC and Brier score only. Promote the LSTM only when it clears both baselines by configured margins; otherwise serve the validation-best baseline. Keep generated joblib model artifacts local and ignored by Git; the committed report records their SHA-256.
+- **Measured outcome:** On the seeded synthetic data, the LSTM did not clear both baseline promotion margins; XGBoost was selected as the served baseline. Test metrics are recorded in `reports/risk.json`.
+- **Rationale:** The test split remains reporting-only, model promotion cannot be driven by test-set performance, and trained weights are not committed.
+- **Limitation:** Synthetic labels and drift patterns produce unusually strong metrics and cannot establish real-world predictive validity. Retrain locally with the pinned Python environment before inference when the ignored model artifact is absent.

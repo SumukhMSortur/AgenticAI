@@ -1,0 +1,15 @@
+seed: 42
+feature_window_months: 12
+calibration_bins: 10
+bootstrap_samples: 1000
+logreg_c: 1.0
+xgboost_estimators: 80
+xgboost_max_depth: 3
+xgboost_learning_rate: 0.05
+lstm_hidden_size: 8
+lstm_epochs: 100
+lstm_patience: 12
+lstm_learning_rate: 0.01
+early_stopping_delta: 0.0001
+promotion_auroc_margin: 0.005
+promotion_brier_margin: 0.005

@@ -1,6 +1,7 @@
 # EcoChain Generated Data
 data/synthetic/documents/*.pdf
 data/chroma_db/
+artifacts/risk/
 *.db
 *.sqlite
 *.sqlite3

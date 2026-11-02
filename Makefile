@@ -32,7 +32,7 @@ data:
 	$(PYTHON) scripts/generate_synthetic_data.py
 
 train:
-	$(PYTHON) ml/train_lstm.py
+	$(PYTHON) ml/train_risk.py
 	$(PYTHON) ml/train_layoutlm.py
 
 eval:
