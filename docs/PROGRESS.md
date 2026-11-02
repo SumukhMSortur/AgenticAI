@@ -64,3 +64,25 @@ This document tracks progress across all phases, recording what was built, what 
 - **Deviations / Blockers:**
   - PDF binary outputs are gitignored to preserve repo compactness; generation is 100% deterministic from `SEED=42` and reproducible via `make data`.
 - **Next Phase:** Phase 3: Privacy Boundary (OCR, Presidio + regex redaction, Llama checker, Vault, OutboundGuard, Leakage suite).
+
+---
+
+## Phase 3: Privacy Boundary
+
+- **Status:** Complete (Gate Passed)
+- **What Was Built:**
+  - `config/recognizers.yaml`: Presidio and regex recognizer specifications for prices, IBANs, phone numbers, supplier IDs, and facility IDs.
+  - `privacy/ocr.py`: `IOcrEngine` interface with `PyMuPdfOcrEngine` local text and word bounding box extraction normalized to the 0-1000 LayoutLM space.
+  - `privacy/vault.py`: `TokenVault` providing per-tenant reversible AES-256 Fernet tokenization (`[PERSON_001]`, `[IBAN_CODE_001]`, etc.), deterministic detokenization, rehydration, and sensitive entity tracking.
+  - `privacy/redactor.py`: `DocumentRedactor` combining Presidio `AnalyzerEngine`, custom regex recognizers, template stopword filtering, and bbox preservation into `RedactedPage`.
+  - `privacy/llama_checker.py`: Second-pass local sensitive data inspector using Ollama with fail-closed behavior (`FakeLlamaChecker` for tests).
+  - `privacy/outbound_guard.py`: Single choke-point for all cloud LLM requests enforcing image byte elimination, 500k char size limits, zero vault-known value leakage, and outbound payload hashing to the audit log.
+  - `tests/leakage/test_privacy_leakage.py`: Leakage test suite across 180 documents (720 privacy seeds) and code AST inspection asserting zero direct LLM imports outside `backend/app/llm/`.
+- **What Was Measured:**
+  - `reports/redaction.json`: 720/720 seeded PII items detected (100% recall across `PERSON`, `EMAIL_ADDRESS`, `IBAN_CODE`, `PRICE`).
+  - Total leakage rate: 0.0% (zero seeded values leaked into outbound payloads).
+  - Total test suite: 22 unit & leakage tests passing in 16.4s.
+  - Ruff linter & Mypy strict: green across 31 source files.
+- **Deviations / Blockers:**
+  - Template label words (`facility`, `supplier`, etc.) are filtered from entity tokenization to prevent template headers from colliding with sensitive entity checks.
+- **Next Phase:** Phase 4: Extraction (Base interface, LayoutLMv3, Heuristic extractor, normalizers, evaluation script).

@@ -1,0 +1,20 @@
+{
+  "evaluation_name": "Privacy Boundary Leakage & Redaction Recall",
+  "total_documents_tested": 180,
+  "total_seeds_tested": 720,
+  "total_leaked": 0,
+  "overall_leakage_rate": 0.0,
+  "recall_per_entity_type": {
+    "PERSON": 1.0,
+    "EMAIL_ADDRESS": 1.0,
+    "IBAN_CODE": 1.0,
+    "PRICE": 1.0
+  },
+  "entity_counts": {
+    "PERSON": 180,
+    "EMAIL_ADDRESS": 180,
+    "IBAN_CODE": 180,
+    "PRICE": 180
+  },
+  "is_gate_passed": true
+}
