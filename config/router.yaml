@@ -1,0 +1,22 @@
+seed: 42
+model_name: sentence-transformers/all-MiniLM-L6-v2
+model_revision: 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+embedding_dimension: 384
+labels:
+  - certificate_assessment
+  - facility_lookup
+  - general_help
+  - regulation_retrieval
+  - risk_forecast
+  - review_status
+test_fraction: 0.20
+validation_fraction: 0.20
+logreg_c: 1.0
+dnn_hidden_units: 64
+dnn_dropout: 0.20
+dnn_epochs: 100
+dnn_batch_size: 16
+dnn_patience: 10
+promotion_macro_f1_margin: 0.01
+fake_llm_input_usd_per_million_tokens: 0.15
+fake_llm_output_usd_per_million_tokens: 0.60

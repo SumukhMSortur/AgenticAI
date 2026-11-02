@@ -2,6 +2,7 @@
 data/synthetic/documents/*.pdf
 data/chroma_db/
 artifacts/risk/
+artifacts/router/
 *.db
 *.sqlite
 *.sqlite3
