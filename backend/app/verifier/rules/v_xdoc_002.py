@@ -1,4 +1,4 @@
-"""V-XDOC-002: compare material claims across documents."""
+"""V-XDOC-002: escalate irreconcilable material claims across documents."""
 
 from backend.app.domain.models import Verdict
 from backend.app.verifier.rules.common import make_verdict
@@ -10,7 +10,7 @@ def check(
     claim_id: str,
     evidence_ids: list[str],
 ) -> Verdict:
-    """Fail irreconcilable materials and escalate when document data is incomplete."""
+    """Escalate conflicting claims and missing data; pass consistent documents."""
     if not doc_material_claims or len(doc_material_claims) < 2:
         return make_verdict(
             claim_id=claim_id,
@@ -49,12 +49,13 @@ def check(
         return make_verdict(
             claim_id=claim_id,
             rule_id="V-XDOC-002",
-            outcome="fail",
+            outcome="escalate",
             reason_code="CROSS_DOCUMENT_MATERIAL_CONFLICT",
             details={
                 "rationale": "Documents have no common claimed materials.",
                 "materials_by_document": all_claims,
-                "confidence": 1.0,
+                "confidence": 0.0,
+                "priority": "normal",
             },
             evidence_ids=evidence_ids,
         )

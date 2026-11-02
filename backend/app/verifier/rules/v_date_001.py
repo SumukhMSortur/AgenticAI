@@ -12,8 +12,18 @@ def check(
     *,
     claim_id: str,
     evidence_ids: list[str],
+    unparsable: bool = False,
 ) -> Verdict:
     """Escalate incomplete or impossible dates; pass a well-ordered range."""
+    if unparsable:
+        return make_verdict(
+            claim_id=claim_id,
+            rule_id="V-DATE-001",
+            outcome="escalate",
+            reason_code="VALIDITY_DATE_UNPARSABLE",
+            details={"rationale": "A validity date could not be parsed.", "confidence": 0.0},
+            evidence_ids=evidence_ids,
+        )
     if valid_from is None or valid_to is None:
         return make_verdict(
             claim_id=claim_id,

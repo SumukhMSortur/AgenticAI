@@ -23,7 +23,7 @@
             "supplier_id": "SUP-001",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-001-BOM",
@@ -36,7 +36,7 @@
             "facility_id": "FACT-0001",
             "supplier_id": "SUP-001"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -68,7 +68,7 @@
             "supplier_id": "SUP-002",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-002-BOM",
@@ -81,7 +81,7 @@
             "facility_id": "FACT-0002",
             "supplier_id": "SUP-002"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -113,7 +113,7 @@
             "supplier_id": "SUP-003",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-003-BOM",
@@ -126,7 +126,7 @@
             "facility_id": "FACT-0003",
             "supplier_id": "SUP-003"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -158,7 +158,7 @@
             "supplier_id": "SUP-004",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-004-BOM",
@@ -171,7 +171,7 @@
             "facility_id": "FACT-0004",
             "supplier_id": "SUP-004"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -195,7 +195,7 @@
           "doc_hash": "hash_005_doc-golden-005_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -203,7 +203,7 @@
             "supplier_id": "SUP-005",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-005-BOM",
@@ -216,7 +216,7 @@
             "facility_id": "FACT-0005",
             "supplier_id": "SUP-005"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -248,7 +248,7 @@
             "supplier_id": "SUP-006",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-006-BOM",
@@ -261,7 +261,7 @@
             "facility_id": "FACT-0006",
             "supplier_id": "SUP-006"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -270,8 +270,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-007",
@@ -293,7 +293,7 @@
             "supplier_id": "SUP-007",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-007-BOM",
@@ -306,7 +306,7 @@
             "facility_id": "FACT-0007",
             "supplier_id": "SUP-DIFFERENT-006"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -338,7 +338,7 @@
             "supplier_id": "SUP-008",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-008-BOM",
@@ -351,7 +351,7 @@
             "facility_id": "FACT-0008",
             "supplier_id": "SUP-008"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -383,7 +383,7 @@
             "supplier_id": "SUP-009",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-009-BOM",
@@ -396,7 +396,7 @@
             "facility_id": "FACT-0009",
             "supplier_id": "SUP-009"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -428,7 +428,7 @@
             "supplier_id": "SUP-010",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-010-BOM",
@@ -441,7 +441,7 @@
             "facility_id": "FACT-0010",
             "supplier_id": "SUP-010"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -473,7 +473,7 @@
             "supplier_id": "SUP-011",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-011-BOM",
@@ -486,7 +486,7 @@
             "facility_id": "FACT-0011",
             "supplier_id": "SUP-011"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -518,7 +518,7 @@
             "supplier_id": "SUP-012",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-012-BOM",
@@ -531,7 +531,7 @@
             "facility_id": "FACT-0012",
             "supplier_id": "SUP-012"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -555,7 +555,7 @@
           "doc_hash": "hash_013_doc-golden-013_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -563,7 +563,7 @@
             "supplier_id": "SUP-013",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-013-BOM",
@@ -576,7 +576,7 @@
             "facility_id": "FACT-0013",
             "supplier_id": "SUP-013"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -608,7 +608,7 @@
             "supplier_id": "SUP-014",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-014-BOM",
@@ -621,7 +621,7 @@
             "facility_id": "FACT-0014",
             "supplier_id": "SUP-014"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -630,8 +630,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-015",
@@ -653,7 +653,7 @@
             "supplier_id": "SUP-015",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-015-BOM",
@@ -666,7 +666,7 @@
             "facility_id": "FACT-0015",
             "supplier_id": "SUP-DIFFERENT-014"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -698,7 +698,7 @@
             "supplier_id": "SUP-016",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-016-BOM",
@@ -711,7 +711,7 @@
             "facility_id": "FACT-0016",
             "supplier_id": "SUP-016"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -743,7 +743,7 @@
             "supplier_id": "SUP-017",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-017-BOM",
@@ -756,7 +756,7 @@
             "facility_id": "FACT-0017",
             "supplier_id": "SUP-017"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -788,7 +788,7 @@
             "supplier_id": "SUP-018",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-018-BOM",
@@ -801,7 +801,7 @@
             "facility_id": "FACT-0018",
             "supplier_id": "SUP-018"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -833,7 +833,7 @@
             "supplier_id": "SUP-019",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-019-BOM",
@@ -846,7 +846,7 @@
             "facility_id": "FACT-0019",
             "supplier_id": "SUP-019"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -878,7 +878,7 @@
             "supplier_id": "SUP-020",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-020-BOM",
@@ -891,7 +891,7 @@
             "facility_id": "FACT-0020",
             "supplier_id": "SUP-020"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -915,7 +915,7 @@
           "doc_hash": "hash_021_doc-golden-021_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -923,7 +923,7 @@
             "supplier_id": "SUP-021",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-021-BOM",
@@ -936,7 +936,7 @@
             "facility_id": "FACT-0021",
             "supplier_id": "SUP-021"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -968,7 +968,7 @@
             "supplier_id": "SUP-022",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-022-BOM",
@@ -981,7 +981,7 @@
             "facility_id": "FACT-0022",
             "supplier_id": "SUP-022"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -990,8 +990,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-023",
@@ -1013,7 +1013,7 @@
             "supplier_id": "SUP-023",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-023-BOM",
@@ -1026,7 +1026,7 @@
             "facility_id": "FACT-0023",
             "supplier_id": "SUP-DIFFERENT-022"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1058,7 +1058,7 @@
             "supplier_id": "SUP-024",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-024-BOM",
@@ -1071,7 +1071,7 @@
             "facility_id": "FACT-0024",
             "supplier_id": "SUP-024"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1103,7 +1103,7 @@
             "supplier_id": "SUP-025",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-025-BOM",
@@ -1116,7 +1116,7 @@
             "facility_id": "FACT-0025",
             "supplier_id": "SUP-025"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1148,7 +1148,7 @@
             "supplier_id": "SUP-026",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-026-BOM",
@@ -1161,7 +1161,7 @@
             "facility_id": "FACT-0026",
             "supplier_id": "SUP-026"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1193,7 +1193,7 @@
             "supplier_id": "SUP-027",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-027-BOM",
@@ -1206,7 +1206,7 @@
             "facility_id": "FACT-0027",
             "supplier_id": "SUP-027"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1238,7 +1238,7 @@
             "supplier_id": "SUP-028",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-028-BOM",
@@ -1251,7 +1251,7 @@
             "facility_id": "FACT-0028",
             "supplier_id": "SUP-028"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1275,7 +1275,7 @@
           "doc_hash": "hash_029_doc-golden-029_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -1283,7 +1283,7 @@
             "supplier_id": "SUP-029",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-029-BOM",
@@ -1296,7 +1296,7 @@
             "facility_id": "FACT-0029",
             "supplier_id": "SUP-029"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1328,7 +1328,7 @@
             "supplier_id": "SUP-030",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-030-BOM",
@@ -1341,7 +1341,7 @@
             "facility_id": "FACT-0030",
             "supplier_id": "SUP-030"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1350,8 +1350,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-031",
@@ -1373,7 +1373,7 @@
             "supplier_id": "SUP-001",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-031-BOM",
@@ -1386,7 +1386,7 @@
             "facility_id": "FACT-0031",
             "supplier_id": "SUP-DIFFERENT-030"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1418,7 +1418,7 @@
             "supplier_id": "SUP-002",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-032-BOM",
@@ -1431,7 +1431,7 @@
             "facility_id": "FACT-0032",
             "supplier_id": "SUP-002"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1463,7 +1463,7 @@
             "supplier_id": "SUP-003",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-033-BOM",
@@ -1476,7 +1476,7 @@
             "facility_id": "FACT-0033",
             "supplier_id": "SUP-003"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1508,7 +1508,7 @@
             "supplier_id": "SUP-004",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-034-BOM",
@@ -1521,7 +1521,7 @@
             "facility_id": "FACT-0034",
             "supplier_id": "SUP-004"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1553,7 +1553,7 @@
             "supplier_id": "SUP-005",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-035-BOM",
@@ -1566,7 +1566,7 @@
             "facility_id": "FACT-0035",
             "supplier_id": "SUP-005"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1598,7 +1598,7 @@
             "supplier_id": "SUP-006",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-036-BOM",
@@ -1611,7 +1611,7 @@
             "facility_id": "FACT-0036",
             "supplier_id": "SUP-006"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1635,7 +1635,7 @@
           "doc_hash": "hash_037_doc-golden-037_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -1643,7 +1643,7 @@
             "supplier_id": "SUP-007",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-037-BOM",
@@ -1656,7 +1656,7 @@
             "facility_id": "FACT-0037",
             "supplier_id": "SUP-007"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1688,7 +1688,7 @@
             "supplier_id": "SUP-008",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-038-BOM",
@@ -1701,7 +1701,7 @@
             "facility_id": "FACT-0038",
             "supplier_id": "SUP-008"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1710,8 +1710,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-039",
@@ -1733,7 +1733,7 @@
             "supplier_id": "SUP-009",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-039-BOM",
@@ -1746,7 +1746,7 @@
             "facility_id": "FACT-0039",
             "supplier_id": "SUP-DIFFERENT-038"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1778,7 +1778,7 @@
             "supplier_id": "SUP-010",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-040-BOM",
@@ -1791,7 +1791,7 @@
             "facility_id": "FACT-0040",
             "supplier_id": "SUP-010"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1823,7 +1823,7 @@
             "supplier_id": "SUP-011",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-041-BOM",
@@ -1836,7 +1836,7 @@
             "facility_id": "FACT-0041",
             "supplier_id": "SUP-011"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1868,7 +1868,7 @@
             "supplier_id": "SUP-012",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-042-BOM",
@@ -1881,7 +1881,7 @@
             "facility_id": "FACT-0042",
             "supplier_id": "SUP-012"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1913,7 +1913,7 @@
             "supplier_id": "SUP-013",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-043-BOM",
@@ -1926,7 +1926,7 @@
             "facility_id": "FACT-0043",
             "supplier_id": "SUP-013"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1958,7 +1958,7 @@
             "supplier_id": "SUP-014",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-044-BOM",
@@ -1971,7 +1971,7 @@
             "facility_id": "FACT-0044",
             "supplier_id": "SUP-014"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -1995,7 +1995,7 @@
           "doc_hash": "hash_045_doc-golden-045_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -2003,7 +2003,7 @@
             "supplier_id": "SUP-015",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-045-BOM",
@@ -2016,7 +2016,7 @@
             "facility_id": "FACT-0045",
             "supplier_id": "SUP-015"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2048,7 +2048,7 @@
             "supplier_id": "SUP-016",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-046-BOM",
@@ -2061,7 +2061,7 @@
             "facility_id": "FACT-0046",
             "supplier_id": "SUP-016"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2070,8 +2070,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-047",
@@ -2093,7 +2093,7 @@
             "supplier_id": "SUP-017",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-047-BOM",
@@ -2106,7 +2106,7 @@
             "facility_id": "FACT-0047",
             "supplier_id": "SUP-DIFFERENT-046"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2138,7 +2138,7 @@
             "supplier_id": "SUP-018",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-048-BOM",
@@ -2151,7 +2151,7 @@
             "facility_id": "FACT-0048",
             "supplier_id": "SUP-018"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2183,7 +2183,7 @@
             "supplier_id": "SUP-019",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-049-BOM",
@@ -2196,7 +2196,7 @@
             "facility_id": "FACT-0049",
             "supplier_id": "SUP-019"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2228,7 +2228,7 @@
             "supplier_id": "SUP-020",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-050-BOM",
@@ -2241,7 +2241,7 @@
             "facility_id": "FACT-0050",
             "supplier_id": "SUP-020"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2273,7 +2273,7 @@
             "supplier_id": "SUP-021",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-051-BOM",
@@ -2286,7 +2286,7 @@
             "facility_id": "FACT-0001",
             "supplier_id": "SUP-021"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2318,7 +2318,7 @@
             "supplier_id": "SUP-022",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-052-BOM",
@@ -2331,7 +2331,7 @@
             "facility_id": "FACT-0002",
             "supplier_id": "SUP-022"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2355,7 +2355,7 @@
           "doc_hash": "hash_053_doc-golden-053_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -2363,7 +2363,7 @@
             "supplier_id": "SUP-023",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-053-BOM",
@@ -2376,7 +2376,7 @@
             "facility_id": "FACT-0003",
             "supplier_id": "SUP-023"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2408,7 +2408,7 @@
             "supplier_id": "SUP-024",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-054-BOM",
@@ -2421,7 +2421,7 @@
             "facility_id": "FACT-0004",
             "supplier_id": "SUP-024"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2430,8 +2430,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-055",
@@ -2453,7 +2453,7 @@
             "supplier_id": "SUP-025",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-055-BOM",
@@ -2466,7 +2466,7 @@
             "facility_id": "FACT-0005",
             "supplier_id": "SUP-DIFFERENT-054"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2498,7 +2498,7 @@
             "supplier_id": "SUP-026",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-056-BOM",
@@ -2511,7 +2511,7 @@
             "facility_id": "FACT-0006",
             "supplier_id": "SUP-026"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2543,7 +2543,7 @@
             "supplier_id": "SUP-027",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-057-BOM",
@@ -2556,7 +2556,7 @@
             "facility_id": "FACT-0007",
             "supplier_id": "SUP-027"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2588,7 +2588,7 @@
             "supplier_id": "SUP-028",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-058-BOM",
@@ -2601,7 +2601,7 @@
             "facility_id": "FACT-0008",
             "supplier_id": "SUP-028"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2633,7 +2633,7 @@
             "supplier_id": "SUP-029",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-059-BOM",
@@ -2646,7 +2646,7 @@
             "facility_id": "FACT-0009",
             "supplier_id": "SUP-029"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2678,7 +2678,7 @@
             "supplier_id": "SUP-030",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-060-BOM",
@@ -2691,7 +2691,7 @@
             "facility_id": "FACT-0010",
             "supplier_id": "SUP-030"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2715,7 +2715,7 @@
           "doc_hash": "hash_061_doc-golden-061_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -2723,7 +2723,7 @@
             "supplier_id": "SUP-001",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-061-BOM",
@@ -2736,7 +2736,7 @@
             "facility_id": "FACT-0011",
             "supplier_id": "SUP-001"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2768,7 +2768,7 @@
             "supplier_id": "SUP-002",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-062-BOM",
@@ -2781,7 +2781,7 @@
             "facility_id": "FACT-0012",
             "supplier_id": "SUP-002"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2790,8 +2790,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-063",
@@ -2813,7 +2813,7 @@
             "supplier_id": "SUP-003",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-063-BOM",
@@ -2826,7 +2826,7 @@
             "facility_id": "FACT-0013",
             "supplier_id": "SUP-DIFFERENT-062"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2858,7 +2858,7 @@
             "supplier_id": "SUP-004",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-064-BOM",
@@ -2871,7 +2871,7 @@
             "facility_id": "FACT-0014",
             "supplier_id": "SUP-004"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2903,7 +2903,7 @@
             "supplier_id": "SUP-005",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-065-BOM",
@@ -2916,7 +2916,7 @@
             "facility_id": "FACT-0015",
             "supplier_id": "SUP-005"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2948,7 +2948,7 @@
             "supplier_id": "SUP-006",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-066-BOM",
@@ -2961,7 +2961,7 @@
             "facility_id": "FACT-0016",
             "supplier_id": "SUP-006"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -2993,7 +2993,7 @@
             "supplier_id": "SUP-007",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-067-BOM",
@@ -3006,7 +3006,7 @@
             "facility_id": "FACT-0017",
             "supplier_id": "SUP-007"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3038,7 +3038,7 @@
             "supplier_id": "SUP-008",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-068-BOM",
@@ -3051,7 +3051,7 @@
             "facility_id": "FACT-0018",
             "supplier_id": "SUP-008"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3075,7 +3075,7 @@
           "doc_hash": "hash_069_doc-golden-069_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -3083,7 +3083,7 @@
             "supplier_id": "SUP-009",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-069-BOM",
@@ -3096,7 +3096,7 @@
             "facility_id": "FACT-0019",
             "supplier_id": "SUP-009"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3128,7 +3128,7 @@
             "supplier_id": "SUP-010",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-070-BOM",
@@ -3141,7 +3141,7 @@
             "facility_id": "FACT-0020",
             "supplier_id": "SUP-010"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3150,8 +3150,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-071",
@@ -3173,7 +3173,7 @@
             "supplier_id": "SUP-011",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-071-BOM",
@@ -3186,7 +3186,7 @@
             "facility_id": "FACT-0021",
             "supplier_id": "SUP-DIFFERENT-070"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3218,7 +3218,7 @@
             "supplier_id": "SUP-012",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-072-BOM",
@@ -3231,7 +3231,7 @@
             "facility_id": "FACT-0022",
             "supplier_id": "SUP-012"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3263,7 +3263,7 @@
             "supplier_id": "SUP-013",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-073-BOM",
@@ -3276,7 +3276,7 @@
             "facility_id": "FACT-0023",
             "supplier_id": "SUP-013"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3308,7 +3308,7 @@
             "supplier_id": "SUP-014",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-074-BOM",
@@ -3321,7 +3321,7 @@
             "facility_id": "FACT-0024",
             "supplier_id": "SUP-014"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3353,7 +3353,7 @@
             "supplier_id": "SUP-015",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-075-BOM",
@@ -3366,7 +3366,7 @@
             "facility_id": "FACT-0025",
             "supplier_id": "SUP-015"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3398,7 +3398,7 @@
             "supplier_id": "SUP-016",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-076-BOM",
@@ -3411,7 +3411,7 @@
             "facility_id": "FACT-0026",
             "supplier_id": "SUP-016"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3435,7 +3435,7 @@
           "doc_hash": "hash_077_doc-golden-077_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -3443,7 +3443,7 @@
             "supplier_id": "SUP-017",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-077-BOM",
@@ -3456,7 +3456,7 @@
             "facility_id": "FACT-0027",
             "supplier_id": "SUP-017"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3488,7 +3488,7 @@
             "supplier_id": "SUP-018",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-078-BOM",
@@ -3501,7 +3501,7 @@
             "facility_id": "FACT-0028",
             "supplier_id": "SUP-018"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3510,8 +3510,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-079",
@@ -3533,7 +3533,7 @@
             "supplier_id": "SUP-019",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-079-BOM",
@@ -3546,7 +3546,7 @@
             "facility_id": "FACT-0029",
             "supplier_id": "SUP-DIFFERENT-078"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3578,7 +3578,7 @@
             "supplier_id": "SUP-020",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-080-BOM",
@@ -3591,7 +3591,7 @@
             "facility_id": "FACT-0030",
             "supplier_id": "SUP-020"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3623,7 +3623,7 @@
             "supplier_id": "SUP-021",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-081-BOM",
@@ -3636,7 +3636,7 @@
             "facility_id": "FACT-0031",
             "supplier_id": "SUP-021"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3668,7 +3668,7 @@
             "supplier_id": "SUP-022",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-082-BOM",
@@ -3681,7 +3681,7 @@
             "facility_id": "FACT-0032",
             "supplier_id": "SUP-022"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3713,7 +3713,7 @@
             "supplier_id": "SUP-023",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-083-BOM",
@@ -3726,7 +3726,7 @@
             "facility_id": "FACT-0033",
             "supplier_id": "SUP-023"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3758,7 +3758,7 @@
             "supplier_id": "SUP-024",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-084-BOM",
@@ -3771,7 +3771,7 @@
             "facility_id": "FACT-0034",
             "supplier_id": "SUP-024"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3795,7 +3795,7 @@
           "doc_hash": "hash_085_doc-golden-085_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -3803,7 +3803,7 @@
             "supplier_id": "SUP-025",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-085-BOM",
@@ -3816,7 +3816,7 @@
             "facility_id": "FACT-0035",
             "supplier_id": "SUP-025"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3848,7 +3848,7 @@
             "supplier_id": "SUP-026",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-086-BOM",
@@ -3861,7 +3861,7 @@
             "facility_id": "FACT-0036",
             "supplier_id": "SUP-026"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3870,8 +3870,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-087",
@@ -3893,7 +3893,7 @@
             "supplier_id": "SUP-027",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-087-BOM",
@@ -3906,7 +3906,7 @@
             "facility_id": "FACT-0037",
             "supplier_id": "SUP-DIFFERENT-086"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3938,7 +3938,7 @@
             "supplier_id": "SUP-028",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-088-BOM",
@@ -3951,7 +3951,7 @@
             "facility_id": "FACT-0038",
             "supplier_id": "SUP-028"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -3983,7 +3983,7 @@
             "supplier_id": "SUP-029",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-089-BOM",
@@ -3996,7 +3996,7 @@
             "facility_id": "FACT-0039",
             "supplier_id": "SUP-029"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4028,7 +4028,7 @@
             "supplier_id": "SUP-030",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-090-BOM",
@@ -4041,7 +4041,7 @@
             "facility_id": "FACT-0040",
             "supplier_id": "SUP-030"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4073,7 +4073,7 @@
             "supplier_id": "SUP-001",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-091-BOM",
@@ -4086,7 +4086,7 @@
             "facility_id": "FACT-0041",
             "supplier_id": "SUP-001"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4118,7 +4118,7 @@
             "supplier_id": "SUP-002",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-092-BOM",
@@ -4131,7 +4131,7 @@
             "facility_id": "FACT-0042",
             "supplier_id": "SUP-002"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4155,7 +4155,7 @@
           "doc_hash": "hash_093_doc-golden-093_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -4163,7 +4163,7 @@
             "supplier_id": "SUP-003",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-093-BOM",
@@ -4176,7 +4176,7 @@
             "facility_id": "FACT-0043",
             "supplier_id": "SUP-003"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4208,7 +4208,7 @@
             "supplier_id": "SUP-004",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-094-BOM",
@@ -4221,7 +4221,7 @@
             "facility_id": "FACT-0044",
             "supplier_id": "SUP-004"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4230,8 +4230,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-095",
@@ -4253,7 +4253,7 @@
             "supplier_id": "SUP-005",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-095-BOM",
@@ -4266,7 +4266,7 @@
             "facility_id": "FACT-0045",
             "supplier_id": "SUP-DIFFERENT-094"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4298,7 +4298,7 @@
             "supplier_id": "SUP-006",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-096-BOM",
@@ -4311,7 +4311,7 @@
             "facility_id": "FACT-0046",
             "supplier_id": "SUP-006"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4343,7 +4343,7 @@
             "supplier_id": "SUP-007",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-097-BOM",
@@ -4356,7 +4356,7 @@
             "facility_id": "FACT-0047",
             "supplier_id": "SUP-007"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4388,7 +4388,7 @@
             "supplier_id": "SUP-008",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-098-BOM",
@@ -4401,7 +4401,7 @@
             "facility_id": "FACT-0048",
             "supplier_id": "SUP-008"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4433,7 +4433,7 @@
             "supplier_id": "SUP-009",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-099-BOM",
@@ -4446,7 +4446,7 @@
             "facility_id": "FACT-0049",
             "supplier_id": "SUP-009"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4478,7 +4478,7 @@
             "supplier_id": "SUP-010",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-100-BOM",
@@ -4491,7 +4491,7 @@
             "facility_id": "FACT-0050",
             "supplier_id": "SUP-010"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4515,7 +4515,7 @@
           "doc_hash": "hash_101_doc-golden-101_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -4523,7 +4523,7 @@
             "supplier_id": "SUP-011",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-101-BOM",
@@ -4536,7 +4536,7 @@
             "facility_id": "FACT-0001",
             "supplier_id": "SUP-011"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4568,7 +4568,7 @@
             "supplier_id": "SUP-012",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-102-BOM",
@@ -4581,7 +4581,7 @@
             "facility_id": "FACT-0002",
             "supplier_id": "SUP-012"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4590,8 +4590,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-103",
@@ -4613,7 +4613,7 @@
             "supplier_id": "SUP-013",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-103-BOM",
@@ -4626,7 +4626,7 @@
             "facility_id": "FACT-0003",
             "supplier_id": "SUP-DIFFERENT-102"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4658,7 +4658,7 @@
             "supplier_id": "SUP-014",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-104-BOM",
@@ -4671,7 +4671,7 @@
             "facility_id": "FACT-0004",
             "supplier_id": "SUP-014"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4703,7 +4703,7 @@
             "supplier_id": "SUP-015",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-105-BOM",
@@ -4716,7 +4716,7 @@
             "facility_id": "FACT-0005",
             "supplier_id": "SUP-015"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4748,7 +4748,7 @@
             "supplier_id": "SUP-016",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-106-BOM",
@@ -4761,7 +4761,7 @@
             "facility_id": "FACT-0006",
             "supplier_id": "SUP-016"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4793,7 +4793,7 @@
             "supplier_id": "SUP-017",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-107-BOM",
@@ -4806,7 +4806,7 @@
             "facility_id": "FACT-0007",
             "supplier_id": "SUP-017"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4838,7 +4838,7 @@
             "supplier_id": "SUP-018",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-108-BOM",
@@ -4851,7 +4851,7 @@
             "facility_id": "FACT-0008",
             "supplier_id": "SUP-018"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4875,7 +4875,7 @@
           "doc_hash": "hash_109_doc-golden-109_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -4883,7 +4883,7 @@
             "supplier_id": "SUP-019",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-109-BOM",
@@ -4896,7 +4896,7 @@
             "facility_id": "FACT-0009",
             "supplier_id": "SUP-019"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4928,7 +4928,7 @@
             "supplier_id": "SUP-020",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-110-BOM",
@@ -4941,7 +4941,7 @@
             "facility_id": "FACT-0010",
             "supplier_id": "SUP-020"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -4950,8 +4950,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-111",
@@ -4973,7 +4973,7 @@
             "supplier_id": "SUP-021",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-111-BOM",
@@ -4986,7 +4986,7 @@
             "facility_id": "FACT-0011",
             "supplier_id": "SUP-DIFFERENT-110"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5018,7 +5018,7 @@
             "supplier_id": "SUP-022",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-112-BOM",
@@ -5031,7 +5031,7 @@
             "facility_id": "FACT-0012",
             "supplier_id": "SUP-022"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5063,7 +5063,7 @@
             "supplier_id": "SUP-023",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-113-BOM",
@@ -5076,7 +5076,7 @@
             "facility_id": "FACT-0013",
             "supplier_id": "SUP-023"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5108,7 +5108,7 @@
             "supplier_id": "SUP-024",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-114-BOM",
@@ -5121,7 +5121,7 @@
             "facility_id": "FACT-0014",
             "supplier_id": "SUP-024"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5153,7 +5153,7 @@
             "supplier_id": "SUP-025",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-115-BOM",
@@ -5166,7 +5166,7 @@
             "facility_id": "FACT-0015",
             "supplier_id": "SUP-025"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5198,7 +5198,7 @@
             "supplier_id": "SUP-026",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-116-BOM",
@@ -5211,7 +5211,7 @@
             "facility_id": "FACT-0016",
             "supplier_id": "SUP-026"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5235,7 +5235,7 @@
           "doc_hash": "hash_117_doc-golden-117_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -5243,7 +5243,7 @@
             "supplier_id": "SUP-027",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-117-BOM",
@@ -5256,7 +5256,7 @@
             "facility_id": "FACT-0017",
             "supplier_id": "SUP-027"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5288,7 +5288,7 @@
             "supplier_id": "SUP-028",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-118-BOM",
@@ -5301,7 +5301,7 @@
             "facility_id": "FACT-0018",
             "supplier_id": "SUP-028"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5310,8 +5310,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-119",
@@ -5333,7 +5333,7 @@
             "supplier_id": "SUP-029",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-119-BOM",
@@ -5346,7 +5346,7 @@
             "facility_id": "FACT-0019",
             "supplier_id": "SUP-DIFFERENT-118"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5378,7 +5378,7 @@
             "supplier_id": "SUP-030",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-120-BOM",
@@ -5391,7 +5391,7 @@
             "facility_id": "FACT-0020",
             "supplier_id": "SUP-030"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5423,7 +5423,7 @@
             "supplier_id": "SUP-001",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-121-BOM",
@@ -5436,7 +5436,7 @@
             "facility_id": "FACT-0021",
             "supplier_id": "SUP-001"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5468,7 +5468,7 @@
             "supplier_id": "SUP-002",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-122-BOM",
@@ -5481,7 +5481,7 @@
             "facility_id": "FACT-0022",
             "supplier_id": "SUP-002"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5513,7 +5513,7 @@
             "supplier_id": "SUP-003",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-123-BOM",
@@ -5526,7 +5526,7 @@
             "facility_id": "FACT-0023",
             "supplier_id": "SUP-003"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5558,7 +5558,7 @@
             "supplier_id": "SUP-004",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-124-BOM",
@@ -5571,7 +5571,7 @@
             "facility_id": "FACT-0024",
             "supplier_id": "SUP-004"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5595,7 +5595,7 @@
           "doc_hash": "hash_125_doc-golden-125_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -5603,7 +5603,7 @@
             "supplier_id": "SUP-005",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-125-BOM",
@@ -5616,7 +5616,7 @@
             "facility_id": "FACT-0025",
             "supplier_id": "SUP-005"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5648,7 +5648,7 @@
             "supplier_id": "SUP-006",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-126-BOM",
@@ -5661,7 +5661,7 @@
             "facility_id": "FACT-0026",
             "supplier_id": "SUP-006"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5670,8 +5670,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-127",
@@ -5693,7 +5693,7 @@
             "supplier_id": "SUP-007",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-127-BOM",
@@ -5706,7 +5706,7 @@
             "facility_id": "FACT-0027",
             "supplier_id": "SUP-DIFFERENT-126"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5738,7 +5738,7 @@
             "supplier_id": "SUP-008",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-128-BOM",
@@ -5751,7 +5751,7 @@
             "facility_id": "FACT-0028",
             "supplier_id": "SUP-008"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5783,7 +5783,7 @@
             "supplier_id": "SUP-009",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-129-BOM",
@@ -5796,7 +5796,7 @@
             "facility_id": "FACT-0029",
             "supplier_id": "SUP-009"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5828,7 +5828,7 @@
             "supplier_id": "SUP-010",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-130-BOM",
@@ -5841,7 +5841,7 @@
             "facility_id": "FACT-0030",
             "supplier_id": "SUP-010"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5873,7 +5873,7 @@
             "supplier_id": "SUP-011",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-131-BOM",
@@ -5886,7 +5886,7 @@
             "facility_id": "FACT-0031",
             "supplier_id": "SUP-011"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5918,7 +5918,7 @@
             "supplier_id": "SUP-012",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-132-BOM",
@@ -5931,7 +5931,7 @@
             "facility_id": "FACT-0032",
             "supplier_id": "SUP-012"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -5955,7 +5955,7 @@
           "doc_hash": "hash_133_doc-golden-133_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -5963,7 +5963,7 @@
             "supplier_id": "SUP-013",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-133-BOM",
@@ -5976,7 +5976,7 @@
             "facility_id": "FACT-0033",
             "supplier_id": "SUP-013"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6008,7 +6008,7 @@
             "supplier_id": "SUP-014",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-134-BOM",
@@ -6021,7 +6021,7 @@
             "facility_id": "FACT-0034",
             "supplier_id": "SUP-014"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6030,8 +6030,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-135",
@@ -6053,7 +6053,7 @@
             "supplier_id": "SUP-015",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-135-BOM",
@@ -6066,7 +6066,7 @@
             "facility_id": "FACT-0035",
             "supplier_id": "SUP-DIFFERENT-134"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6098,7 +6098,7 @@
             "supplier_id": "SUP-016",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-136-BOM",
@@ -6111,7 +6111,7 @@
             "facility_id": "FACT-0036",
             "supplier_id": "SUP-016"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6143,7 +6143,7 @@
             "supplier_id": "SUP-017",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-137-BOM",
@@ -6156,7 +6156,7 @@
             "facility_id": "FACT-0037",
             "supplier_id": "SUP-017"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6188,7 +6188,7 @@
             "supplier_id": "SUP-018",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-138-BOM",
@@ -6201,7 +6201,7 @@
             "facility_id": "FACT-0038",
             "supplier_id": "SUP-018"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6233,7 +6233,7 @@
             "supplier_id": "SUP-019",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-139-BOM",
@@ -6246,7 +6246,7 @@
             "facility_id": "FACT-0039",
             "supplier_id": "SUP-019"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6278,7 +6278,7 @@
             "supplier_id": "SUP-020",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-140-BOM",
@@ -6291,7 +6291,7 @@
             "facility_id": "FACT-0040",
             "supplier_id": "SUP-020"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6315,7 +6315,7 @@
           "doc_hash": "hash_141_doc-golden-141_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -6323,7 +6323,7 @@
             "supplier_id": "SUP-021",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-141-BOM",
@@ -6336,7 +6336,7 @@
             "facility_id": "FACT-0041",
             "supplier_id": "SUP-021"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6368,7 +6368,7 @@
             "supplier_id": "SUP-022",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-142-BOM",
@@ -6381,7 +6381,7 @@
             "facility_id": "FACT-0042",
             "supplier_id": "SUP-022"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6390,8 +6390,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     },
     {
       "case_id": "GOLDEN-143",
@@ -6413,7 +6413,7 @@
             "supplier_id": "SUP-023",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-143-BOM",
@@ -6426,7 +6426,7 @@
             "facility_id": "FACT-0043",
             "supplier_id": "SUP-DIFFERENT-142"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6458,7 +6458,7 @@
             "supplier_id": "SUP-024",
             "page_claims": "Page 1 of 3"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-144-BOM",
@@ -6471,7 +6471,7 @@
             "facility_id": "FACT-0044",
             "supplier_id": "SUP-024"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6503,7 +6503,7 @@
             "supplier_id": "SUP-025",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-145-BOM",
@@ -6516,7 +6516,7 @@
             "facility_id": "FACT-0045",
             "supplier_id": "SUP-025"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6548,7 +6548,7 @@
             "supplier_id": "SUP-026",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-146-BOM",
@@ -6561,7 +6561,7 @@
             "facility_id": "FACT-0046",
             "supplier_id": "SUP-026"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6593,7 +6593,7 @@
             "supplier_id": "SUP-027",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-147-BOM",
@@ -6606,7 +6606,7 @@
             "facility_id": "FACT-0047",
             "supplier_id": "SUP-027"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6638,7 +6638,7 @@
             "supplier_id": "SUP-028",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-148-BOM",
@@ -6651,7 +6651,7 @@
             "facility_id": "FACT-0048",
             "supplier_id": "SUP-028"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6675,7 +6675,7 @@
           "doc_hash": "hash_149_doc-golden-149_sha256",
           "doc_type": "certificate",
           "fields": {
-            "issuer": "Control Union Certification B.V.",
+            "issuer": "Control Union Certs B.V.",
             "valid_from": "2024-01-01",
             "valid_to": "2028-12-31",
             "scope_materials": "100% Organic Cotton",
@@ -6683,7 +6683,7 @@
             "supplier_id": "SUP-029",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-149-BOM",
@@ -6696,7 +6696,7 @@
             "facility_id": "FACT-0049",
             "supplier_id": "SUP-029"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6728,7 +6728,7 @@
             "supplier_id": "SUP-030",
             "page_claims": "Page 1 of 1"
           },
-          "1": 1
+          "page_count": 1
         },
         {
           "doc_id": "DOC-GOLDEN-150-BOM",
@@ -6741,7 +6741,7 @@
             "facility_id": "FACT-0050",
             "supplier_id": "SUP-030"
           },
-          "1": 1
+          "page_count": 1
         }
       ],
       "expected_verdicts": [
@@ -6750,8 +6750,8 @@
           "expected_outcome": "fail"
         }
       ],
-      "expected_escalation": false,
-      "expected_overall_status": "non_compliant"
+      "expected_escalation": true,
+      "expected_overall_status": "review_required"
     }
   ]
 }

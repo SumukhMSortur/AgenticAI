@@ -98,3 +98,11 @@ This document tracks progress across all phases, recording what was built, what 
 - **Contract decision:** ADR-008 records the canonical verdict shape and V-DATE-001 escalation behavior.
 - **Windows services checked:** Python 3.12.10, Node, and npm are available. Tesseract, Ollama, Redis CLI, PostgreSQL CLI, and Docker are not available on PATH; service-backed integration checks remain blocked.
 - **Next action:** Restore `ECOCHAIN_MASTER_PROMPT.md` and `ECOCHAIN_ADDENDUM_LIVE_DATA.md`, then implement and test the remaining verifier rules against those specifications.
+
+## Phase 6 implementation checkpoint (2026-11-02)
+
+- **Status:** Implementation and gates pass; Phase 6 remains partial until the report is regenerated after the implementation commit.
+- **What Was Built:** Added the remaining page-count, confidence, external snapshot, provider-outage, and sanctions rules; deterministic `Verifier` orchestration; validated `config/verifier.yaml` thresholds; snapshot/provider contracts and deterministic fakes; critical/normal escalation priority; and a seeded golden evaluator. Corrected the golden fixture's page-count field and fuzzy issuer example.
+- **What Was Measured:** Python 3.12.10; Ruff clean; strict mypy clean across 64 source files; 63 tests passed; verifier package coverage 397/397 statements (100%). The synthetic golden evaluator matched 150/150 expected rule verdicts and 150/150 escalation outcomes. The seeded data manifest verifies.
+- **Deviations / Blockers:** `ECOCHAIN_ADDENDUM_LIVE_DATA.md` is absent, so the external/sanctions behavior and priority details are conservative assumptions recorded in ADR-009, not verified Addendum A3 requirements. The golden set has no expected V-EXT/V-SANC labels. The generated report must be rerun after the implementation commit so its Git provenance identifies the code it measures.
+- **Next Phase:** Finish the Phase 6 report/provenance commit and tag before assessing Phase 7's locked training dependencies.

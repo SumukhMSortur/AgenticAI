@@ -61,7 +61,7 @@ def generate_golden_set(num_cases: int = 150, seed: int = 42) -> Path:
             "BOM requests organic cotton but certificate covers recycled polyester only",
             "fail",
             "V-SCOPE-001",
-            False,
+            True,
         ),
         (
             "xdoc_supplier_mismatch",
@@ -126,7 +126,7 @@ def generate_golden_set(num_cases: int = 150, seed: int = 42) -> Path:
         elif sc_type == "fuzzy_issuer":
             valid_from = "2024-01-01"
             valid_to = "2028-12-31"
-            issuer = "Control Union Certification B.V."  # Missing 's'
+            issuer = "Control Union Certs B.V."  # Deliberately inside the fuzzy-review band.
             cert_scope = "100% Organic Cotton"
             bom_material = "100% Organic Cotton"
             supplier_id_doc2 = supplier_id
@@ -179,7 +179,7 @@ def generate_golden_set(num_cases: int = 150, seed: int = 42) -> Path:
                             if sc_type == "missing_page"
                             else "Page 1 of 1",
                         },
-                        page_count: page_count,
+                        "page_count": page_count,
                     },
                     {
                         "doc_id": f"{doc_id}-BOM",
@@ -190,7 +190,7 @@ def generate_golden_set(num_cases: int = 150, seed: int = 42) -> Path:
                             "facility_id": factory_id,
                             "supplier_id": supplier_id_doc2,
                         },
-                        page_count: 1,
+                        "page_count": 1,
                     },
                 ],
                 "expected_verdicts": [

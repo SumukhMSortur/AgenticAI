@@ -51,6 +51,68 @@ class ExternalRef(BaseModel):
     record_key: str
 
 
+class ExternalSnapshotRecord(BaseModel):
+    """A normalized record from an immutable external-data snapshot."""
+
+    record_key: str
+    normalized_name: str
+    country: str | None = None
+    identifiers: dict[str, str] = Field(default_factory=dict)
+    attributes: dict[str, Any] = Field(default_factory=dict)
+
+
+class ExternalSnapshot(BaseModel):
+    """Snapshot provenance and records supplied to local-only verification."""
+
+    source: str
+    fetched_at: datetime
+    snapshot_hash: str
+    records: list[ExternalSnapshotRecord] = Field(default_factory=list)
+
+
+class ExternalLookup(BaseModel):
+    """Result of a provider lookup, detached from provider/network behavior."""
+
+    source: str
+    status: Literal["healthy", "degraded", "unavailable"]
+    matched: bool
+    match_type: Literal["exact_id", "exact_name", "fuzzy_name", "none"]
+    score: float = Field(ge=0.0, le=1.0)
+    record_key: str | None = None
+    fetched_at: datetime | None = None
+    snapshot_hash: str | None = None
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class SanctionsMatch(BaseModel):
+    """Local sanctions-list match result and snapshot provenance."""
+
+    source: str
+    matched: bool
+    match_type: Literal["exact_id", "exact_name", "fuzzy_name", "none"]
+    score: float = Field(ge=0.0, le=1.0)
+    record_key: str | None = None
+    snapshot_hash: str
+
+
+class VerificationContext(BaseModel):
+    """Vault-mapped job context needed by deterministic verifier rules."""
+
+    assessment_date: date
+    fields_by_claim: dict[str, dict[str, Any]] = Field(default_factory=dict)
+    page_claims_by_doc: dict[str, list[str]] = Field(default_factory=dict)
+    page_counts_by_doc: dict[str, int] = Field(default_factory=dict)
+    materials_by_doc: dict[str, list[str]] = Field(default_factory=dict)
+    supplier_ids_by_doc: dict[str, str] = Field(default_factory=dict)
+    facility_ids_by_doc: dict[str, str] = Field(default_factory=dict)
+    facility_names_by_doc: dict[str, str] = Field(default_factory=dict)
+    certificate_doc_by_claim: dict[str, str] = Field(default_factory=dict)
+    bom_doc_by_claim: dict[str, str] = Field(default_factory=dict)
+    external_lookups_by_claim: dict[str, ExternalLookup] = Field(default_factory=dict)
+    sanctions_matches_by_claim: dict[str, list[SanctionsMatch]] = Field(default_factory=dict)
+    risk_score: float = Field(default=0.0, ge=0.0, le=1.0)
+
+
 class EvidenceItem(BaseModel):
     """Verifiable reference pointer supporting a compliance claim. Never contains raw PII."""
 
