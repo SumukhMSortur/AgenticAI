@@ -50,6 +50,9 @@ module = [
     "presidio_analyzer.*",
     "tldextract.*",
     "yaml.*",
+    "chromadb.*",
+    "sentence_transformers.*",
+    "rank_bm25.*",
 ]
 ignore_missing_imports = true
 disallow_untyped_calls = false
