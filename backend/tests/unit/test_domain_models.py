@@ -9,6 +9,7 @@ from backend.app.domain.models import (
     BBox,
     Claim,
     EvidenceItem,
+    ExternalRef,
     ExtractedField,
     RiskForecast,
     Scorecard,
@@ -76,6 +77,22 @@ def test_claim_and_verdict() -> None:
         details={"expiry": "2027-01-01"},
     )
     assert verdict.outcome == "pass"
+
+
+def test_external_evidence_requires_complete_provenance() -> None:
+    """External evidence must have a valid, complete provenance reference."""
+    valid_ref = {
+        "source": "registry",
+        "fetched_at": "2026-11-02T10:00:00Z",
+        "snapshot_hash": "sha256:abc123",
+        "record_key": "REC-001",
+    }
+    ref = ExternalRef.model_validate(valid_ref)
+    assert ref.record_key == "REC-001"
+
+    for kind in ("external_record", "watchlist_hit", "regulation_update"):
+        with pytest.raises(ValidationError):
+            EvidenceItem(evidence_id="E1", kind=kind, ref={"source": "registry"})
 
 
 def test_risk_forecast_and_scorecard() -> None:

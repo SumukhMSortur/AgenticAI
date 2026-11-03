@@ -2,6 +2,7 @@
 
 import pytest
 from sqlalchemy import create_engine, text
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session, sessionmaker
 
 from backend.app.core.errors import AuditChainTamperError
@@ -14,6 +15,25 @@ def db_session() -> Session:
     """Provides an isolated in-memory SQLite database session with all tables."""
     engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(bind=engine)
+    with engine.begin() as connection:
+        connection.exec_driver_sql(
+            """
+            CREATE TRIGGER prevent_audit_events_update
+            BEFORE UPDATE ON audit_events
+            BEGIN
+                SELECT RAISE(ABORT, 'audit_events is append-only');
+            END
+            """
+        )
+        connection.exec_driver_sql(
+            """
+            CREATE TRIGGER prevent_audit_events_delete
+            BEFORE DELETE ON audit_events
+            BEGIN
+                SELECT RAISE(ABORT, 'audit_events is append-only');
+            END
+            """
+        )
     session_factory = sessionmaker(bind=engine)
     session = session_factory()
 
@@ -101,9 +121,23 @@ def test_audit_chain_tamper_detection_on_raw_sql_tamper(db_session: Session) -> 
     is_valid, _ = verify_chain(db_session, "tenant_test")
     assert is_valid is True
 
-    # Malicious raw SQL update bypassing ORM listeners
+    # Even raw SQL must be rejected by the database trigger.
+    with pytest.raises(DBAPIError, match="audit_events is append-only"):
+        db_session.execute(
+            text(
+                "UPDATE audit_events SET payload = "
+                '\'{"field": "tampered_val"}\' WHERE sequence = 1'
+            )
+        )
+    db_session.rollback()
+
+    # Simulate a privileged actor disabling the trigger; the hash chain still detects edits.
+    db_session.execute(text("DROP TRIGGER prevent_audit_events_update"))
     db_session.execute(
-        text('UPDATE audit_events SET payload = \'{"field": "tampered_val"}\' WHERE sequence = 1')
+        text(
+            "UPDATE audit_events SET payload = "
+            '\'{"field": "tampered_val"}\' WHERE sequence = 1'
+        )
     )
     db_session.commit()
 

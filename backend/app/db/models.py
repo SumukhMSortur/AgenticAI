@@ -264,7 +264,6 @@ class AuditEvent(Base):
     event_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
 
 
-# Database level append-only enforcement: raise error on UPDATE or DELETE
 @event.listens_for(AuditEvent, "before_update")
 def receive_before_update(_mapper: Any, _connection: Any, target: AuditEvent) -> None:
     raise AuditChainTamperError(

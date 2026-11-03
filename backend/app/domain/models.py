@@ -46,10 +46,10 @@ class ExtractedField(BaseModel):
 class ExternalRef(BaseModel):
     """Provenance pointer for an external registry record, watchlist hit, or regulatory feed."""
 
-    source: str
+    source: str = Field(min_length=1)
     fetched_at: datetime
-    snapshot_hash: str
-    record_key: str
+    snapshot_hash: str = Field(min_length=1)
+    record_key: str = Field(min_length=1)
 
 
 class ExternalSnapshotRecord(BaseModel):
@@ -82,6 +82,8 @@ class ExternalLookup(BaseModel):
     record_key: str | None = None
     fetched_at: datetime | None = None
     snapshot_hash: str | None = None
+    country_match: bool | None = None
+    parent_company_match: bool | None = None
     details: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -133,7 +135,12 @@ class EvidenceItem(BaseModel):
     @classmethod
     def validate_ref(cls, v: dict[str, Any], _info: Any) -> dict[str, Any]:
         """Validates that external evidence items contain required provenance reference keys."""
-        # When kind indicates external provenance, verify ExternalRef shape
+        if _info.data.get("kind") in {
+            "external_record",
+            "watchlist_hit",
+            "regulation_update",
+        }:
+            ExternalRef.model_validate(v)
         return v
 
 
