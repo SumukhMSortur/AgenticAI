@@ -99,24 +99,27 @@ make build
 ## RAG models and evaluation
 
 Download the embedding and reranker models for offline local inference, then
-run the citation-only evaluation:
+run the local retrieval, citation, date-filter, answerability, and ablation gates:
 
 ```powershell
 .\.venv\Scripts\python.exe -m scripts.download_rag_models
 .\.venv\Scripts\python.exe -m scripts.evaluate_rag
 ```
 
-The citation-only run writes `reports/rag.json`; the overall Phase 5 gate stays
-pending until Ragas faithfulness and answer relevance are measured. Completing
-those metrics makes guarded Gemini generation and OpenAI judge requests, may
-incur provider charges, and requires explicit operator approval:
+The offline run writes `reports/rag.json`; Ragas faithfulness and answer
+relevance are reported as `not_run` until both provider keys are available.
+Completing those metrics makes guarded Gemini generation and OpenAI judge
+requests, may incur provider charges, and requires explicit operator approval:
 
 ```powershell
+$env:GOOGLE_API_KEY = "<Google AI API key>"
+$env:OPENAI_API_KEY = "<OpenAI API key>"
 .\.venv\Scripts\python.exe -m scripts.evaluate_rag --allow-external-model-calls
 ```
 
-Set the provider API keys locally and enable tenant opt-in only for an
-authorized evaluation. Ragas telemetry is disabled by the evaluator.
+Keep the keys in the local environment or ignored `.env`; never commit them.
+Without both keys, the command makes no provider calls and leaves Ragas as
+`not_run`. Ragas telemetry is disabled by the evaluator.
 
 ## Quick quality gate
 

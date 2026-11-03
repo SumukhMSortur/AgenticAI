@@ -31,7 +31,7 @@ implementation exists but misses a stated requirement or lacks required evidence
 | Phase 5: BM25+dense hybrid retrieval with reciprocal-rank fusion | met | `backend/app/rag/retriever.py`; RAG unit tests |
 | Phase 5: real cross-encoder reranking | met | `backend/app/rag/retriever.py`; `scripts/evaluate_rag.py`; locally executed reranker report in `reports/rag.json` |
 | Phase 5: LLM entailment through guard, failure escalates | met | `backend/app/integrations/gemini_entailment.py`; fail-closed checker and guarded-call tests (`backend/app/rag/entailment_checker.py`; `backend/tests/unit/test_rag.py`) |
-| Phase 5: >=60-query golden retrieval set and citation/Ragas evaluation | partial | 60 labeled queries and citation metrics are recorded; Ragas metrics await explicit external-model approval (`data/golden/rag_golden_set.json`; `reports/rag.json`) |
+| Phase 5: >=60-query golden retrieval set, citation/Ragas evaluation | partial | Offline citation, date-filter, answerability, and four-mode ablation gates pass; Ragas faithfulness/answer relevance are `not_run` because API keys are unavailable. Answerability threshold was selected on the same set, not a held-out estimate (`data/golden/rag_golden_set.json`; `data/golden/rag_no_support_set.json`; `reports/rag.json`) |
 | Phase 5 / R3: version-aware idempotent ingestion, human proposal/approval, audit decision | met | Source/version-scoped upsert, persisted approval, and audit-chain tests (`backend/app/rag/ingestion.py`; `backend/tests/unit/test_rag.py`) |
 | Phase 6: 11 Master Verifier rules and deterministic engine | met | `backend/app/verifier/engine.py`; `backend/tests/unit/test_verifier_rules.py`; `reports/verifier.json` |
 | Phase 6 / A3: V-EXT-001/002/003/900 and V-SANC-001/002 semantics | met | Corrected not-found escalation, country/name band, parent-company, stale-source, exact-ID, and name-only/fuzzy outcomes are covered (`backend/app/verifier/rules/`; `backend/tests/unit/test_verifier_rules.py`) |
@@ -79,7 +79,7 @@ implementation exists but misses a stated requirement or lacks required evidence
 
 ## Highest-priority gaps
 
-1. Complete Phase 5 by running the guarded Gemini generator and separate-family OpenAI Ragas judge; citation-only report currently has 60/60 recall@5.
+1. Phase 5 offline gate is closed; semantic Ragas faithfulness/answer relevance remain `not_run` until `GOOGLE_API_KEY` and `OPENAI_API_KEY` are available and the guarded command in `docs/RUNBOOK.md` is explicitly run.
 2. Keep Phase 10 partial until required routes and a production `WorkflowServices` factory pass real-service integration tests.
 3. Verify migration `2026_11_02_0004` against PostgreSQL; Docker Desktop's engine was unavailable during this audit.
 4. Close Phase 4 with actual LayoutLMv3 fine-tuning/inference and an honest held-out evaluation.

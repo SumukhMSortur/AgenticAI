@@ -1,4 +1,577 @@
 {
+  "answerability_metrics": {
+    "accuracy": 0.925,
+    "balanced_accuracy": 0.95,
+    "no_support_accuracy": 1.0,
+    "no_support_queries": 20,
+    "per_query": [
+      {
+        "correct": false,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -3.427238702774048,
+        "predicted_answerable": false,
+        "query_id": "RAG-001"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 3.9293651580810547,
+        "predicted_answerable": true,
+        "query_id": "RAG-002"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -1.1789947748184204,
+        "predicted_answerable": true,
+        "query_id": "RAG-003"
+      },
+      {
+        "correct": false,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -8.704412460327148,
+        "predicted_answerable": false,
+        "query_id": "RAG-004"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -0.9464728832244873,
+        "predicted_answerable": true,
+        "query_id": "RAG-005"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 3.2189180850982666,
+        "predicted_answerable": true,
+        "query_id": "RAG-006"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 4.104464530944824,
+        "predicted_answerable": true,
+        "query_id": "RAG-007"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 3.4077491760253906,
+        "predicted_answerable": true,
+        "query_id": "RAG-008"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 4.586748123168945,
+        "predicted_answerable": true,
+        "query_id": "RAG-009"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 2.3626582622528076,
+        "predicted_answerable": true,
+        "query_id": "RAG-010"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -1.4071671962738037,
+        "predicted_answerable": true,
+        "query_id": "RAG-011"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 1.1895408630371094,
+        "predicted_answerable": true,
+        "query_id": "RAG-012"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.034767150878906,
+        "predicted_answerable": true,
+        "query_id": "RAG-013"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 0.999848484992981,
+        "predicted_answerable": true,
+        "query_id": "RAG-014"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -0.6998279094696045,
+        "predicted_answerable": true,
+        "query_id": "RAG-015"
+      },
+      {
+        "correct": false,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -2.7928788661956787,
+        "predicted_answerable": false,
+        "query_id": "RAG-016"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 1.0570776462554932,
+        "predicted_answerable": true,
+        "query_id": "RAG-017"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 4.302333831787109,
+        "predicted_answerable": true,
+        "query_id": "RAG-018"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 1.1747164726257324,
+        "predicted_answerable": true,
+        "query_id": "RAG-019"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 0.01785772666335106,
+        "predicted_answerable": true,
+        "query_id": "RAG-020"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -0.5799363851547241,
+        "predicted_answerable": true,
+        "query_id": "RAG-021"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 0.3073204457759857,
+        "predicted_answerable": true,
+        "query_id": "RAG-022"
+      },
+      {
+        "correct": false,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -2.0728492736816406,
+        "predicted_answerable": false,
+        "query_id": "RAG-023"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 0.22938549518585205,
+        "predicted_answerable": true,
+        "query_id": "RAG-024"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.96226692199707,
+        "predicted_answerable": true,
+        "query_id": "RAG-025"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 3.772012710571289,
+        "predicted_answerable": true,
+        "query_id": "RAG-026"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 2.6948165893554688,
+        "predicted_answerable": true,
+        "query_id": "RAG-027"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 3.299915313720703,
+        "predicted_answerable": true,
+        "query_id": "RAG-028"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 3.2617735862731934,
+        "predicted_answerable": true,
+        "query_id": "RAG-029"
+      },
+      {
+        "correct": false,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -5.1247687339782715,
+        "predicted_answerable": false,
+        "query_id": "RAG-030"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 6.773839950561523,
+        "predicted_answerable": true,
+        "query_id": "RAG-031"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.667047500610352,
+        "predicted_answerable": true,
+        "query_id": "RAG-032"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 0.4532378911972046,
+        "predicted_answerable": true,
+        "query_id": "RAG-033"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 4.3997297286987305,
+        "predicted_answerable": true,
+        "query_id": "RAG-034"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.151429176330566,
+        "predicted_answerable": true,
+        "query_id": "RAG-035"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 4.4681806564331055,
+        "predicted_answerable": true,
+        "query_id": "RAG-036"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.6297807693481445,
+        "predicted_answerable": true,
+        "query_id": "RAG-037"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 6.507513523101807,
+        "predicted_answerable": true,
+        "query_id": "RAG-038"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 3.533371686935425,
+        "predicted_answerable": true,
+        "query_id": "RAG-039"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 1.7390961647033691,
+        "predicted_answerable": true,
+        "query_id": "RAG-040"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 6.715633392333984,
+        "predicted_answerable": true,
+        "query_id": "RAG-041"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 7.3647613525390625,
+        "predicted_answerable": true,
+        "query_id": "RAG-042"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.107203483581543,
+        "predicted_answerable": true,
+        "query_id": "RAG-043"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.105844497680664,
+        "predicted_answerable": true,
+        "query_id": "RAG-044"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -0.6085336208343506,
+        "predicted_answerable": true,
+        "query_id": "RAG-045"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 1.4000531435012817,
+        "predicted_answerable": true,
+        "query_id": "RAG-046"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.095315456390381,
+        "predicted_answerable": true,
+        "query_id": "RAG-047"
+      },
+      {
+        "correct": false,
+        "expected_answerable": true,
+        "max_cross_encoder_score": -2.4432880878448486,
+        "predicted_answerable": false,
+        "query_id": "RAG-048"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 7.409703254699707,
+        "predicted_answerable": true,
+        "query_id": "RAG-049"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 6.704742431640625,
+        "predicted_answerable": true,
+        "query_id": "RAG-050"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.164860725402832,
+        "predicted_answerable": true,
+        "query_id": "RAG-051"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 6.568441390991211,
+        "predicted_answerable": true,
+        "query_id": "RAG-052"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 6.1125993728637695,
+        "predicted_answerable": true,
+        "query_id": "RAG-053"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 8.112963676452637,
+        "predicted_answerable": true,
+        "query_id": "RAG-054"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 6.379180431365967,
+        "predicted_answerable": true,
+        "query_id": "RAG-055"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.321800231933594,
+        "predicted_answerable": true,
+        "query_id": "RAG-056"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 8.206245422363281,
+        "predicted_answerable": true,
+        "query_id": "RAG-057"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 5.8217549324035645,
+        "predicted_answerable": true,
+        "query_id": "RAG-058"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 4.4879255294799805,
+        "predicted_answerable": true,
+        "query_id": "RAG-059"
+      },
+      {
+        "correct": true,
+        "expected_answerable": true,
+        "max_cross_encoder_score": 6.357096195220947,
+        "predicted_answerable": true,
+        "query_id": "RAG-060"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -8.711259841918945,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-001"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -10.465264320373535,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-002"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -8.834836959838867,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-003"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -10.480088233947754,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-004"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -8.272473335266113,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-005"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -8.981687545776367,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-006"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -11.22398853302002,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-007"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -5.55502462387085,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-008"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -8.679025650024414,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-009"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -10.28994083404541,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-010"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -10.086092948913574,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-011"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -7.652546405792236,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-012"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -2.7288498878479004,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-013"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -2.0213558673858643,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-014"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -8.147150993347168,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-015"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -5.866054058074951,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-016"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -9.94924259185791,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-017"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -3.5734646320343018,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-018"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -10.077649116516113,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-019"
+      },
+      {
+        "correct": true,
+        "expected_answerable": false,
+        "max_cross_encoder_score": -11.240346908569336,
+        "predicted_answerable": false,
+        "query_id": "RAG-NS-020"
+      }
+    ],
+    "support_threshold": -2.0,
+    "supported_queries": 60,
+    "supported_query_recall": 0.9,
+    "total_queries": 80
+  },
+  "answerability_threshold_note": "The -2.0 score threshold was selected by sweeping this same labeled set; these answerability scores are not an independent holdout estimate.",
   "citation_metrics": {
     "citation_precision_at_k": 0.2,
     "citation_recall_at_k": 1.0,
@@ -8,25 +581,43 @@
   },
   "corpus_chunk_count": 10,
   "dataset_sha256": "2bcf2ff3c82a8c65baffaba502548621d10a7a67df4f86737f9958b9aff56eed",
+  "date_filter_violations": {
+    "per_mode": {
+      "bm25": 0,
+      "dense": 0,
+      "hybrid": 0,
+      "hybrid_rerank": 0
+    },
+    "total": 0
+  },
   "evaluation_config": {
+    "minimum_no_support_queries": 20,
     "minimum_queries": 60,
+    "support_score_threshold": -2.0,
     "thresholds": {
       "answer_relevance": 0.8,
       "citation_precision_at_5": 0.2,
       "citation_recall_at_5": 0.9,
-      "faithfulness": 0.8
+      "faithfulness": 0.8,
+      "max_date_filter_violations": 0,
+      "no_support_accuracy": 0.95,
+      "supported_query_recall": 0.9
     },
     "top_k": 5
   },
   "external_model_calls_enabled": false,
   "gates": {
-    "answer_relevance": null,
+    "answer_relevance": "not_run",
     "citation_precision_at_5": true,
     "citation_recall_at_5": true,
-    "faithfulness": null,
-    "golden_query_count": true
+    "date_filter_violations": true,
+    "faithfulness": "not_run",
+    "golden_query_count": true,
+    "no_support_accuracy": true,
+    "no_support_query_count": true,
+    "supported_query_recall": true
   },
-  "generated_at": "2026-11-03T12:34:20.289591+00:00",
+  "generated_at": "2026-11-03T12:57:55.120806+00:00",
   "models": {
     "embedding": "all-MiniLM-L6-v2",
     "generator": {
@@ -42,6 +633,8 @@
     },
     "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2"
   },
+  "no_support_dataset_sha256": "011fd9d0f02295f2c5b4397c097448d2622162a3c5ac069fc667f873a738b9df",
+  "no_support_query_count": 20,
   "per_query": [
     {
       "expected_chunk_ids": [
@@ -825,12 +1418,46 @@
     }
   ],
   "query_count": 60,
-  "ragas_metrics": null,
+  "ragas_metrics": {
+    "answer_relevance": "not_run",
+    "faithfulness": "not_run",
+    "reason": "API keys not available"
+  },
   "report_version": "1.0.0",
+  "retrieval_ablation": {
+    "bm25": {
+      "citation_precision_at_k": 0.2,
+      "citation_recall_at_k": 1.0,
+      "k": 5,
+      "mean_reciprocal_rank_at_k": 0.8977777777777778,
+      "queries": 60
+    },
+    "dense": {
+      "citation_precision_at_k": 0.2,
+      "citation_recall_at_k": 1.0,
+      "k": 5,
+      "mean_reciprocal_rank_at_k": 0.975,
+      "queries": 60
+    },
+    "hybrid": {
+      "citation_precision_at_k": 0.2,
+      "citation_recall_at_k": 1.0,
+      "k": 5,
+      "mean_reciprocal_rank_at_k": 0.9833333333333333,
+      "queries": 60
+    },
+    "hybrid_rerank": {
+      "citation_precision_at_k": 0.2,
+      "citation_recall_at_k": 1.0,
+      "k": 5,
+      "mean_reciprocal_rank_at_k": 0.9833333333333333,
+      "queries": 60
+    }
+  },
   "software": {
     "ragas": "0.4.3",
     "sentence_transformers": "6.2.0"
   },
-  "source_git_sha": "fcad136c4d4145af7f5abd75ab79136cff3a4052",
-  "status": "pending_ragas_judge"
+  "source_git_sha": "f540b0a6b3f66372e6eeb85f0b94907fc19fe233",
+  "status": "offline_pass_ragas_not_run"
 }

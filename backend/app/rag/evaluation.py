@@ -6,6 +6,7 @@ import json
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
+from math import isfinite
 from pathlib import Path
 from typing import Protocol
 
@@ -25,6 +26,14 @@ class RAGEvaluationCase:
     golden_query: GoldenQuery
     retrieved_chunks: tuple[dict[str, object], ...]
     response: str = ""
+
+
+@dataclass(frozen=True)
+class NoSupportQuery:
+    query_id: str
+    query: str
+    assessment_date: date
+    jurisdiction: str
 
 
 class RagasScorer(Protocol):
@@ -96,15 +105,15 @@ def citation_metrics(
 
     for case in cases:
         expected = set(case.golden_query.expected_chunk_ids)
-        retrieved = [
-            str(chunk.get("chunk_id", ""))
-            for chunk in case.retrieved_chunks[:k]
-        ]
+        retrieved = [str(chunk.get("chunk_id", "")) for chunk in case.retrieved_chunks[:k]]
         hits = expected.intersection(retrieved)
         precision_scores.append(len(hits) / k)
         recall_scores.append(len(hits) / len(expected))
         reciprocal_ranks.append(
-            next((1.0 / rank for rank, chunk_id in enumerate(retrieved, 1) if chunk_id in expected), 0.0)
+            next(
+                (1.0 / rank for rank, chunk_id in enumerate(retrieved, 1) if chunk_id in expected),
+                0.0,
+            )
         )
 
     return {
@@ -114,6 +123,113 @@ def citation_metrics(
         "citation_recall_at_k": sum(recall_scores) / len(recall_scores),
         "mean_reciprocal_rank_at_k": sum(reciprocal_ranks) / len(reciprocal_ranks),
     }
+
+
+def load_no_support_queries(path: Path, minimum_queries: int = 1) -> list[NoSupportQuery]:
+    """Load queries whose answers are deliberately absent from the indexed corpus."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or not isinstance(data.get("queries"), list):
+        raise ValueError("No-support set must contain a 'queries' array.")
+
+    queries: list[NoSupportQuery] = []
+    seen_ids: set[str] = set()
+    for row in data["queries"]:
+        if not isinstance(row, dict):
+            raise ValueError("Each no-support query must be an object.")
+        query_id = _required_string(row, "query_id")
+        if query_id in seen_ids:
+            raise ValueError(f"Duplicate no-support query ID: {query_id}")
+        seen_ids.add(query_id)
+        queries.append(
+            NoSupportQuery(
+                query_id=query_id,
+                query=_required_string(row, "query"),
+                assessment_date=date.fromisoformat(_required_string(row, "assessment_date")),
+                jurisdiction=_required_string(row, "jurisdiction"),
+            )
+        )
+
+    if len(queries) < minimum_queries:
+        raise ValueError(
+            f"No-support set has {len(queries)} queries; at least {minimum_queries} are required."
+        )
+    return queries
+
+
+def answerability_metrics(
+    supported_scores: Sequence[tuple[str, float | None]],
+    unsupported_scores: Sequence[tuple[str, float | None]],
+    support_threshold: float,
+) -> dict[str, object]:
+    """Measure reranker-threshold support decisions on labeled answerable/unanswerable queries."""
+    if not isfinite(support_threshold):
+        raise ValueError("support_threshold must be finite")
+    if not supported_scores or not unsupported_scores:
+        raise ValueError("Supported and no-support query sets must both be non-empty.")
+
+    per_query: list[dict[str, object]] = []
+    supported_correct = 0
+    unsupported_correct = 0
+    for expected_answerable, rows in (
+        (True, supported_scores),
+        (False, unsupported_scores),
+    ):
+        for query_id, score in rows:
+            if score is not None and not isfinite(score):
+                raise ValueError(f"Query '{query_id}' has a non-finite support score.")
+            predicted_answerable = score is not None and score >= support_threshold
+            correct = predicted_answerable == expected_answerable
+            if expected_answerable:
+                supported_correct += int(correct)
+            else:
+                unsupported_correct += int(correct)
+            per_query.append(
+                {
+                    "query_id": query_id,
+                    "expected_answerable": expected_answerable,
+                    "predicted_answerable": predicted_answerable,
+                    "max_cross_encoder_score": score,
+                    "correct": correct,
+                }
+            )
+
+    supported_count = len(supported_scores)
+    unsupported_count = len(unsupported_scores)
+    supported_recall = supported_correct / supported_count
+    no_support_accuracy = unsupported_correct / unsupported_count
+    total_accuracy = (supported_correct + unsupported_correct) / (
+        supported_count + unsupported_count
+    )
+    return {
+        "support_threshold": support_threshold,
+        "supported_queries": supported_count,
+        "supported_query_recall": supported_recall,
+        "no_support_queries": unsupported_count,
+        "no_support_accuracy": no_support_accuracy,
+        "total_queries": supported_count + unsupported_count,
+        "accuracy": total_accuracy,
+        "balanced_accuracy": (supported_recall + no_support_accuracy) / 2,
+        "per_query": per_query,
+    }
+
+
+def count_date_filter_violations(cases: Sequence[RAGEvaluationCase]) -> int:
+    """Count returned passages that are future-effective or already superseded."""
+    violations = 0
+    for case in cases:
+        assessment_date = case.golden_query.assessment_date.isoformat()
+        for chunk in case.retrieved_chunks:
+            effective_from = chunk.get("effective_from")
+            superseded_by = chunk.get("superseded_by")
+            if isinstance(effective_from, str) and effective_from > assessment_date:
+                violations += 1
+            if (
+                isinstance(superseded_by, str)
+                and superseded_by
+                and superseded_by <= assessment_date
+            ):
+                violations += 1
+    return violations
 
 
 async def evaluate_ragas(

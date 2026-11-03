@@ -95,10 +95,11 @@ This document tracks progress across all phases, recording what was built, what 
 
 ## Phase 5: Compliance RAG
 
-- **Status:** Partial. Real local CrossEncoder reranking, parent-linked regulation chunks, version-aware idempotent ingestion, guarded Gemini entailment/answer generation, and a 60-query labeled set are implemented.
-- **Evidence:** `reports/rag.json` records precision@5 `0.20`, recall@5 `1.00`, MRR@5 `0.9833` across 60 queries. The Ragas faithfulness and answer-relevance fields remain null and gates pending; the evaluator requires `--allow-external-model-calls` before sending prompts to Gemini/OpenAI. RAG unit tests pass (20 tests); Ruff and strict mypy are being rechecked.
-- **Dependencies:** `langchain-community==0.3.31` keeps the Ragas compatibility import available; ADR-016 records the compatibility pin. ADR-017 records metric thresholds and the external-evaluation privacy/cost boundary.
-- **Next:** Obtain explicit approval, run the guarded Ragas evaluation, and close its gates before resuming Phase 10.
+- **Status:** Offline gate closed. Real local CrossEncoder reranking, parent-linked regulation chunks, approval-gated versioned ingestion, and local answerability checks are implemented. The full semantic acceptance remains incomplete because Ragas is `not_run`.
+- **Evidence:** `reports/rag.json` records 60-query precision@5 `0.20`, recall@5 `1.00`, MRR@5 `0.9833`; date-filter violations `0`; no-support accuracy `1.00`; supported-query recall `0.90`; and BM25-only/dense-only/hybrid/hybrid+rerank metrics. The 80-query answerability threshold was selected on that same set, so it is not an independent holdout estimate. All 24 RAG unit tests pass; targeted Ruff and strict mypy pass.
+- **Ragas:** Faithfulness and answer relevance are `not_run` with reason `API keys not available`; no provider calls were made. To run later, set `GOOGLE_API_KEY` and `OPENAI_API_KEY`, then run `.\.venv\Scripts\python.exe -m scripts.evaluate_rag --allow-external-model-calls`. The call may incur charges.
+- **Dependencies:** `langchain-community==0.3.31` keeps the Ragas compatibility import available; ADR-016 records the compatibility pin, ADR-017 the metric thresholds/privacy boundary, and ADR-018 the offline closure and limitation.
+- **Next:** Phase 10 missing routes and production `WorkflowServices` assembly, using `LLM_PROVIDER=fake` in the test/runtime configuration.
 
 ---
 
@@ -118,7 +119,7 @@ This document tracks progress across all phases, recording what was built, what 
 - **What Was Built:** Added the remaining page-count, confidence, external snapshot, provider-outage, and sanctions rules; deterministic `Verifier` orchestration; validated `config/verifier.yaml` thresholds; snapshot/provider contracts and deterministic fakes; critical/normal escalation priority; and a seeded golden evaluator. Corrected the golden fixture's page-count field and fuzzy issuer example.
 - **What Was Measured:** Python 3.12.10; Ruff clean; strict mypy clean across 64 source files; 63 tests passed; verifier package coverage 397/397 statements (100%). The synthetic golden evaluator matched 150/150 expected rule verdicts and 150/150 escalation outcomes. The seeded data manifest verifies.
 - **Deviations / Blockers:** The existing golden set has no expected V-EXT/V-SANC labels; dedicated boundary tests cover those outcomes. `reports/verifier.json` was regenerated after implementation commit `79e037b`.
-- **Next Phase:** Phase 7's validation-only calibration and promotion requirements remain met; Phase 5 is the next active closure task.
+- **Current next phase:** Phase 5 offline closure is complete; resume Phase 10. Phase 7's validation-only calibration and promotion requirements remain met.
 
 ## Phase 6: Deterministic verifier (complete, 2026-11-02)
 
@@ -182,4 +183,4 @@ This document tracks progress across all phases, recording what was built, what 
 - Added `docs/CONFORMANCE.md`, comparing Phases 1-10, section 5 contracts, Addendum R1-R4, and acceptance items 1-20.
 - Safety fixes committed: `c82aa4f` (audit triggers and external refs), `b1122d1` (guarded Ollama), `79e037b` (EXT/SANC semantics), and `ff93818` (100% Verifier coverage).
 - Targeted validation: 25 Verifier tests pass with 100% statement coverage (402/402); audit/domain/privacy targeted tests pass (17 passed); Ruff and strict mypy pass for changed application files.
-- The new PostgreSQL audit-trigger migration remains unverified because Docker is currently unavailable. Phase 5 is next, then Phase 10.
+- The new PostgreSQL audit-trigger migration remains pending PostgreSQL verification. Phase 5 offline closure is complete; Phase 10 is next.

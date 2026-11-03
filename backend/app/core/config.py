@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -42,7 +42,11 @@ class Settings(BaseSettings):
     WORKFLOW_SERVICES_FACTORY: str = Field(default="")
 
     # Cloud LLM (Gemini) - Model name must come from environment, never hardcoded
-    GEMINI_API_KEY: str = Field(default="")
+    GEMINI_API_KEY: str = Field(
+        default="",
+        validation_alias=AliasChoices("GOOGLE_API_KEY", "GEMINI_API_KEY"),
+    )
+    OPENAI_API_KEY: str = Field(default="")
     GEMINI_MODEL: str = Field(default="gemini-2.5-flash")
 
     # Local Privacy & OCR

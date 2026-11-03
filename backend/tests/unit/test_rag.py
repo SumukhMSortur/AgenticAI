@@ -14,7 +14,7 @@ from google.genai import types
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session, sessionmaker
 
-from backend.app.core.config import settings
+from backend.app.core.config import Settings, settings
 from backend.app.core.errors import (
     EntailmentEscalationError,
     PrivacyViolationError,
@@ -35,9 +35,12 @@ from backend.app.rag.entailment_checker import LLMEntailmentChecker, RuleBasedEn
 from backend.app.rag.evaluation import (
     GoldenQuery,
     RAGEvaluationCase,
+    answerability_metrics,
     citation_metrics,
+    count_date_filter_violations,
     evaluate_ragas,
     load_golden_queries,
+    load_no_support_queries,
 )
 from backend.app.rag.retriever import CrossEncoderReranker, HybridRetriever
 from backend.app.rag.store import ChromaVectorStore
@@ -242,6 +245,62 @@ def test_hybrid_retriever_returns_ranked_results() -> None:
         assert "_cross_encoder_score" in r
 
 
+def test_retriever_exposes_all_ablation_modes() -> None:
+    chunks = chunk_regulations(REGULATIONS_FILE)
+    store = ChromaVectorStore(in_memory=True)
+    store.reset()
+    store.upsert_chunks(chunks)
+    corpus = [
+        {
+            "chunk_id": chunk.chunk_id,
+            "text": chunk.text,
+            "effective_from": chunk.effective_from.isoformat(),
+            "superseded_by": chunk.superseded_by or "",
+            "jurisdiction": chunk.jurisdiction,
+        }
+        for chunk in chunks
+    ]
+    retriever = HybridRetriever(
+        vector_store=store,
+        corpus_chunks=corpus,
+        reranker=CrossEncoderReranker(model=StubPairScorer()),
+    )
+    bm25_results = retriever.retrieve(
+        query="digital product passport textile composition",
+        assessment_date=date(2026, 12, 1),
+        jurisdiction="EU",
+        n_results=5,
+        mode="bm25",
+    )
+    dense_results = retriever.retrieve(
+        query="digital product passport textile composition",
+        assessment_date=date(2026, 12, 1),
+        jurisdiction="EU",
+        n_results=5,
+        mode="dense",
+    )
+    hybrid_results = retriever.retrieve(
+        query="digital product passport textile composition",
+        assessment_date=date(2026, 12, 1),
+        jurisdiction="EU",
+        n_results=5,
+        mode="hybrid",
+    )
+    reranked_results = retriever.retrieve(
+        query="digital product passport textile composition",
+        assessment_date=date(2026, 12, 1),
+        jurisdiction="EU",
+        n_results=5,
+        mode="hybrid_rerank",
+    )
+
+    assert bm25_results and "_bm25_score" in bm25_results[0]
+    assert dense_results and "_dense_rank" in dense_results[0]
+    assert hybrid_results and "_rrf_score" in hybrid_results[0]
+    assert "_cross_encoder_score" not in hybrid_results[0]
+    assert reranked_results and "_cross_encoder_score" in reranked_results[0]
+
+
 def test_cross_encoder_reranks_by_pair_score() -> None:
     """Cross-encoder scores, rather than RRF order, determine the final ranking."""
     scorer = StubPairScorer([0.1, 0.9])
@@ -304,6 +363,50 @@ def test_citation_metrics_use_expected_chunk_ids() -> None:
     assert result["mean_reciprocal_rank_at_k"] == 1.0
 
 
+def test_no_support_set_and_answerability_metrics_are_validated() -> None:
+    queries = load_no_support_queries(Path("data/golden/rag_no_support_set.json"), 20)
+    assert len(queries) == 20
+    assert len({query.query_id for query in queries}) == 20
+
+    result = answerability_metrics(
+        supported_scores=[("positive-1", 0.1), ("positive-2", -3.0)],
+        unsupported_scores=[
+            ("negative-1", -2.1),
+            ("negative-2", -1.9),
+            ("negative-3", None),
+        ],
+        support_threshold=-2.0,
+    )
+
+    assert result["no_support_accuracy"] == pytest.approx(2 / 3)
+    assert result["supported_query_recall"] == 0.5
+    assert result["accuracy"] == pytest.approx(3 / 5)
+
+
+def test_date_filter_violation_metric_detects_future_and_superseded_passages() -> None:
+    query = GoldenQuery(
+        query_id="RAG-date-test",
+        query="What is currently in force?",
+        assessment_date=date(2026, 4, 1),
+        jurisdiction="EU",
+        expected_chunk_ids=("valid",),
+        reference_answer="A valid requirement.",
+    )
+    case = RAGEvaluationCase(
+        golden_query=query,
+        retrieved_chunks=(
+            {"chunk_id": "valid", "effective_from": "2024-01-01", "superseded_by": ""},
+            {"chunk_id": "future", "effective_from": "2027-01-01"},
+            {
+                "chunk_id": "superseded",
+                "effective_from": "2023-01-01",
+                "superseded_by": "2026-03-01",
+            },
+        ),
+    )
+    assert count_date_filter_violations([case]) == 2
+
+
 def test_ragas_aggregation_accepts_fake_judge_without_network() -> None:
     query = GoldenQuery(
         query_id="RAG-test",
@@ -328,10 +431,16 @@ def test_ragas_aggregation_accepts_fake_judge_without_network() -> None:
     assert fake_judge.samples[0][2] == ["The requirement."]
 
 
+def test_google_api_key_environment_alias(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("GOOGLE_API_KEY", "test-google-key")
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    assert Settings().GEMINI_API_KEY == "test-google-key"
+
+
 def test_guarded_openai_ragas_requires_opt_in_and_allowlisted_payload(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(settings, "OPENAI_API_KEY", "test-key")
     with pytest.raises(PrivacyViolationError, match="explicit tenant opt-in"):
         GuardedOpenAIRagasJudge(
             model="gpt-4o-mini",
@@ -420,9 +529,7 @@ def test_gemini_entailment_parses_guarded_response(monkeypatch: pytest.MonkeyPat
     judge = GeminiEntailmentJudge(
         tenant_id="tenant-test",
         tenant_opted_in=True,
-        client=FakeGeminiClient(
-            FakeGeminiModels('{"entailed":true,"confidence":0.95}')
-        ),
+        client=FakeGeminiClient(FakeGeminiModels('{"entailed":true,"confidence":0.95}')),
     )
 
     assert judge(
@@ -450,10 +557,13 @@ def test_gemini_rag_generation_is_guarded_and_fails_closed(
         tenant_opted_in=True,
         client=FakeGeminiClient(FakeGeminiModels("Grounded answer [article-1].")),
     )
-    assert allowed(
-        "What does the rule require?",
-        [{"chunk_id": "article-1", "text": "The rule."}],
-    ) == "Grounded answer [article-1]."
+    assert (
+        allowed(
+            "What does the rule require?",
+            [{"chunk_id": "article-1", "text": "The rule."}],
+        )
+        == "Grounded answer [article-1]."
+    )
     with pytest.raises(RAGGenerationError, match="required"):
         allowed("", [])
 
@@ -510,11 +620,14 @@ def test_versioned_ingestion_is_idempotent_and_source_scoped() -> None:
             candidate_data=[],
             tenant_id="tenant_test",
         )
-        assert manager.approve_and_ingest(
-            proposal.id,
-            "reviewer-1",
-            tenant_id="tenant_test",
-        ) == 2
+        assert (
+            manager.approve_and_ingest(
+                proposal.id,
+                "reviewer-1",
+                tenant_id="tenant_test",
+            )
+            == 2
+        )
 
         first_count = manager.ingest("EU-ESPR-2024", "EU-ESPR-2024-1781")
         second_count = manager.ingest("EU-ESPR-2024", "EU-ESPR-2024-1781")
@@ -551,11 +664,14 @@ def test_approved_update_is_audited_before_ingestion() -> None:
             tenant_id="tenant_test",
         )
 
-        assert manager.approve_and_ingest(
-            proposal.id,
-            "reviewer-1",
-            tenant_id="tenant_test",
-        ) == 2
+        assert (
+            manager.approve_and_ingest(
+                proposal.id,
+                "reviewer-1",
+                tenant_id="tenant_test",
+            )
+            == 2
+        )
         assert proposal.status == "approved"
         assert proposal.reviewer_id == "reviewer-1"
         assert store.count() == 2

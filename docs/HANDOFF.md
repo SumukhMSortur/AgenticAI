@@ -3,11 +3,11 @@
 | Phase | Status (done / partial / not started) | Tag | Tests | Metrics produced (file) | Deviations and ADRs | Blockers |
 |---|---|---|---|---|---|---|
 | 0 Recon, plan, skeleton | done | `phase-0-complete` | Current full gate passes | — | Historical record in `docs/PROGRESS.md` | None known |
-| 1 Foundations | partial | `phase-1-complete` | Domain/audit safety tests pass; PostgreSQL migration check pending | — | Trigger migration 0004 added; SQLite all-revisions check is blocked by pre-existing migration 0003 | Docker engine unavailable; PostgreSQL trigger not yet verified |
+| 1 Foundations | partial | `phase-1-complete` | Domain/audit safety tests pass; PostgreSQL migration check pending | — | Trigger migration 0004 added; SQLite all-revisions check is blocked by pre-existing migration 0003 | PostgreSQL verification of trigger migration 0004 is still required |
 | 2 Data | partial | `phase-2-complete` | Generator and manifest tests pass | `data/MANIFEST.json` | 180 PDFs do not meet "hundreds"; visual variation needs expansion | Expand the corpus and document types |
-| 3 Privacy boundary | done | `phase-3-complete` | Leakage and guard tests pass | `reports/redaction.json` | Ollama is now a tenant-scoped guarded integration; live provider adapters remain unimplemented | None for the local privacy boundary |
+| 3 Privacy boundary | done | `phase-3-complete` | Leakage and guard tests pass | `reports/redaction.json` | Ollama, Gemini, and OpenAI calls are guarded; Phase 14 external-data providers remain unimplemented | None for the local privacy boundary |
 | 4 Extraction | partial | `phase-4-complete` | Heuristic evaluation tests pass | `reports/extraction.json` | LayoutLMv3 fine-tuning/inference is still a stub; report uses heuristic output | Implement and evaluate the actual model |
-| 5 Compliance RAG | partial | Historical `phase-5-complete` tag is not a closure claim | 20 RAG unit tests pass; targeted Ruff and strict mypy pass | `reports/rag.json`: 60 queries, precision@5 0.20, recall@5 1.00, MRR@5 0.9833; Ragas fields pending | ADR-016/017 | Explicit approval required before Gemini generation/OpenAI judging |
+| 5 Compliance RAG | done (offline gate; Ragas pending) | `phase-5-complete` annotated with the Ragas limitation | 24 RAG unit tests pass; targeted Ruff and strict mypy pass | `reports/rag.json`: P@5 0.20, R@5 1.00, MRR@5 0.9833; date violations 0; no-support accuracy 1.00; supported-query recall 0.90; four retrieval modes compared | ADR-016/017/018; Ragas is `not_run` | `GOOGLE_API_KEY` and `OPENAI_API_KEY` unavailable |
 | 6 Deterministic verifier | done | `phase-6-complete` | 25 targeted tests; verifier package 100% statement coverage; golden result 150/150 | `reports/verifier.json` | ADR-008/009; external semantics were corrected against restored Addendum A3 | Golden set has no expected V-EXT/V-SANC labels |
 | 7 Predictive risk | done | `phase-7-complete` | Ruff, strict mypy, 70 tests; risk package 100% statement coverage; CPU training/inference verified | `reports/risk.json` | ADR-010; synthetic-only metrics; XGBoost selected using validation metrics | Trained weights are local/ignored and must be regenerated for inference |
 | 8 Intent router | done | `phase-8-complete` | Ruff, strict mypy, 79 tests; 93% total app coverage; repeated benchmark reproduced metrics and artifact hash | `reports/router.json` | ADR-011; DNN tied baseline and was not retained | Local MiniLM cache required; small labeled query set |
@@ -16,7 +16,7 @@
 | 11 Frontend | not started | — | — | — | — | Frontend files/package manifest not yet verified |
 | 12 Evaluation, CI, Docker | not started | — | — | — | — | Full-stack Docker/CI implementation not started |
 | 13 Hardening | not started | — | — | — | — | Service-backed outage tests not run |
-| 14 Live integrations | not started | — | — | — | ADR-007/009 | Addendum A5 absent; live-provider terms/endpoints must be verified before wiring |
+| 14 Live integrations | not started | — | — | — | ADR-007/009 | Official provider terms/endpoints must be verified before live wiring |
 
 ## Current checkpoint
 
@@ -46,6 +46,7 @@
   .\.venv\Scripts\python.exe -m scripts.export_openapi
   ```
 
-- **Phase 5 checkpoint (2026-11-03):** Real local CrossEncoder and 60-query golden retrieval evaluation are implemented. Citation gates pass in `reports/rag.json`; Ragas faithfulness and answer relevance are intentionally pending because completing them sends prompts to Gemini and OpenAI and may incur charges.
-- **Exact next action:** Obtain explicit approval for external Gemini/OpenAI evaluation, run the guarded evaluator, then resume Phase 10 endpoint and production `WorkflowServices` work. Do not mark Phase 5 complete until Ragas evidence passes.
+- **Phase 5 checkpoint (2026-11-03):** Offline gate passed on 60 supported and 20 no-support queries. Citation P@5/R@5/MRR@5 are `0.20/1.00/0.9833`; date-filter violations are `0`; no-support accuracy is `1.00`, supported-query recall `0.90`, and balanced answerability accuracy `0.95`. BM25, dense, hybrid, and hybrid+rerank metrics are recorded. The answerability threshold was swept on the same labeled set, so that metric is not a held-out estimate.
+- **Ragas limitation/open item:** Both faithfulness and answer relevance are explicitly `not_run` because API keys are unavailable. To run later, set `GOOGLE_API_KEY` and `OPENAI_API_KEY`, then execute `.\.venv\Scripts\python.exe -m scripts.evaluate_rag --allow-external-model-calls`; this sends prompts/contexts to providers and may incur charges. No external calls were made for this checkpoint.
+- **Exact next action:** Resume Phase 10 missing routes and production `WorkflowServices` assembly; keep the fake LLM provider selected in tests and offline gates.
 - **Open risks:** PostgreSQL verification of audit trigger migration 0004; Phase 4 model training; Phase 10 missing endpoints and graph factory. Phase 11+ are not started.

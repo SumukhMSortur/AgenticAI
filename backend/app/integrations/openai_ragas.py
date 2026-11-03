@@ -9,6 +9,7 @@ from ragas.llms import llm_factory
 from ragas.llms.base import InstructorBaseRagasLLM
 from sqlalchemy.orm import Session
 
+from backend.app.core.config import settings
 from backend.app.core.errors import PrivacyViolationError
 from backend.app.privacy.outbound_guard import (
     ExternalCallPolicy,
@@ -49,12 +50,10 @@ class GuardedOpenAIRagasJudge:
         guard: OutboundGuard | None = None,
     ) -> None:
         if not tenant_opted_in:
-            raise PrivacyViolationError(
-                "External Ragas judging requires explicit tenant opt-in."
-            )
+            raise PrivacyViolationError("External Ragas judging requires explicit tenant opt-in.")
         if not tenant_id.strip():
             raise PrivacyViolationError("Tenant ID is required for external Ragas judging.")
-        api_key = os.environ.get("OPENAI_API_KEY")
+        api_key = settings.OPENAI_API_KEY
         if not api_key:
             raise RuntimeError("OPENAI_API_KEY is required for the configured Ragas judge.")
 

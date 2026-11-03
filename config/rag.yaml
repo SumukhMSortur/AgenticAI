@@ -3,13 +3,19 @@ retriever:
   top_k: 5
 evaluation:
   golden_set: data/golden/rag_golden_set.json
+  no_support_set: data/golden/rag_no_support_set.json
   report: reports/rag.json
   minimum_queries: 60
+  minimum_no_support_queries: 20
+  support_score_threshold: -2.0
   gates:
     citation_precision_at_5: 0.2
     citation_recall_at_5: 0.9
     faithfulness: 0.8
     answer_relevance: 0.8
+    no_support_accuracy: 0.95
+    supported_query_recall: 0.9
+    max_date_filter_violations: 0
   generator:
     provider: google-genai
     family: gemini

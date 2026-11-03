@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from datetime import date
 from math import isfinite
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 import numpy as np
 from rank_bm25 import BM25Okapi
@@ -16,6 +16,8 @@ from backend.app.rag.models import RERANKER_MODEL_NAME
 from backend.app.rag.store import IVectorStore
 
 logger = get_logger(__name__)
+
+RetrievalMode = Literal["bm25", "dense", "hybrid", "hybrid_rerank"]
 
 
 class PairScorer(Protocol):
@@ -73,10 +75,7 @@ class CrossEncoderReranker:
             for score, candidate in zip(scores, candidates, strict=True)
         ]
         scored.sort(key=lambda item: (-item[0], item[1]))
-        return [
-            {**candidate, "_cross_encoder_score": score}
-            for score, _, candidate in scored
-        ]
+        return [{**candidate, "_cross_encoder_score": score} for score, _, candidate in scored]
 
 
 def _tokenize(text: str) -> list[str]:
@@ -128,12 +127,15 @@ class HybridRetriever:
         n_results: int = 5,
         bm25_weight: float = 0.3,
         dense_weight: float = 0.7,
+        mode: RetrievalMode = "hybrid_rerank",
     ) -> list[dict[str, Any]]:
-        """Run hybrid retrieval and return top-n merged results."""
+        """Run the selected sparse, dense, hybrid, or reranked retrieval path."""
         if not query.strip():
             raise ValueError("query must not be empty")
         if n_results < 1:
             raise ValueError("n_results must be positive")
+        if mode not in {"bm25", "dense", "hybrid", "hybrid_rerank"}:
+            raise ValueError(f"unsupported retrieval mode: {mode}")
         if bm25_weight < 0 or dense_weight < 0 or bm25_weight + dense_weight <= 0:
             raise ValueError("retrieval weights must be non-negative and not both zero")
 
@@ -144,7 +146,10 @@ class HybridRetriever:
         if self._bm25 and self._corpus:
             tokens = _tokenize(query)
             scores = self._bm25.get_scores(tokens)
-            ranked_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)
+            ranked_indices = sorted(
+                range(len(scores)),
+                key=lambda i: (-scores[i], str(self._corpus[i].get("chunk_id", ""))),
+            )
             for rank, idx in enumerate(ranked_indices):
                 chunk = self._corpus[idx]
                 # Apply date filter
@@ -173,6 +178,11 @@ class HybridRetriever:
         for rank, r in enumerate(dense_results):
             r["_dense_rank"] = rank
 
+        if mode == "bm25":
+            return bm25_results[:n_results]
+        if mode == "dense":
+            return dense_results[:n_results]
+
         # ---- RRF merge ----
         rrf_k = 60
         rrf_scores: dict[str, float] = {}
@@ -196,4 +206,6 @@ class HybridRetriever:
             chunk["_rrf_score"] = score
             candidates.append(chunk)
 
+        if mode == "hybrid":
+            return candidates[:n_results]
         return self._reranker.rerank(query, candidates)[:n_results]

@@ -1,0 +1,126 @@
+{
+  "dataset_version": "1.0.0",
+  "corpus": "data/regulations/csddd_regulations.json",
+  "queries": [
+    {
+      "query_id": "RAG-NS-001",
+      "query": "Which French company was fined for a CSDDD violation in 2025?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-002",
+      "query": "How many inspections did the Dutch supervisory authority conduct last year?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-003",
+      "query": "What is the name of the supplier factory in Bangladesh that failed its latest audit?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-004",
+      "query": "What minimum wage must a textile factory in Vietnam pay its workers?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-005",
+      "query": "What is the registered address of the supplier that produces this garment?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-006",
+      "query": "Which supplier registration number appears on the factory's business license?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-007",
+      "query": "What exact penalty amount did a Spanish court award in a CSDDD damages case?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-008",
+      "query": "Which German agency published its 2025 enforcement statistics for corporate due diligence?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-009",
+      "query": "What are the board members and paid-in capital of the supplier company?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-010",
+      "query": "Which exact EU sanctions-list entry matches the supplier's director?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-011",
+      "query": "What was the 2025 export volume of a named cotton mill in India?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-012",
+      "query": "Which individual worker filed a complaint against the supplier, and on what date?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-013",
+      "query": "What is the latest digital product passport serial number assigned to this shirt?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-014",
+      "query": "Which accredited auditor issued the supplier's most recent inspection certificate?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-015",
+      "query": "What is the current EUR to INR exchange rate used for this invoice?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-016",
+      "query": "Which named company has been held liable under the amended directive by an Italian court?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-017",
+      "query": "What chemical concentration was measured in the supplier's wastewater sample?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-018",
+      "query": "How many employees does this specific supplier currently have?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-019",
+      "query": "What is the exact delivery date for purchase order 87421?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    },
+    {
+      "query_id": "RAG-NS-020",
+      "query": "Which local permit number authorizes the factory to discharge industrial wastewater?",
+      "assessment_date": "2026-04-01",
+      "jurisdiction": "EU"
+    }
+  ]
+}
