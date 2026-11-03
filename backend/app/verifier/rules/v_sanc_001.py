@@ -10,7 +10,7 @@ def check(
     claim_id: str,
     evidence_ids: list[str],
 ) -> Verdict:
-    """Fail on exact identifier/name matches; missing source results escalate."""
+    """Fail only on exact identifier matches; missing source results escalate."""
     if matches is None:
         return make_verdict(
             claim_id=claim_id,
@@ -22,7 +22,7 @@ def check(
         )
     exact_matches = [
         match for match in matches
-        if match.matched and match.match_type in {"exact_id", "exact_name"}
+        if match.matched and match.match_type == "exact_id"
     ]
     if exact_matches:
         match = sorted(exact_matches, key=lambda item: (item.source, item.record_key or ""))[0]

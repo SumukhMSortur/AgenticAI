@@ -317,6 +317,8 @@ def _external_lookup(
     score: float = 1.0,
     fetched_at: date = date(2026, 11, 1),
     snapshot_hash: str | None = "snapshot-1",
+    country_match: bool | None = True,
+    parent_company_match: bool | None = True,
 ) -> ExternalLookup:
     from datetime import datetime, time
 
@@ -329,6 +331,8 @@ def _external_lookup(
         record_key="record-1" if matched else None,
         fetched_at=datetime.combine(fetched_at, time.min, tzinfo=UTC),
         snapshot_hash=snapshot_hash,
+        country_match=country_match,
+        parent_company_match=parent_company_match,
     )
 
 
@@ -424,7 +428,7 @@ def test_v_ext_001_identity_match_conflict_ambiguity_and_missing() -> None:
         v_ext_001.check(None, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS),
         "V-EXT-001",
         "escalate",
-        "EXTERNAL_FACILITY_EVIDENCE_MISSING",
+        "EXTERNAL_FACILITY_SOURCE_UNAVAILABLE",
     )
     _assert_result(
         v_ext_001.check(_external_lookup(), claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS),
@@ -432,13 +436,22 @@ def test_v_ext_001_identity_match_conflict_ambiguity_and_missing() -> None:
         "pass",
         "EXTERNAL_FACILITY_MATCH",
     )
-    conflict = v_ext_001.check(
+    unmatched = v_ext_001.check(
         _external_lookup(matched=False, match_type="exact_id", score=0.0),
         claim_id=_CLAIM_ID,
         evidence_ids=_EVIDENCE_IDS,
     )
-    _assert_result(conflict, "V-EXT-001", "fail", "EXTERNAL_FACILITY_ID_CONFLICT")
-    assert conflict.details["priority"] == "critical"
+    _assert_result(unmatched, "V-EXT-001", "escalate", "EXTERNAL_FACILITY_NOT_FOUND")
+    _assert_result(
+        v_ext_001.check(
+            _external_lookup(match_type="fuzzy_name", score=0.74),
+            claim_id=_CLAIM_ID,
+            evidence_ids=_EVIDENCE_IDS,
+        ),
+        "V-EXT-001",
+        "escalate",
+        "EXTERNAL_FACILITY_NOT_FOUND",
+    )
     _assert_result(
         v_ext_001.check(
             _external_lookup(match_type="fuzzy_name", score=0.8),
@@ -446,8 +459,8 @@ def test_v_ext_001_identity_match_conflict_ambiguity_and_missing() -> None:
             evidence_ids=_EVIDENCE_IDS,
         ),
         "V-EXT-001",
-        "escalate",
-        "EXTERNAL_FACILITY_MATCH_UNCERTAIN",
+        "pass",
+        "EXTERNAL_FACILITY_CANDIDATE_FOUND",
     )
     _assert_result(
         v_ext_001.check(
@@ -457,123 +470,149 @@ def test_v_ext_001_identity_match_conflict_ambiguity_and_missing() -> None:
         ),
         "V-EXT-001",
         "escalate",
-        "EXTERNAL_PROVIDER_UNAVAILABLE",
+        "EXTERNAL_FACILITY_SOURCE_UNAVAILABLE",
     )
 
 
-def test_v_ext_002_snapshot_freshness_and_provenance() -> None:
+def test_v_ext_002_country_and_name_match_thresholds() -> None:
+    _assert_result(
+        v_ext_002.check(
+            None, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS
+        ),
+        "V-EXT-002",
+        "escalate",
+        "EXTERNAL_FACILITY_DATA_UNAVAILABLE",
+    )
+    _assert_result(
+        v_ext_002.check(
+            _external_lookup(matched=False, match_type="none"),
+            claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS,
+        ),
+        "V-EXT-002",
+        "pass",
+        "EXTERNAL_FACILITY_MATCH_NOT_APPLICABLE",
+    )
+    _assert_result(
+        v_ext_002.check(
+            _external_lookup(country_match=False),
+            claim_id=_CLAIM_ID,
+            evidence_ids=_EVIDENCE_IDS,
+        ),
+        "V-EXT-002",
+        "escalate",
+        "EXTERNAL_FACILITY_COUNTRY_MISMATCH",
+    )
+    _assert_result(
+        v_ext_002.check(
+            _external_lookup(country_match=None),
+            claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS,
+        ),
+        "V-EXT-002",
+        "escalate",
+        "EXTERNAL_FACILITY_COUNTRY_UNVERIFIED",
+    )
+    for score in (0.75, 0.90):
+        _assert_result(
+            v_ext_002.check(
+                _external_lookup(match_type="fuzzy_name", score=score),
+                claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS,
+            ),
+            "V-EXT-002",
+            "escalate",
+            "EXTERNAL_FACILITY_NAME_AMBIGUOUS",
+        )
+    _assert_result(
+        v_ext_002.check(
+            _external_lookup(match_type="fuzzy_name", score=0.91),
+            claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS,
+        ),
+        "V-EXT-002",
+        "pass",
+        "EXTERNAL_FACILITY_COUNTRY_AND_NAME_CONFIRMED",
+    )
+    with pytest.raises(ValueError, match="review thresholds"):
+        v_ext_002.check(
+            _external_lookup(), claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS,
+            name_review_min=0.91, name_review_max=0.90,
+        )
+
+
+def test_v_ext_003_parent_company_relationship() -> None:
+    _assert_result(
+        v_ext_003.check(None, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS),
+        "V-EXT-003",
+        "escalate",
+        "EXTERNAL_PARENT_COMPANY_UNVERIFIED",
+    )
+    _assert_result(
+        v_ext_003.check(
+            _external_lookup(parent_company_match=False),
+            claim_id=_CLAIM_ID,
+            evidence_ids=_EVIDENCE_IDS,
+        ),
+        "V-EXT-003",
+        "escalate",
+        "EXTERNAL_PARENT_COMPANY_MISMATCH",
+    )
+    _assert_result(
+        v_ext_003.check(
+            _external_lookup(parent_company_match=None),
+            claim_id=_CLAIM_ID,
+            evidence_ids=_EVIDENCE_IDS,
+        ),
+        "V-EXT-003",
+        "escalate",
+        "EXTERNAL_PARENT_COMPANY_UNVERIFIED",
+    )
+    _assert_result(
+        v_ext_003.check(
+            _external_lookup(parent_company_match=True),
+            claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS,
+        ),
+        "V-EXT-003",
+        "pass",
+        "EXTERNAL_PARENT_COMPANY_CONFIRMED",
+    )
+
+
+def test_v_ext_900_snapshot_freshness_and_provider_availability() -> None:
     assessment = date(2026, 11, 2)
+    for lookup in (None, _external_lookup(status="unavailable"), _external_lookup(status="degraded")):
+        _assert_result(
+            v_ext_900.check(
+                lookup, assessment, 30, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS
+            ),
+            "V-EXT-900",
+            "escalate",
+            "EXTERNAL_SOURCE_UNAVAILABLE",
+        )
     _assert_result(
-        v_ext_002.check(
-            None, assessment, 30, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS
+        v_ext_900.check(
+            _external_lookup(fetched_at=date(2026, 10, 3)),
+            assessment, 30, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS,
         ),
-        "V-EXT-002",
-        "escalate",
-        "EXTERNAL_SNAPSHOT_PROVENANCE_MISSING",
+        "V-EXT-900",
+        "pass",
+        "EXTERNAL_SNAPSHOT_FRESH",
     )
-    fresh = v_ext_002.check(
-        _external_lookup(fetched_at=date(2026, 10, 3)),
-        assessment,
-        30,
-        claim_id=_CLAIM_ID,
-        evidence_ids=_EVIDENCE_IDS,
-    )
-    _assert_result(fresh, "V-EXT-002", "pass", "EXTERNAL_SNAPSHOT_FRESH")
-    _assert_result(
-        v_ext_002.check(
-            _external_lookup(fetched_at=date(2026, 10, 2)),
-            assessment,
-            30,
-            claim_id=_CLAIM_ID,
-            evidence_ids=_EVIDENCE_IDS,
-        ),
-        "V-EXT-002",
-        "escalate",
-        "EXTERNAL_SNAPSHOT_STALE",
-    )
-    _assert_result(
-        v_ext_002.check(
-            _external_lookup(fetched_at=date(2026, 11, 3)),
-            assessment,
-            30,
-            claim_id=_CLAIM_ID,
-            evidence_ids=_EVIDENCE_IDS,
-        ),
-        "V-EXT-002",
-        "escalate",
-        "EXTERNAL_SNAPSHOT_STALE",
-    )
+    for fetched_at in (date(2026, 10, 2), date(2026, 11, 3)):
+        _assert_result(
+            v_ext_900.check(
+                _external_lookup(fetched_at=fetched_at),
+                assessment, 30, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS,
+            ),
+            "V-EXT-900",
+            "escalate",
+            "EXTERNAL_SNAPSHOT_STALE",
+        )
     with pytest.raises(ValueError, match="non-negative"):
-        v_ext_002.check(
+        v_ext_900.check(
             _external_lookup(), assessment, -1,
             claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS,
         )
 
 
-def test_v_ext_003_match_confidence_and_config_boundaries() -> None:
-    _assert_result(
-        v_ext_003.check(None, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS),
-        "V-EXT-003",
-        "escalate",
-        "EXTERNAL_FACILITY_MATCH_UNCONFIRMED",
-    )
-    _assert_result(
-        v_ext_003.check(
-            _external_lookup(match_type="fuzzy_name", score=0.9),
-            claim_id=_CLAIM_ID,
-            evidence_ids=_EVIDENCE_IDS,
-        ),
-        "V-EXT-003",
-        "pass",
-        "EXTERNAL_FACILITY_FUZZY_MATCH_CONFIRMED",
-    )
-    _assert_result(
-        v_ext_003.check(
-            _external_lookup(match_type="fuzzy_name", score=0.89),
-            claim_id=_CLAIM_ID,
-            evidence_ids=_EVIDENCE_IDS,
-        ),
-        "V-EXT-003",
-        "escalate",
-        "EXTERNAL_FACILITY_MATCH_UNCERTAIN",
-    )
-    with pytest.raises(ValueError, match="between 0 and 1"):
-        v_ext_003.check(
-            _external_lookup(), claim_id=_CLAIM_ID,
-            evidence_ids=_EVIDENCE_IDS, confirmed_match_threshold=1.1,
-        )
-
-
-def test_v_ext_900_missing_unavailable_degraded_and_healthy() -> None:
-    for lookup in (None, _external_lookup(status="unavailable")):
-        result = v_ext_900.check(
-            lookup, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS
-        )
-        _assert_result(result, "V-EXT-900", "escalate", "EXTERNAL_PROVIDER_UNAVAILABLE")
-        assert result.details["priority"] == "critical"
-    _assert_result(
-        v_ext_900.check(
-            _external_lookup(status="degraded"),
-            claim_id=_CLAIM_ID,
-            evidence_ids=_EVIDENCE_IDS,
-        ),
-        "V-EXT-900",
-        "escalate",
-        "EXTERNAL_PROVIDER_DEGRADED",
-    )
-    _assert_result(
-        v_ext_900.check(
-            _external_lookup(),
-            claim_id=_CLAIM_ID,
-            evidence_ids=_EVIDENCE_IDS,
-        ),
-        "V-EXT-900",
-        "pass",
-        "EXTERNAL_PROVIDER_HEALTHY",
-    )
-
-
-def test_v_sanc_001_exact_match_is_critical_and_missing_data_escalates() -> None:
+def test_v_sanc_001_only_exact_identifier_match_fails_critically() -> None:
     _assert_result(
         v_sanc_001.check(None, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS),
         "V-SANC-001",
@@ -593,9 +632,17 @@ def test_v_sanc_001_exact_match_is_critical_and_missing_data_escalates() -> None
     )
     _assert_result(verdict, "V-SANC-001", "fail", "SANCTIONS_EXACT_MATCH")
     assert verdict.details["priority"] == "critical"
+    exact_name = SanctionsMatch(
+        source="sanctions-fixture",
+        matched=True,
+        match_type="exact_name",
+        score=1.0,
+        record_key="list-2",
+        snapshot_hash="sha256:fixture",
+    )
     _assert_result(
         v_sanc_001.check(
-            [], claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS
+            [exact_name], claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS
         ),
         "V-SANC-001",
         "pass",
@@ -603,12 +650,12 @@ def test_v_sanc_001_exact_match_is_critical_and_missing_data_escalates() -> None
     )
 
 
-def test_v_sanc_002_fuzzy_match_threshold_and_missing_data() -> None:
+def test_v_sanc_002_name_only_and_high_confidence_fuzzy_matches_escalate() -> None:
     match = SanctionsMatch(
         source="sanctions-fixture",
         matched=True,
         match_type="fuzzy_name",
-        score=0.8,
+        score=0.9,
         record_key="list-2",
         snapshot_hash="sha256:fixture",
     )
@@ -617,9 +664,18 @@ def test_v_sanc_002_fuzzy_match_threshold_and_missing_data() -> None:
     )
     _assert_result(verdict, "V-SANC-002", "escalate", "SANCTIONS_POSSIBLE_FUZZY_MATCH")
     assert verdict.details["priority"] == "critical"
+    exact_name = match.model_copy(update={"match_type": "exact_name", "score": 1.0})
+    exact_name_verdict = v_sanc_002.check(
+        [exact_name], claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS
+    )
+    _assert_result(
+        exact_name_verdict, "V-SANC-002", "escalate", "SANCTIONS_POSSIBLE_FUZZY_MATCH"
+    )
+    assert exact_name_verdict.details["priority"] == "critical"
+    below_threshold = match.model_copy(update={"score": 0.89})
     _assert_result(
         v_sanc_002.check(
-            [], claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS
+            [below_threshold], claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS
         ),
         "V-SANC-002",
         "pass",
@@ -695,7 +751,7 @@ def test_verifier_engine_is_deterministic_links_evidence_and_derives_priority() 
                     source="test-list",
                     matched=True,
                     match_type="fuzzy_name",
-                    score=0.8,
+                    score=0.95,
                     snapshot_hash="test-hash",
                 )
             ]
@@ -785,8 +841,8 @@ def test_verifier_settings_reject_incomplete_configuration(tmp_path: Path) -> No
             "confidence": {"base": 0.85, "moderate_risk": 0.9, "high_risk": 0.95},
             "risk": {"moderate_threshold": 0.3, "high_threshold": 0.6},
             "issuer": {"fail_below": 0.75, "escalate_through": 0.9},
-            "external": {"confirmed_match": 0.9},
-            "sanctions": {"fuzzy_review": 0.75},
+            "external": {"review_min": 0.75, "review_max": 0.90},
+            "sanctions": {"fuzzy_review": 0.90},
         }
     )
     assert settings.expiry_warn_days == 60

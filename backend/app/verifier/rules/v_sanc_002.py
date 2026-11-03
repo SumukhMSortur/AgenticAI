@@ -3,7 +3,7 @@
 from backend.app.domain.models import SanctionsMatch, Verdict
 from backend.app.verifier.rules.common import make_verdict
 
-_FUZZY_REVIEW_THRESHOLD = 0.75
+_FUZZY_REVIEW_THRESHOLD = 0.90
 
 
 def check(
@@ -13,7 +13,7 @@ def check(
     evidence_ids: list[str],
     review_threshold: float = _FUZZY_REVIEW_THRESHOLD,
 ) -> Verdict:
-    """Escalate fuzzy-name hits; exact hits are handled by V-SANC-001."""
+    """Escalate name-only and high-confidence fuzzy matches for critical review."""
     if not 0.0 <= review_threshold <= 1.0:
         raise ValueError("review_threshold must be between 0 and 1")
     if matches is None:
@@ -28,8 +28,10 @@ def check(
     possible_matches = [
         match for match in matches
         if match.matched
-        and match.match_type == "fuzzy_name"
-        and match.score >= review_threshold
+        and (
+            match.match_type == "exact_name"
+            or (match.match_type == "fuzzy_name" and match.score >= review_threshold)
+        )
     ]
     if possible_matches:
         match = sorted(

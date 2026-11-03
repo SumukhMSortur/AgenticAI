@@ -51,7 +51,8 @@ class VerifierSettings(BaseModel):
     risk_high_threshold: float = Field(ge=0.0, le=1.0)
     issuer_fail_below: float = Field(ge=0.0, le=1.0)
     issuer_escalate_through: float = Field(ge=0.0, le=1.0)
-    external_confirmed_match: float = Field(ge=0.0, le=1.0)
+    external_name_review_min: float = Field(ge=0.0, le=1.0)
+    external_name_review_max: float = Field(ge=0.0, le=1.0)
     sanctions_fuzzy_review: float = Field(ge=0.0, le=1.0)
 
     @model_validator(mode="after")
@@ -67,6 +68,8 @@ class VerifierSettings(BaseModel):
             raise ValueError("risk thresholds must be nondecreasing")
         if self.issuer_fail_below > self.issuer_escalate_through:
             raise ValueError("issuer thresholds must be nondecreasing")
+        if self.external_name_review_min > self.external_name_review_max:
+            raise ValueError("external name review thresholds must be nondecreasing")
         return self
 
     @classmethod
@@ -83,7 +86,8 @@ class VerifierSettings(BaseModel):
                 "risk_high_threshold": data["risk"]["high_threshold"],
                 "issuer_fail_below": data["issuer"]["fail_below"],
                 "issuer_escalate_through": data["issuer"]["escalate_through"],
-                "external_confirmed_match": data["external"]["confirmed_match"],
+                "external_name_review_min": data["external"]["review_min"],
+                "external_name_review_max": data["external"]["review_max"],
                 "sanctions_fuzzy_review": data["sanctions"]["fuzzy_review"],
             }
         except (KeyError, TypeError) as error:
@@ -270,22 +274,24 @@ class Verifier:
                             external_lookup,
                             claim_id=claim.claim_id,
                             evidence_ids=claim.evidence_ids,
+                            not_found_threshold=self.settings.external_name_review_min,
                         ),
                         v_ext_002.check(
                             external_lookup,
-                            context.assessment_date,
-                            self.settings.snapshot_max_age_days,
                             claim_id=claim.claim_id,
                             evidence_ids=claim.evidence_ids,
+                            name_review_min=self.settings.external_name_review_min,
+                            name_review_max=self.settings.external_name_review_max,
                         ),
                         v_ext_003.check(
                             external_lookup,
                             claim_id=claim.claim_id,
                             evidence_ids=claim.evidence_ids,
-                            confirmed_match_threshold=self.settings.external_confirmed_match,
                         ),
                         v_ext_900.check(
                             external_lookup,
+                            context.assessment_date,
+                            self.settings.snapshot_max_age_days,
                             claim_id=claim.claim_id,
                             evidence_ids=claim.evidence_ids,
                         ),
