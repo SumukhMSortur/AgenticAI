@@ -50,6 +50,7 @@ class RegulationIngestionManager:
         proposal_id = str(uuid.uuid4())
         proposal = RegulationUpdateProposal(
             id=proposal_id,
+            tenant_id=tenant_id,
             source=source,
             candidate_version_id=candidate_version_id,
             status="pending",
@@ -89,7 +90,11 @@ class RegulationIngestionManager:
         if self.db is None:
             raise RuntimeError("A database session is required to approve a regulation update.")
 
-        proposal = self.db.query(RegulationUpdateProposal).filter_by(id=proposal_id).first()
+        proposal = (
+            self.db.query(RegulationUpdateProposal)
+            .filter_by(id=proposal_id, tenant_id=tenant_id)
+            .first()
+        )
         if proposal is None:
             raise ValueError(f"Proposal '{proposal_id}' not found.")
         if proposal.status == "rejected":
@@ -119,8 +124,44 @@ class RegulationIngestionManager:
             proposal.candidate_version_id,
             regulations_path or self.regulations_path,
         )
-        logger.info(f"Proposal '{proposal_id}' approved by reviewer '{reviewer_id}'. Ingested {count} chunks.")
+        logger.info(
+            f"Proposal '{proposal_id}' approved by reviewer '{reviewer_id}'. Ingested {count} chunks."
+        )
         return count
+
+    def reject_update(
+        self,
+        proposal_id: str,
+        reviewer_id: str,
+        tenant_id: str,
+        notes: str | None = None,
+    ) -> RegulationUpdateProposal:
+        """Persist a tenant-scoped human rejection and append it to the audit chain."""
+        if self.db is None:
+            raise RuntimeError("A database session is required to reject a regulation update.")
+        proposal = (
+            self.db.query(RegulationUpdateProposal)
+            .filter_by(id=proposal_id, tenant_id=tenant_id)
+            .first()
+        )
+        if proposal is None:
+            raise ValueError(f"Proposal '{proposal_id}' not found.")
+        if proposal.status != "pending":
+            raise ValueError(f"Proposal '{proposal_id}' has already been resolved.")
+
+        proposal.status = "rejected"
+        proposal.reviewer_id = reviewer_id
+        proposal.decided_at = datetime.now(UTC)
+        proposal.notes = notes
+        append_audit_event(
+            db=self.db,
+            tenant_id=tenant_id,
+            event_type="regulation_update_decided",
+            doc_hash=proposal.candidate_version_id,
+            reviewer_decision={"status": "rejected", "reviewer_id": reviewer_id},
+            payload={"proposal_id": proposal_id, "notes": notes},
+        )
+        return proposal
 
     def ingest(
         self,

@@ -1,6 +1,7 @@
 """Application configuration loaded via pydantic-settings."""
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -39,7 +40,10 @@ class Settings(BaseSettings):
     MAX_UPLOAD_PAGES: int = Field(default=100, gt=0)
     API_RATE_LIMIT_REQUESTS: int = Field(default=120, gt=0)
     API_RATE_LIMIT_WINDOW_SECONDS: int = Field(default=60, gt=0)
-    WORKFLOW_SERVICES_FACTORY: str = Field(default="")
+    WORKFLOW_SERVICES_FACTORY: str = Field(
+        default="backend.app.graph.services:create_workflow_services"
+    )
+    LLM_PROVIDER: Literal["fake"] = Field(default="fake")
 
     # Cloud LLM (Gemini) - Model name must come from environment, never hardcoded
     GEMINI_API_KEY: str = Field(

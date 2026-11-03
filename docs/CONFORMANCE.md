@@ -41,13 +41,13 @@ implementation exists but misses a stated requirement or lacks required evidence
 | Phase 7: 95% CIs and explicit validation promotion rule | met | `backend/app/risk/promotion.py`; `reports/risk.json`; promotion tests |
 | Phase 8: DNN-vs-baseline benchmark and promotion decision | met | `ml/train_router.py`; `reports/router.json`; ADR-011 in `docs/DECISIONS.md` |
 | Phase 9: bounded graph stages, evidence-backed verdicts, decision and escalation | met | `backend/app/graph/workflow.py`; `backend/tests/e2e/test_graph_workflow.py` |
-| Phase 9 / A4: enrich stage performs local snapshot matching and emits external evidence | partial | Graph stage exists but production `WorkflowServices` factory/snapshot-backed implementation is absent (`backend/app/graph/workflow.py`; `docs/HANDOFF.md`) |
+| Phase 9 / A4: enrich stage performs local snapshot matching and emits external evidence | met | `backend/app/graph/services.py`; snapshot provenance asserted in `backend/tests/integration/test_api_postgres_redis.py`; unavailable data escalates |
 | Phase 9: HITL survives process and PostgreSQL restart; audit chain persists | met | `backend/tests/integration/test_graph_postgres_resume.py`; `docs/graph.md` |
 | Phase 10: JWT, tenant-scoped repositories, upload checks, idempotency, rate limits | met | `backend/app/api/`; `backend/app/api/repositories.py`; API integration tests |
 | Phase 10: Redis Stream SSE supports `Last-Event-ID` replay | met | `backend/app/api/`; `backend/tests/integration/test_api_postgres_redis.py` |
-| Phase 10: scorecard endpoint, rendered-page endpoint, query endpoint, factory risk endpoint | missing | No matching routes in `backend/app/api/router.py` |
-| Phase 10: production graph factory and full API job/HITL integration | missing | Worker fails closed without factory; integration test does not execute full job or API HITL (`backend/app/workers/tasks.py`; `docs/HANDOFF.md`) |
-| Phase 10 / A5: `/v1/integrations/status` and proposal approve/reject API | partial | Current integration route is `/integrations`; proposals are listed but no decision route (`backend/app/api/router.py`) |
+| Phase 10: scorecard endpoint, rendered-page endpoint, query endpoint, factory risk endpoint | met | `backend/app/api/router.py`; tenant, page/ETag, query, and risk tests in `backend/tests/integration/test_api_postgres_redis.py` |
+| Phase 10: graph factory and full API job/HITL integration | met | Local fake-backed `create_workflow_services`; real Celery worker pauses and resumes through the API in `backend/tests/integration/test_api_postgres_redis.py` |
+| Phase 10 / A5: `/v1/integrations/status` and proposal approve/reject API | met | `backend/app/api/router.py`; tenant setting and proposal decision assertions in `backend/tests/integration/test_api_postgres_redis.py` |
 | Section 5: `EvidenceItem` external kinds and `ExternalRef` validation | met | External kinds validate required `ExternalRef` fields (`backend/app/domain/models.py`; `backend/tests/unit/test_domain_models.py`) |
 | Section 5: `GraphState` contract and append-only reducers | met | `backend/app/domain/models.py`; `backend/app/graph/workflow.py` |
 | R1: external source/snapshot/record/watchlist/proposal tables | met | `backend/app/db/alembic/versions/2026_11_02_0002_addendum_a_tables.py`; DB models |
@@ -73,20 +73,20 @@ implementation exists but misses a stated requirement or lacks required evidence
 | Acceptance 15: no external call bypasses guard; seeded PII excluded | met | Import-boundary and guarded Ollama payload tests; live provider adapters are not yet implemented |
 | Acceptance 16: external scorecard facts show source/as-of and replay from audit/snapshot hash | partial | Snapshot provenance schema exists; no complete live lookup-to-scorecard evidence |
 | Acceptance 17: sanctions exact match fail+critical; fuzzy/outage escalate | met | V-SANC tests and V-EXT-900 tests |
-| Acceptance 18: regulation changes require recorded human approval | partial | Service-level persisted approval and audit proof pass; Phase 10 proposal approve/reject API remains absent (`backend/app/rag/ingestion.py`; `backend/tests/unit/test_rag.py`; `backend/app/api/router.py`) |
+| Acceptance 18: regulation changes require recorded human approval | met | Persisted approval/rejection API and audit-chain integration assertions (`backend/app/api/router.py`; `backend/app/rag/ingestion.py`; `backend/tests/integration/test_api_postgres_redis.py`) |
 | Acceptance 19: provider terms/endpoints documented from official docs with check date | partial | ADR-007 documents sources; no complete current verification record for all providers |
 | Acceptance 20: external-data limitations documented and no LSTM contamination | partial | ADR-007 records snapshot-first/no-LSTM decision; final Known Limitations docs absent |
 
 ## Highest-priority gaps
 
 1. Phase 5 offline gate is closed; semantic Ragas faithfulness/answer relevance remain `not_run` until `GOOGLE_API_KEY` and `OPENAI_API_KEY` are available and the guarded command in `docs/RUNBOOK.md` is explicitly run.
-2. Keep Phase 10 partial until required routes and a production `WorkflowServices` factory pass real-service integration tests.
-3. Verify migration `2026_11_02_0004` against PostgreSQL; Docker Desktop's engine was unavailable during this audit.
-4. Close Phase 4 with actual LayoutLMv3 fine-tuning/inference and an honest held-out evaluation.
-5. Expand Phase 2's document corpus to the specified hundreds and add the missing visual/adversarial variation.
+2. Verify migration `2026_11_02_0004` directly against PostgreSQL; the previous SQLite-only check could not exercise the PostgreSQL triggers.
+3. Close Phase 4 with actual LayoutLMv3 fine-tuning/inference and an honest held-out evaluation.
+4. Expand Phase 2's document corpus to the specified hundreds and add the missing visual/adversarial variation.
 
-This audit is a baseline, not a phase-completion declaration. Implementations and statuses
-must be updated as fixes land. The all-revisions SQLite smoke test is currently blocked by
+This audit is updated as fixes land and reports the current conformance evidence. Phase 10
+closed with the real-service gate on 2026-11-03; ADR-019 records the fake-backed local
+workflow and synthetic-risk limitations. The all-revisions SQLite smoke test is currently blocked by
 pre-existing migration `2026_11_02_0003_api_submissions.py`, which uses SQLite-unsupported
 `ALTER COLUMN ... DROP DEFAULT`; the new trigger migration therefore still needs a PostgreSQL
 service-backed check.

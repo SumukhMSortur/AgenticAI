@@ -6,7 +6,7 @@ from backend.app.verifier.rules.common import make_verdict
 
 def check(
     confidence: float,
-    risk_score: float,
+    risk_score: float | None,
     base_threshold: float,
     moderate_threshold: float,
     high_threshold: float,
@@ -19,7 +19,6 @@ def check(
     """Select the configured confidence threshold for the supplied risk score."""
     values = (
         confidence,
-        risk_score,
         base_threshold,
         moderate_threshold,
         high_threshold,
@@ -28,13 +27,16 @@ def check(
     )
     if any(not 0.0 <= value <= 1.0 for value in values):
         raise ValueError("confidence and risk thresholds must be between 0 and 1")
+    if risk_score is not None and not 0.0 <= risk_score <= 1.0:
+        raise ValueError("risk score must be between 0 and 1")
     if moderate_risk_threshold > high_risk_threshold:
         raise ValueError("moderate risk threshold must not exceed high risk threshold")
-    threshold = base_threshold
-    if risk_score >= high_risk_threshold:
-        threshold = high_threshold
-    elif risk_score >= moderate_risk_threshold:
-        threshold = moderate_threshold
+    threshold = high_threshold if risk_score is None else base_threshold
+    if risk_score is not None:
+        if risk_score >= high_risk_threshold:
+            threshold = high_threshold
+        elif risk_score >= moderate_risk_threshold:
+            threshold = moderate_threshold
     if confidence < threshold:
         return make_verdict(
             claim_id=claim_id,
@@ -46,7 +48,10 @@ def check(
                 "confidence": confidence,
                 "required_confidence": threshold,
                 "risk_score": risk_score,
-                "priority": "critical" if risk_score >= high_risk_threshold else "normal",
+                "risk_status": "unavailable" if risk_score is None else "available",
+                "priority": "critical"
+                if risk_score is not None and risk_score >= high_risk_threshold
+                else "normal",
             },
             evidence_ids=evidence_ids,
         )
@@ -60,6 +65,7 @@ def check(
             "confidence": confidence,
             "required_confidence": threshold,
             "risk_score": risk_score,
+            "risk_status": "unavailable" if risk_score is None else "available",
         },
         evidence_ids=evidence_ids,
     )

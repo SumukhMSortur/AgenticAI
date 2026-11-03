@@ -9,12 +9,13 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from backend.app.api.uploads import ValidatedUpload
 from backend.app.core.config import settings
+from backend.app.db.audit_log import append_audit_event
 from backend.app.db.models import (
     AuditEvent,
     Document,
@@ -37,9 +38,7 @@ def get_user_by_email(session: Session, email: str) -> User | None:
 
 
 def get_job(session: Session, tenant_id: str, job_id: str) -> Job | None:
-    return session.scalar(
-        select(Job).where(Job.id == job_id, Job.tenant_id == tenant_id)
-    )
+    return session.scalar(select(Job).where(Job.id == job_id, Job.tenant_id == tenant_id))
 
 
 def list_jobs(session: Session, tenant_id: str, limit: int = 100) -> Sequence[Job]:
@@ -108,57 +107,59 @@ def create_or_get_job(
     submission_hash = hashlib.sha256(
         json.dumps(hashes, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
-    existing = session.scalar(
-        select(Job).where(
-            Job.tenant_id == tenant_id,
-            Job.submission_hash == submission_hash,
-        )
-    )
-    if existing is not None:
-        return existing, False
-
     try:
         with session.begin():
-            job = Job(
-                tenant_id=tenant_id,
-                thread_id=str(uuid.uuid4()),
-                status="queued",
-                assessment_date=assessment_date.isoformat(),
-                query=query,
-                route="full_analysis",
-                submission_hash=submission_hash,
+            existing = session.scalar(
+                select(Job).where(
+                    Job.tenant_id == tenant_id,
+                    Job.submission_hash == submission_hash,
+                )
             )
-            session.add(job)
-            session.flush()
-            for upload in documents:
-                document = session.scalar(
-                    select(Document).where(
-                        Document.tenant_id == tenant_id,
-                        Document.doc_hash == upload.doc_hash,
-                    )
+            if existing is not None:
+                job = existing
+                created = False
+            else:
+                job = Job(
+                    tenant_id=tenant_id,
+                    thread_id=str(uuid.uuid4()),
+                    status="queued",
+                    assessment_date=assessment_date.isoformat(),
+                    query=query,
+                    route="full_analysis",
+                    submission_hash=submission_hash,
                 )
-                if document is None:
-                    storage_path = _storage_path(tenant_id, upload.doc_hash)
-                    _persist_content(storage_path, upload.content)
-                    document = Document(
-                        tenant_id=tenant_id,
-                        doc_hash=upload.doc_hash,
-                        filename=upload.filename,
-                        mime_type="application/pdf",
-                        page_count=upload.page_count,
-                        storage_path=str(storage_path),
+                session.add(job)
+                session.flush()
+                for upload in documents:
+                    document = session.scalar(
+                        select(Document).where(
+                            Document.tenant_id == tenant_id,
+                            Document.doc_hash == upload.doc_hash,
+                        )
                     )
-                    session.add(document)
-                    session.flush()
-                session.add(
-                    JobDocument(
-                        job_id=job.id,
-                        document_id=document.id,
-                        tenant_id=tenant_id,
+                    if document is None:
+                        storage_path = _storage_path(tenant_id, upload.doc_hash)
+                        _persist_content(storage_path, upload.content)
+                        document = Document(
+                            tenant_id=tenant_id,
+                            doc_hash=upload.doc_hash,
+                            filename=upload.filename,
+                            mime_type="application/pdf",
+                            page_count=upload.page_count,
+                            storage_path=str(storage_path),
+                        )
+                        session.add(document)
+                        session.flush()
+                    session.add(
+                        JobDocument(
+                            job_id=job.id,
+                            document_id=document.id,
+                            tenant_id=tenant_id,
+                        )
                     )
-                )
-            session.flush()
-        return job, True
+                session.flush()
+                created = True
+        return job, created
     except IntegrityError:
         session.rollback()
         concurrent_job = session.scalar(
@@ -195,10 +196,7 @@ def list_pending_reviews(
         .order_by(Review.created_at, Review.id)
         .limit(limit)
     ).all()
-    return [
-        (review, _review_priority(scorecard_data))
-        for review, scorecard_data in rows
-    ]
+    return [(review, _review_priority(scorecard_data)) for review, scorecard_data in rows]
 
 
 def _review_priority(scorecard_data: dict[str, Any] | None) -> str:
@@ -252,6 +250,54 @@ def get_factory(session: Session, tenant_id: str, factory_id: str) -> Factory | 
     )
 
 
+def get_factory_risk(
+    session: Session,
+    tenant_id: str,
+    factory_id: str,
+) -> dict[str, Any] | None:
+    factory = get_factory(session, tenant_id, factory_id)
+    if factory is None:
+        return None
+
+    jobs = session.scalars(
+        select(Job)
+        .where(
+            Job.tenant_id == tenant_id,
+            Job.scorecard_data.is_not(None),
+        )
+        .order_by(Job.updated_at.desc(), Job.id)
+        .limit(100)
+    ).all()
+    for job in jobs:
+        scorecard = job.scorecard_data
+        forecast = scorecard.get("risk_forecast") if isinstance(scorecard, dict) else None
+        if not isinstance(forecast, dict):
+            continue
+        forecast_factory_id = forecast.get("factory_id")
+        if forecast_factory_id not in {factory.id, factory.external_id}:
+            continue
+        risk_score = forecast.get("p_fail_6m")
+        model_tag = forecast.get("model_tag")
+        baseline = forecast.get("baseline_comparison")
+        if (
+            isinstance(risk_score, bool)
+            or not isinstance(risk_score, (int, float))
+            or not 0.0 <= float(risk_score) <= 1.0
+            or model_tag not in {"lstm", "xgboost", "logreg"}
+            or not isinstance(baseline, dict)
+        ):
+            raise ValueError(f"Job {job.id} contains an invalid risk forecast")
+        return {
+            "factory_id": factory.id,
+            "job_id": job.id,
+            "risk_score": float(risk_score),
+            "model_tag": model_tag,
+            "baseline_comparison": baseline,
+            "created_at": job.updated_at,
+        }
+    return None
+
+
 def list_audit_events(
     session: Session,
     tenant_id: str,
@@ -267,14 +313,10 @@ def list_audit_events(
 
 
 def get_live_lookup_setting(session: Session, tenant_id: str) -> bool | None:
-    return session.scalar(
-        select(Tenant.live_lookup_enabled).where(Tenant.id == tenant_id)
-    )
+    return session.scalar(select(Tenant.live_lookup_enabled).where(Tenant.id == tenant_id))
 
 
-def set_live_lookup_setting(
-    session: Session, tenant_id: str, enabled: bool
-) -> bool | None:
+def set_live_lookup_setting(session: Session, tenant_id: str, enabled: bool) -> bool | None:
     tenant = session.get(Tenant, tenant_id)
     if tenant is None:
         return None
@@ -300,6 +342,47 @@ def list_pending_regulation_proposals(
     ).all()
 
 
+def get_regulation_proposal(
+    session: Session,
+    tenant_id: str,
+    proposal_id: str,
+) -> RegulationUpdateProposal | None:
+    return session.scalar(
+        select(RegulationUpdateProposal).where(
+            RegulationUpdateProposal.id == proposal_id,
+            RegulationUpdateProposal.tenant_id == tenant_id,
+        )
+    )
+
+
+def reject_regulation_proposal(
+    session: Session,
+    tenant_id: str,
+    proposal_id: str,
+    *,
+    reviewer_id: str,
+    notes: str,
+) -> RegulationUpdateProposal | None:
+    proposal = get_regulation_proposal(session, tenant_id, proposal_id)
+    if proposal is None:
+        return None
+    if proposal.status != "pending":
+        raise ValueError(f"Proposal '{proposal_id}' has already been resolved")
+    proposal.status = "rejected"
+    proposal.reviewer_id = reviewer_id
+    proposal.decided_at = datetime.now(UTC)
+    proposal.notes = notes
+    append_audit_event(
+        db=session,
+        tenant_id=tenant_id,
+        event_type="regulation_update_decided",
+        doc_hash=proposal.candidate_version_id,
+        reviewer_decision={"status": "rejected", "reviewer_id": reviewer_id},
+        payload={"proposal_id": proposal_id, "notes": notes},
+    )
+    return proposal
+
+
 def list_integration_status(
     session: Session,
     tenant_id: str,
@@ -307,22 +390,42 @@ def list_integration_status(
     live_enabled = get_live_lookup_setting(session, tenant_id)
     if live_enabled is None:
         return []
-    rows = session.execute(
-        select(ExternalSource, func.max(ExternalSnapshot.fetched_at))
-        .outerjoin(ExternalSnapshot, ExternalSnapshot.source_id == ExternalSource.id)
-        .group_by(ExternalSource.id)
-        .order_by(ExternalSource.id)
-    ).all()
-    return [
-        {
-            "source": source.id,
-            "status": (
-                "unverified"
-                if live_enabled
-                else ("snapshot_only" if as_of is not None else "unverified")
-            ),
-            "live_enabled": live_enabled,
-            "as_of": as_of,
-        }
-        for source, as_of in rows
-    ]
+    current_time = datetime.now(UTC)
+    sources = session.scalars(select(ExternalSource).order_by(ExternalSource.id)).all()
+    statuses: list[dict[str, Any]] = []
+    for source in sources:
+        snapshot = session.scalar(
+            select(ExternalSnapshot)
+            .where(ExternalSnapshot.source_id == source.id)
+            .order_by(ExternalSnapshot.fetched_at.desc(), ExternalSnapshot.id)
+            .limit(1)
+        )
+        age_days = None
+        health = "unavailable"
+        if snapshot is not None:
+            as_of = snapshot.fetched_at
+            if as_of.tzinfo is None:
+                as_of = as_of.replace(tzinfo=UTC)
+            age_days = max(0, (current_time - as_of).days)
+            health = "healthy" if age_days <= source.max_age_days else "stale"
+        else:
+            as_of = None
+
+        if live_enabled:
+            status = "unverified"
+        elif snapshot is not None:
+            status = "snapshot_only"
+        else:
+            status = "disabled"
+        statuses.append(
+            {
+                "source": source.id,
+                "status": status,
+                "live_enabled": live_enabled,
+                "as_of": as_of,
+                "record_count": snapshot.record_count if snapshot is not None else 0,
+                "age_days": age_days,
+                "health": health,
+            }
+        )
+    return statuses

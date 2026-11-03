@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 from backend.app.core.config import settings
 from backend.app.db.models import Document, Job, JobDocument, Review
 from backend.app.db.session import SessionLocal
-from backend.app.domain.models import DocumentRef, GraphState, Scorecard
+from backend.app.domain.models import DocumentRef, GraphState, RiskForecast, Scorecard
 from backend.app.graph.workflow import (
     ReviewDecision,
     WorkflowServices,
@@ -48,9 +48,7 @@ def _workflow_services() -> WorkflowServices:
     if not separator:
         module_name, separator, attribute_name = factory_path.rpartition(".")
     if not module_name or not attribute_name:
-        raise ValueError(
-            "WORKFLOW_SERVICES_FACTORY must use 'module:factory' or 'module.factory'"
-        )
+        raise ValueError("WORKFLOW_SERVICES_FACTORY must use 'module:factory' or 'module.factory'")
     module = importlib.import_module(module_name)
     factory = getattr(module, attribute_name)
     if not callable(factory):
@@ -85,9 +83,7 @@ def _publish(
 
 
 def _tenant_job(session: Session, job_id: str, tenant_id: str) -> Job | None:
-    return session.scalar(
-        select(Job).where(Job.id == job_id, Job.tenant_id == tenant_id)
-    )
+    return session.scalar(select(Job).where(Job.id == job_id, Job.tenant_id == tenant_id))
 
 
 def _job_documents(
@@ -130,6 +126,11 @@ def _scorecard_payload(values: Mapping[str, Any]) -> dict[str, Any] | None:
         payload["escalation"] = escalation.model_dump(mode="json")
     elif isinstance(escalation, dict):
         payload["escalation"] = escalation
+    risk = values.get("risk")
+    if isinstance(risk, RiskForecast):
+        payload["risk_forecast"] = risk.model_dump(mode="json")
+    elif isinstance(risk, dict):
+        payload["risk_forecast"] = risk
     return payload
 
 
@@ -274,11 +275,7 @@ def _run_job(job_id: str, tenant_id: str, *, resume: ReviewDecision | None = Non
             )
             _save_job_result(session, job, values, paused)
             terminal_event = "review_required" if paused else "completed"
-            summary = (
-                "Workflow paused for human review."
-                if paused
-                else "Workflow completed."
-            )
+            summary = "Workflow paused for human review." if paused else "Workflow completed."
             _publish(redis, job.id, terminal_event, summary)
             return terminal_event
     except Exception:

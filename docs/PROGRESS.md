@@ -170,7 +170,7 @@ This document tracks progress across all phases, recording what was built, what 
 - **Prompt availability:** All four active prompts are present in `docs/prompts/`; see `docs/prompts/README.md`.
 - **Local note:** `.env` is ignored and not committed. `TEST_DATABASE_URL` points to `127.0.0.1` because Psycopg's raw connection otherwise stalls while resolving Windows `localhost` to IPv6 before trying Docker's IPv4 loopback binding.
 
-## Phase 10: API, workers, SSE (partial, 2026-11-02)
+## Phase 10: API, workers, SSE (initial partial checkpoint, superseded 2026-11-03)
 
 - **What Was Built:** Added FastAPI `/v1` routers for token issuance, tenant-scoped jobs/documents, reviews, factories, audit events, integrations, lookup settings, and regulation proposals. Passwords use Argon2; signed JWT principals carry UUID user/tenant IDs and role. Repository methods include the tenant predicate in each resource lookup. Upload validation enforces count/size/type/PDF magic/page limits and deduplicates identical documents; job idempotency hashes the sorted unique document-hash set per tenant.
 - **Async work and events:** Added a Redis-backed atomic fixed-window rate limiter, per-job Redis Streams, replay/tailing by `Last-Event-ID`, JSON-only summary events, Celery job/review-resume tasks, PostgreSQL graph checkpoint use, and tenant-bound review decisions. Added migration `2026_11_02_0003_api_submissions.py` for query/idempotency metadata, tenant settings, document associations, and proposal tenant ownership. `make build` exports `frontend/openapi.json`.
@@ -184,3 +184,12 @@ This document tracks progress across all phases, recording what was built, what 
 - Safety fixes committed: `c82aa4f` (audit triggers and external refs), `b1122d1` (guarded Ollama), `79e037b` (EXT/SANC semantics), and `ff93818` (100% Verifier coverage).
 - Targeted validation: 25 Verifier tests pass with 100% statement coverage (402/402); audit/domain/privacy targeted tests pass (17 passed); Ruff and strict mypy pass for changed application files.
 - The new PostgreSQL audit-trigger migration remains pending PostgreSQL verification. Phase 5 offline closure is complete; Phase 10 is next.
+
+## Phase 9/10 closure (2026-11-03)
+
+- **Phase 9 local enrichment:** Wired the `enrich` graph stage to tenant-scoped local snapshots through `backend/app/graph/services.py`. Facility and sanctions evidence retain snapshot hash, source, fetch time, and record key. No live provider calls are made; missing data escalates. The graph restart/resume and golden-set integration gates pass.
+- **Phase 10 API completion:** Added the scorecard, rendered-PDF/ETag, RAG query, factory-risk, `/v1/integrations/status`, and regulation-proposal decision routes. Added local workflow assembly with `LLM_PROVIDER=fake`, a deterministic fake explainer, and fail-closed production behavior when approved risk history is unavailable.
+- **Phase 10 gate:** Python 3.12.10; Ruff passed for `backend`, `scripts`, and `ml`; strict mypy passed across 97 application files; 10 targeted unit/e2e tests passed. `scripts/test_integration.ps1` passed all 4 real PostgreSQL/Redis tests (API tenant boundaries, upload/rate limits, SSE replay, real Celery full job and API HITL pause/resume, Postgres restart/resume, and the 150-case graph golden set). OpenAPI export succeeded.
+- **Repeatability fix:** API integration snapshot fixture now uses a per-run source ID and removes only its own source and dependent snapshot rows. Status assertions account for snapshots already present in the persistent test database and verify each tenant's live-lookup setting.
+- **Limitations / ADR-019:** The local factory uses no live external provider. Synthetic audit history is development-only; production fails closed when approved history is absent. Live provider integration remains Phase 14. Ragas semantic metrics remain `not_run`; the Phase 2 corpus and Phase 4 model limitations remain open.
+- **Next Phase:** Phase 11 frontend; first verify and pin the available Node.js and package-manager versions.

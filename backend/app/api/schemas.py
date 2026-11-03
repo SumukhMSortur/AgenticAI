@@ -28,6 +28,18 @@ class JobDetail(JobRead):
     scorecard_data: dict[str, Any] | None
 
 
+class ScorecardRead(BaseModel):
+    job_id: str
+    tenant_id: str
+    assessment_date: date
+    overall_status: Literal["compliant", "non_compliant", "review_required", "informational"]
+    risk_score: float | None
+    lines: list[dict[str, Any]]
+    re_audit_recommended: bool
+    summary: str
+    escalation: dict[str, Any] | None = None
+
+
 class DocumentRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -66,6 +78,15 @@ class FactoryRead(BaseModel):
     external_id: str | None
 
 
+class FactoryRiskRead(BaseModel):
+    factory_id: str
+    job_id: str
+    risk_score: float
+    model_tag: Literal["lstm", "xgboost", "logreg"]
+    baseline_comparison: dict[str, Any]
+    created_at: datetime
+
+
 class AuditEventRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -90,6 +111,9 @@ class IntegrationStatus(BaseModel):
     status: Literal["unverified", "disabled", "snapshot_only", "healthy", "unavailable"]
     live_enabled: bool
     as_of: datetime | None = None
+    record_count: int = Field(default=0, ge=0)
+    age_days: int | None = Field(default=None, ge=0)
+    health: Literal["unverified", "healthy", "stale", "unavailable"] = "unverified"
 
 
 class RegulationProposalRead(BaseModel):
@@ -100,3 +124,30 @@ class RegulationProposalRead(BaseModel):
     detected_at: datetime
     candidate_version_id: str
     status: str
+
+
+class RegulationProposalDecisionRequest(BaseModel):
+    decision: Literal["approved", "rejected"]
+    notes: str = Field(default="", max_length=4000)
+
+
+class RAGQueryRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=2000)
+    assessment_date: date
+    jurisdiction: str = Field(default="EU", min_length=2, max_length=8)
+    top_k: int = Field(default=5, ge=1, le=10)
+
+
+class RAGPassageRead(BaseModel):
+    chunk_id: str
+    text: str
+    regulation_id: str
+    version_id: str
+    jurisdiction: str
+    section_number: str
+    score: float
+
+
+class RAGQueryRead(BaseModel):
+    supported: bool
+    results: list[RAGPassageRead]

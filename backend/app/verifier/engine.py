@@ -58,11 +58,7 @@ class VerifierSettings(BaseModel):
     @model_validator(mode="after")
     def validate_ordered_thresholds(self) -> "VerifierSettings":
         """Reject contradictory thresholds before they affect rule outcomes."""
-        if not (
-            self.confidence_base
-            <= self.confidence_moderate_risk
-            <= self.confidence_high_risk
-        ):
+        if not (self.confidence_base <= self.confidence_moderate_risk <= self.confidence_high_risk):
             raise ValueError("confidence thresholds must be nondecreasing")
         if self.risk_moderate_threshold > self.risk_high_threshold:
             raise ValueError("risk thresholds must be nondecreasing")
@@ -202,9 +198,7 @@ class Verifier:
                 ]
             )
 
-            certificate_doc = context.certificate_doc_by_claim.get(
-                claim.claim_id, claim.doc_id
-            )
+            certificate_doc = context.certificate_doc_by_claim.get(claim.claim_id, claim.doc_id)
             bom_doc = context.bom_doc_by_claim.get(claim.claim_id)
             certificate_materials = _as_strings(
                 fields.get("scope_materials", materials_by_doc.get(certificate_doc))
@@ -268,48 +262,58 @@ class Verifier:
                 )
             external_lookup = context.external_lookups_by_claim.get(claim.claim_id)
             if external_lookup is not None:
+                external_evidence_ids = list(claim.evidence_ids)
+                if external_lookup.evidence_id is not None:
+                    external_evidence_ids.append(external_lookup.evidence_id)
                 results.extend(
                     [
                         v_ext_001.check(
                             external_lookup,
                             claim_id=claim.claim_id,
-                            evidence_ids=claim.evidence_ids,
+                            evidence_ids=external_evidence_ids,
                             not_found_threshold=self.settings.external_name_review_min,
                         ),
                         v_ext_002.check(
                             external_lookup,
                             claim_id=claim.claim_id,
-                            evidence_ids=claim.evidence_ids,
+                            evidence_ids=external_evidence_ids,
                             name_review_min=self.settings.external_name_review_min,
                             name_review_max=self.settings.external_name_review_max,
                         ),
                         v_ext_003.check(
                             external_lookup,
                             claim_id=claim.claim_id,
-                            evidence_ids=claim.evidence_ids,
+                            evidence_ids=external_evidence_ids,
                         ),
                         v_ext_900.check(
                             external_lookup,
                             context.assessment_date,
                             self.settings.snapshot_max_age_days,
                             claim_id=claim.claim_id,
-                            evidence_ids=claim.evidence_ids,
+                            evidence_ids=external_evidence_ids,
                         ),
                     ]
                 )
             if claim.claim_id in context.sanctions_matches_by_claim:
                 matches = context.sanctions_matches_by_claim[claim.claim_id]
+                sanctions_evidence_ids = list(claim.evidence_ids)
+                if matches is not None:
+                    sanctions_evidence_ids.extend(
+                        match.evidence_id
+                        for match in matches
+                        if match.evidence_id is not None
+                    )
                 results.extend(
                     [
                         v_sanc_001.check(
                             matches,
                             claim_id=claim.claim_id,
-                            evidence_ids=claim.evidence_ids,
+                            evidence_ids=sanctions_evidence_ids,
                         ),
                         v_sanc_002.check(
                             matches,
                             claim_id=claim.claim_id,
-                            evidence_ids=claim.evidence_ids,
+                            evidence_ids=sanctions_evidence_ids,
                             review_threshold=self.settings.sanctions_fuzzy_review,
                         ),
                     ]
@@ -319,7 +323,7 @@ class Verifier:
     def escalation_state(
         self,
         verdicts: Sequence[Verdict],
-        risk_score: float,
+        risk_score: float | None,
         critical_risk_threshold: float | None = None,
     ) -> EscalationState:
         """Derive escalation and its priority without changing rule outcomes."""
@@ -328,14 +332,12 @@ class Verifier:
             if critical_risk_threshold is None
             else critical_risk_threshold
         )
-        if not 0.0 <= risk_score <= 1.0 or not 0.0 <= critical_threshold <= 1.0:
+        if (
+            risk_score is not None and not 0.0 <= risk_score <= 1.0
+        ) or not 0.0 <= critical_threshold <= 1.0:
             raise ValueError("risk values must be between 0 and 1")
-        triggered = [
-            verdict
-            for verdict in verdicts
-            if verdict.outcome == "escalate"
-        ]
-        critical = risk_score >= critical_threshold or any(
+        triggered = [verdict for verdict in verdicts if verdict.outcome == "escalate"]
+        critical = (risk_score is not None and risk_score >= critical_threshold) or any(
             verdict.details.get("priority") == "critical" for verdict in verdicts
         )
         first = triggered[0] if triggered else None

@@ -14,11 +14,12 @@ from typing import TextIO
 from urllib.parse import urlsplit
 
 import pytest
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, text
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import sessionmaker
 
 from backend.app.core.config import settings
-from backend.app.db.audit_log import verify_chain
+from backend.app.db.audit_log import append_audit_event, verify_chain
 from backend.app.db.models import AuditEvent
 from backend.app.domain.models import EvidenceItem, GraphState
 from backend.app.graph.workflow import (
@@ -342,5 +343,36 @@ def test_postgres_checkpoint_runs_full_golden_set() -> None:
         rows = _audit_rows(connection_string, tenant_id)
         assert len(rows) == len(cases)
         assert all(row.event_type == "workflow.completed" for row in rows)
+    finally:
+        engine.dispose()
+
+
+@pytest.mark.integration
+def test_postgres_audit_events_are_append_only() -> None:
+    engine = create_engine(_postgres_url(), pool_pre_ping=True)
+    tenant_id = str(uuid.uuid4())
+    session_factory = sessionmaker(bind=engine, expire_on_commit=False)
+    try:
+        with session_factory() as session:
+            event = append_audit_event(
+                session,
+                tenant_id=tenant_id,
+                event_type="integration.audit-immutability",
+                payload={"test": True},
+            )
+            with pytest.raises(DBAPIError, match="audit_events is append-only"):
+                session.execute(
+                    text("UPDATE audit_events SET event_type = :event_type WHERE id = :event_id"),
+                    {"event_type": "tampered", "event_id": event.id},
+                )
+            session.rollback()
+
+            with pytest.raises(DBAPIError, match="audit_events is append-only"):
+                session.execute(
+                    text("DELETE FROM audit_events WHERE id = :event_id"),
+                    {"event_id": event.id},
+                )
+            session.rollback()
+            assert verify_chain(session, tenant_id) == (True, None)
     finally:
         engine.dispose()

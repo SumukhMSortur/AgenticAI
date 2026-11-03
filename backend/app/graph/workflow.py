@@ -102,10 +102,7 @@ class Router(Protocol):
     def route(self, query: str) -> RouteDecision: ...
 
 
-class PipelineStage(Protocol):
-    """Injected implementation for one isolated processing stage."""
-
-    def __call__(self, state: GraphState) -> GraphState: ...
+PipelineStage = Callable[[GraphState], GraphState]
 
 
 class Explainer(Protocol):
@@ -139,9 +136,7 @@ class VerifiedFinding:
 class ExplanationContext:
     """Privacy-minimized, decision-locked context for explanation drafting."""
 
-    overall_status: Literal[
-        "compliant", "non_compliant", "review_required", "informational"
-    ]
+    overall_status: Literal["compliant", "non_compliant", "review_required", "informational"]
     findings: tuple[VerifiedFinding, ...]
     evidence_ids: tuple[str, ...]
     risk_score: float | None
@@ -311,11 +306,35 @@ def _verify_node(
         risk_score = risk.p_fail_6m if risk is not None else context.risk_score
         active_context = context.model_copy(update={"risk_score": risk_score})
         verdicts = services.verifier.verify(claims, active_context)
-        escalation = services.verifier.escalation_state(
+        verifier_escalation = services.verifier.escalation_state(
             verdicts,
             risk_score,
             critical_risk_threshold=settings.risk_critical_threshold,
         )
+        upstream_escalation = state.get("escalation")
+        escalation = verifier_escalation
+        if upstream_escalation is not None and upstream_escalation.is_escalated:
+            if not verifier_escalation.is_escalated:
+                escalation = upstream_escalation
+            else:
+                escalation = EscalationState(
+                    is_escalated=True,
+                    priority=(
+                        "critical"
+                        if "critical"
+                        in {upstream_escalation.priority, verifier_escalation.priority}
+                        else "normal"
+                    ),
+                    reason=verifier_escalation.reason or upstream_escalation.reason,
+                    triggered_by_rule=(
+                        verifier_escalation.triggered_by_rule
+                        or upstream_escalation.triggered_by_rule
+                    ),
+                    details={
+                        "upstream": upstream_escalation.model_dump(mode="json"),
+                        "verifier": verifier_escalation.model_dump(mode="json"),
+                    },
+                )
         return {
             "verdicts": verdicts,
             "escalation": escalation,
@@ -354,15 +373,17 @@ def _decide_node(settings: GraphSettings) -> Callable[[GraphState], GraphState]:
                 )
             )
         risk = state.get("risk")
-        risk_score = risk.p_fail_6m if risk is not None else context.risk_score
+        risk_score = risk.p_fail_6m if risk is not None else None
         escalation = state.get("escalation") or EscalationState()
-        if risk_score >= settings.risk_review_threshold and not escalation.is_escalated:
+        if (
+            risk_score is not None
+            and risk_score >= settings.risk_review_threshold
+            and not escalation.is_escalated
+        ):
             escalation = EscalationState(
                 is_escalated=True,
                 priority=(
-                    "critical"
-                    if risk_score >= settings.risk_critical_threshold
-                    else "normal"
+                    "critical" if risk_score >= settings.risk_critical_threshold else "normal"
                 ),
                 reason="RISK_FORECAST_REQUIRES_REVIEW",
                 details={"risk_score": risk_score},
@@ -382,7 +403,10 @@ def _decide_node(settings: GraphSettings) -> Callable[[GraphState], GraphState]:
             overall_status=overall_status,
             risk_score=risk_score,
             lines=lines,
-            re_audit_recommended=risk_score >= settings.risk_reaudit_threshold or has_failure,
+            re_audit_recommended=(
+                risk_score is not None and risk_score >= settings.risk_reaudit_threshold
+            )
+            or has_failure,
             summary="",
         )
         return {
@@ -437,11 +461,11 @@ def _explain_node(
             for verdict in state.get("verdicts", [])
         )
         context = ExplanationContext(
-            overall_status=(
-                scorecard.overall_status if scorecard is not None else "informational"
-            ),
+            overall_status=(scorecard.overall_status if scorecard is not None else "informational"),
             findings=findings,
-            evidence_ids=tuple(sorted({item for finding in findings for item in finding.evidence_ids})),
+            evidence_ids=tuple(
+                sorted({item for finding in findings for item in finding.evidence_ids})
+            ),
             risk_score=scorecard.risk_score if scorecard is not None else None,
         )
         result = services.explainer.summarize(
@@ -472,7 +496,9 @@ def _record_node(
             "thread_id": state["thread_id"],
             "event_type": "workflow.completed",
             "prompt_version": state.get("prompt_version", settings.prompt_version),
-            "overall_status": scorecard.overall_status if scorecard is not None else "informational",
+            "overall_status": scorecard.overall_status
+            if scorecard is not None
+            else "informational",
             "verdicts": {
                 f"{verdict.claim_id}:{verdict.rule_id}": verdict.outcome
                 for verdict in state.get("verdicts", [])
@@ -518,14 +544,12 @@ def build_workflow(
         ("redact", services.redact, frozenset({"redacted_pages"})),
         ("extract", services.extract, frozenset({"fields", "claims", "evidence"})),
         ("enrich", services.enrich, frozenset({"evidence", "verification_context"})),
-        ("forecast", services.forecast, frozenset({"risk"})),
+        ("forecast", services.forecast, frozenset({"risk", "escalation"})),
         ("retrieve", services.retrieve, frozenset({"evidence", "retrieved_context"})),
     ):
         graph.add_node(
             node_name,
-            _as_langgraph_node(
-                _stage_node(node_name, handler, allowed_keys, active_settings)
-            ),
+            _as_langgraph_node(_stage_node(node_name, handler, allowed_keys, active_settings)),
             retry_policy=retry_policy,
         )
     graph.add_node("verify", _as_langgraph_node(_verify_node(services, active_settings)))
@@ -572,9 +596,7 @@ def build_workflow(
 def postgres_checkpointer(connection_string: str) -> Iterator[PostgresSaver]:
     """Open and initialize PostgreSQL checkpoint storage for durable HITL resumes."""
     if connection_string.startswith("postgresql+psycopg://"):
-        connection_string = connection_string.replace(
-            "postgresql+psycopg://", "postgresql://", 1
-        )
+        connection_string = connection_string.replace("postgresql+psycopg://", "postgresql://", 1)
     if not connection_string.startswith(("postgresql://", "postgres://")):
         raise ValueError("checkpoint URL must use PostgreSQL")
     with PostgresSaver.from_conn_string(connection_string) as checkpointer:

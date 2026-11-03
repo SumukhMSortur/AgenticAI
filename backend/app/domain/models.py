@@ -84,6 +84,7 @@ class ExternalLookup(BaseModel):
     snapshot_hash: str | None = None
     country_match: bool | None = None
     parent_company_match: bool | None = None
+    evidence_id: str | None = None
     details: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -96,6 +97,8 @@ class SanctionsMatch(BaseModel):
     score: float = Field(ge=0.0, le=1.0)
     record_key: str | None = None
     snapshot_hash: str
+    fetched_at: datetime | None = None
+    evidence_id: str | None = None
 
 
 class VerificationContext(BaseModel):
@@ -112,8 +115,8 @@ class VerificationContext(BaseModel):
     certificate_doc_by_claim: dict[str, str] = Field(default_factory=dict)
     bom_doc_by_claim: dict[str, str] = Field(default_factory=dict)
     external_lookups_by_claim: dict[str, ExternalLookup] = Field(default_factory=dict)
-    sanctions_matches_by_claim: dict[str, list[SanctionsMatch]] = Field(default_factory=dict)
-    risk_score: float = Field(default=0.0, ge=0.0, le=1.0)
+    sanctions_matches_by_claim: dict[str, list[SanctionsMatch] | None] = Field(default_factory=dict)
+    risk_score: float | None = Field(default=0.0, ge=0.0, le=1.0)
 
 
 class EvidenceItem(BaseModel):
@@ -223,15 +226,13 @@ class Scorecard(BaseModel):
     tenant_id: str
     assessment_date: date
     overall_status: Literal["compliant", "non_compliant", "review_required"]
-    risk_score: float = Field(ge=0.0, le=1.0)
+    risk_score: float | None = Field(ge=0.0, le=1.0)
     lines: list[ScorecardLine] = Field(default_factory=list)
     re_audit_recommended: bool = False
     summary: str = ""
 
 
-def merge_step_counts(
-    current: dict[str, int], update: dict[str, int]
-) -> dict[str, int]:
+def merge_step_counts(current: dict[str, int], update: dict[str, int]) -> dict[str, int]:
     """Accumulate successful node executions without discarding prior counters."""
     merged = dict(current)
     for node, count in update.items():

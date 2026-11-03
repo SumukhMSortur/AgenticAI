@@ -1,6 +1,7 @@
 """Authenticated, tenant-scoped HTTP endpoints."""
 
 from datetime import date
+from pathlib import Path
 from typing import Annotated
 
 from celery.exceptions import CeleryError
@@ -16,25 +17,32 @@ from fastapi import (
     status,
 )
 from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import Response
 from fastapi.security import OAuth2PasswordRequestForm
 from redis.asyncio import Redis
 from sqlalchemy.orm import Session
 from sse_starlette.sse import EventSourceResponse
 
 from backend.app.api import repositories
+from backend.app.api.document_pages import render_pdf_page
 from backend.app.api.events import publish_job_event, stream_job_events, validate_stream_id
 from backend.app.api.rate_limit import enforce_rate_limit
 from backend.app.api.schemas import (
     AuditEventRead,
     DocumentRead,
     FactoryRead,
+    FactoryRiskRead,
     IntegrationStatus,
     JobDetail,
     JobRead,
     LiveLookupSetting,
+    RAGQueryRead,
+    RAGQueryRequest,
+    RegulationProposalDecisionRequest,
     RegulationProposalRead,
     ReviewDecisionRequest,
     ReviewRead,
+    ScorecardRead,
     TokenResponse,
 )
 from backend.app.api.security import (
@@ -46,6 +54,11 @@ from backend.app.api.security import (
 from backend.app.api.uploads import validate_upload_batch
 from backend.app.core.config import settings
 from backend.app.db.session import get_db
+from backend.app.rag.ingestion import RegulationIngestionManager
+from backend.app.rag.query_service import (
+    get_regulation_query_service,
+    get_regulation_vector_store,
+)
 from backend.app.workers.tasks import process_job, resume_review
 
 router = APIRouter(
@@ -54,6 +67,7 @@ router = APIRouter(
 )
 
 Database = Annotated[Session, Depends(get_db)]
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 def _tenant_admin(principal: Principal) -> None:
@@ -176,12 +190,27 @@ async def get_job(
     principal: CurrentPrincipal,
     session: Database,
 ) -> JobDetail:
-    job = await run_in_threadpool(
-        repositories.get_job, session, principal.tenant_id, job_id
-    )
+    job = await run_in_threadpool(repositories.get_job, session, principal.tenant_id, job_id)
     if job is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
     return JobDetail.model_validate(job)
+
+
+@router.get("/jobs/{job_id}/scorecard", response_model=ScorecardRead, tags=["jobs"])
+async def get_job_scorecard(
+    job_id: str,
+    principal: CurrentPrincipal,
+    session: Database,
+) -> ScorecardRead:
+    job = await run_in_threadpool(repositories.get_job, session, principal.tenant_id, job_id)
+    if job is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
+    if job.scorecard_data is None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Scorecard is not available until workflow processing completes",
+        )
+    return ScorecardRead.model_validate(job.scorecard_data)
 
 
 @router.get("/jobs/{job_id}/documents", response_model=list[DocumentRead], tags=["documents"])
@@ -190,9 +219,7 @@ async def get_job_documents(
     principal: CurrentPrincipal,
     session: Database,
 ) -> list[DocumentRead]:
-    job = await run_in_threadpool(
-        repositories.get_job, session, principal.tenant_id, job_id
-    )
+    job = await run_in_threadpool(repositories.get_job, session, principal.tenant_id, job_id)
     if job is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
     documents = await run_in_threadpool(
@@ -224,6 +251,75 @@ async def get_document(
     return DocumentRead.model_validate(document)
 
 
+@router.get(
+    "/documents/{document_id}/pages/{page_number}.png",
+    tags=["documents"],
+    responses={200: {"content": {"image/png": {}}}, 304: {"description": "Not modified"}},
+)
+async def get_document_page(
+    document_id: str,
+    page_number: int,
+    principal: CurrentPrincipal,
+    session: Database,
+    if_none_match: Annotated[str | None, Header(alias="If-None-Match")] = None,
+) -> Response:
+    document = await run_in_threadpool(
+        repositories.get_document,
+        session,
+        principal.tenant_id,
+        document_id,
+    )
+    if document is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found",
+        )
+    if page_number < 1 or page_number > document.page_count:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document page not found",
+        )
+
+    etag = f'"{document.doc_hash}-page-{page_number}-scale-2"'
+    if if_none_match is not None and (
+        "*" in {value.strip() for value in if_none_match.split(",")}
+        or etag in {value.strip() for value in if_none_match.split(",")}
+    ):
+        return Response(status_code=status.HTTP_304_NOT_MODIFIED, headers={"ETag": etag})
+
+    upload_root = settings.UPLOAD_DIRECTORY
+    if not upload_root.is_absolute():
+        upload_root = _PROJECT_ROOT / upload_root
+    try:
+        content = await run_in_threadpool(
+            render_pdf_page,
+            document.storage_path,
+            upload_root,
+            principal.tenant_id,
+            page_number,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Stored document file is unavailable",
+        ) from exc
+    except IndexError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document page not found",
+        ) from exc
+    except PermissionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Stored document path is outside the tenant upload directory",
+        ) from exc
+    return Response(
+        content=content,
+        media_type="image/png",
+        headers={"ETag": etag, "Cache-Control": "private, max-age=300"},
+    )
+
+
 @router.get("/jobs/{job_id}/events", tags=["jobs"])
 async def get_job_events(
     job_id: str,
@@ -232,9 +328,7 @@ async def get_job_events(
     session: Database,
     last_event_id: Annotated[str | None, Header(alias="Last-Event-ID")] = None,
 ) -> EventSourceResponse:
-    job = await run_in_threadpool(
-        repositories.get_job, session, principal.tenant_id, job_id
-    )
+    job = await run_in_threadpool(repositories.get_job, session, principal.tenant_id, job_id)
     if job is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
     validate_stream_id(last_event_id)
@@ -408,6 +502,41 @@ async def get_factory(
     return FactoryRead.model_validate(factory)
 
 
+@router.get(
+    "/factories/{factory_id}/risk",
+    response_model=FactoryRiskRead,
+    tags=["factories"],
+)
+async def get_factory_risk(
+    factory_id: str,
+    principal: CurrentPrincipal,
+    session: Database,
+) -> FactoryRiskRead:
+    risk = await run_in_threadpool(
+        repositories.get_factory_risk,
+        session,
+        principal.tenant_id,
+        factory_id,
+    )
+    if risk is None:
+        factory = await run_in_threadpool(
+            repositories.get_factory,
+            session,
+            principal.tenant_id,
+            factory_id,
+        )
+        if factory is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Factory not found",
+            )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No risk forecast is available for this factory",
+        )
+    return FactoryRiskRead.model_validate(risk)
+
+
 @router.get("/audit-events", response_model=list[AuditEventRead], tags=["audit"])
 async def get_audit_events(
     principal: CurrentPrincipal,
@@ -471,7 +600,111 @@ async def get_regulation_proposals(
     return [RegulationProposalRead.model_validate(proposal) for proposal in proposals]
 
 
+@router.post(
+    "/regulation-proposals/{proposal_id}/decision",
+    response_model=RegulationProposalRead,
+    tags=["regulations"],
+)
+async def decide_regulation_proposal(
+    proposal_id: str,
+    body: RegulationProposalDecisionRequest,
+    principal: CurrentPrincipal,
+    session: Database,
+) -> RegulationProposalRead:
+    _reviewer(principal)
+    proposal = await run_in_threadpool(
+        repositories.get_regulation_proposal,
+        session,
+        principal.tenant_id,
+        proposal_id,
+    )
+    if proposal is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Regulation proposal not found",
+        )
+    if proposal.status != "pending":
+        if proposal.status != body.decision:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Regulation proposal has already been resolved",
+            )
+        return RegulationProposalRead.model_validate(proposal)
+
+    if body.decision == "rejected":
+        try:
+            await run_in_threadpool(
+                repositories.reject_regulation_proposal,
+                session,
+                principal.tenant_id,
+                proposal_id,
+                reviewer_id=principal.user_id,
+                notes=body.notes,
+            )
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=str(exc),
+            ) from exc
+    else:
+        store = await run_in_threadpool(get_regulation_vector_store)
+        manager = RegulationIngestionManager(store=store, db=session)
+        try:
+            await run_in_threadpool(
+                manager.approve_and_ingest,
+                proposal_id,
+                principal.user_id,
+                tenant_id=principal.tenant_id,
+                notes=body.notes,
+            )
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=str(exc),
+            ) from exc
+
+    decided = await run_in_threadpool(
+        repositories.get_regulation_proposal,
+        session,
+        principal.tenant_id,
+        proposal_id,
+    )
+    if decided is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Regulation proposal not found",
+        )
+    return RegulationProposalRead.model_validate(decided)
+
+
+@router.post("/query", response_model=RAGQueryRead, tags=["regulations"])
+async def query_regulations(
+    body: RAGQueryRequest,
+    _principal: CurrentPrincipal,
+) -> RAGQueryRead:
+    query = body.query.strip()
+    if not query:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Query must not be blank",
+        )
+    service = await run_in_threadpool(get_regulation_query_service)
+    supported, results = await run_in_threadpool(
+        service.query,
+        query,
+        body.assessment_date,
+        body.jurisdiction,
+        body.top_k,
+    )
+    return RAGQueryRead.model_validate({"supported": supported, "results": results})
+
+
 @router.get("/integrations", response_model=list[IntegrationStatus], tags=["integrations"])
+@router.get(
+    "/integrations/status",
+    response_model=list[IntegrationStatus],
+    tags=["integrations"],
+)
 async def get_integrations(
     principal: CurrentPrincipal,
     session: Database,

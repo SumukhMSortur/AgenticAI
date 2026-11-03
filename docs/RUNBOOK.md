@@ -82,11 +82,21 @@ in separate PowerShell terminals after applying migrations:
 .\.venv\Scripts\celery.exe -A backend.app.workers.celery_app:celery_app worker --pool=solo --loglevel=INFO
 ```
 
-`WORKFLOW_SERVICES_FACTORY` must name a real `module:factory` callable that
-returns the graph's production `WorkflowServices`. No production assembly is
-currently included in this checkout; leave it unset rather than substituting a
-test fake. Readiness, job submissions, and review decisions return 503 until
-the production factory is supplied.
+For the local, offline workflow gate, configure the explicitly fake-backed
+assembly in both the API and worker terminals:
+
+```powershell
+$env:LLM_PROVIDER = "fake"
+$env:WORKFLOW_SERVICES_FACTORY = "backend.app.graph.services:create_workflow_services"
+```
+
+This assembly uses a deterministic fake explainer and local external-data
+snapshots; it does not call live providers. Development/test risk forecasts may
+use the checked-in synthetic history. In `ENVIRONMENT=production`, that history
+is disabled and unavailable approved history escalates rather than returning a
+forecast. Do not treat this local setup as production model or live-integration
+readiness. Provider wiring and validated production audit history remain open
+work for later phases (ADR-019).
 
 Export the API schema for frontend type generation with:
 

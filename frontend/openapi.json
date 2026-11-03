@@ -254,6 +254,51 @@
         "title": "FactoryRead",
         "type": "object"
       },
+      "FactoryRiskRead": {
+        "properties": {
+          "baseline_comparison": {
+            "additionalProperties": true,
+            "title": "Baseline Comparison",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "factory_id": {
+            "title": "Factory Id",
+            "type": "string"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "model_tag": {
+            "enum": [
+              "lstm",
+              "xgboost",
+              "logreg"
+            ],
+            "title": "Model Tag",
+            "type": "string"
+          },
+          "risk_score": {
+            "title": "Risk Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "factory_id",
+          "job_id",
+          "risk_score",
+          "model_tag",
+          "baseline_comparison",
+          "created_at"
+        ],
+        "title": "FactoryRiskRead",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -269,6 +314,18 @@
       },
       "IntegrationStatus": {
         "properties": {
+          "age_days": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Days"
+          },
           "as_of": {
             "anyOf": [
               {
@@ -281,9 +338,26 @@
             ],
             "title": "As Of"
           },
+          "health": {
+            "default": "unverified",
+            "enum": [
+              "unverified",
+              "healthy",
+              "stale",
+              "unavailable"
+            ],
+            "title": "Health",
+            "type": "string"
+          },
           "live_enabled": {
             "title": "Live Enabled",
             "type": "boolean"
+          },
+          "record_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Record Count",
+            "type": "integer"
           },
           "source": {
             "title": "Source",
@@ -441,6 +515,128 @@
         "title": "LiveLookupSetting",
         "type": "object"
       },
+      "RAGPassageRead": {
+        "properties": {
+          "chunk_id": {
+            "title": "Chunk Id",
+            "type": "string"
+          },
+          "jurisdiction": {
+            "title": "Jurisdiction",
+            "type": "string"
+          },
+          "regulation_id": {
+            "title": "Regulation Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "section_number": {
+            "title": "Section Number",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "version_id": {
+            "title": "Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "chunk_id",
+          "text",
+          "regulation_id",
+          "version_id",
+          "jurisdiction",
+          "section_number",
+          "score"
+        ],
+        "title": "RAGPassageRead",
+        "type": "object"
+      },
+      "RAGQueryRead": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/RAGPassageRead"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "supported": {
+            "title": "Supported",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "supported",
+          "results"
+        ],
+        "title": "RAGQueryRead",
+        "type": "object"
+      },
+      "RAGQueryRequest": {
+        "properties": {
+          "assessment_date": {
+            "format": "date",
+            "title": "Assessment Date",
+            "type": "string"
+          },
+          "jurisdiction": {
+            "default": "EU",
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Jurisdiction",
+            "type": "string"
+          },
+          "query": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          },
+          "top_k": {
+            "default": 5,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Top K",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query",
+          "assessment_date"
+        ],
+        "title": "RAGQueryRequest",
+        "type": "object"
+      },
+      "RegulationProposalDecisionRequest": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "approved",
+              "rejected"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "RegulationProposalDecisionRequest",
+        "type": "object"
+      },
       "RegulationProposalRead": {
         "properties": {
           "candidate_version_id": {
@@ -564,6 +760,84 @@
           "priority"
         ],
         "title": "ReviewRead",
+        "type": "object"
+      },
+      "ScorecardRead": {
+        "properties": {
+          "assessment_date": {
+            "format": "date",
+            "title": "Assessment Date",
+            "type": "string"
+          },
+          "escalation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escalation"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "overall_status": {
+            "enum": [
+              "compliant",
+              "non_compliant",
+              "review_required",
+              "informational"
+            ],
+            "title": "Overall Status",
+            "type": "string"
+          },
+          "re_audit_recommended": {
+            "title": "Re Audit Recommended",
+            "type": "boolean"
+          },
+          "risk_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Score"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "tenant_id": {
+            "title": "Tenant Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "tenant_id",
+          "assessment_date",
+          "overall_status",
+          "risk_score",
+          "lines",
+          "re_audit_recommended",
+          "summary"
+        ],
+        "title": "ScorecardRead",
         "type": "object"
       },
       "TokenResponse": {
@@ -820,6 +1094,80 @@
         ]
       }
     },
+    "/v1/documents/{document_id}/pages/{page_number}.png": {
+      "get": {
+        "operationId": "get_document_page_v1_documents__document_id__pages__page_number__png_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "page_number",
+            "required": true,
+            "schema": {
+              "title": "Page Number",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-None-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-None-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "image/png": {}
+            },
+            "description": "Successful Response"
+          },
+          "304": {
+            "description": "Not modified"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Document Page",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
     "/v1/factories": {
       "get": {
         "operationId": "get_factories_v1_factories_get",
@@ -897,6 +1245,53 @@
         ]
       }
     },
+    "/v1/factories/{factory_id}/risk": {
+      "get": {
+        "operationId": "get_factory_risk_v1_factories__factory_id__risk_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "factory_id",
+            "required": true,
+            "schema": {
+              "title": "Factory Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FactoryRiskRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Factory Risk",
+        "tags": [
+          "factories"
+        ]
+      }
+    },
     "/v1/integrations": {
       "get": {
         "operationId": "get_integrations_v1_integrations_get",
@@ -909,6 +1304,36 @@
                     "$ref": "#/components/schemas/IntegrationStatus"
                   },
                   "title": "Response Get Integrations V1 Integrations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Integrations",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/v1/integrations/status": {
+      "get": {
+        "operationId": "get_integrations_v1_integrations_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IntegrationStatus"
+                  },
+                  "title": "Response Get Integrations V1 Integrations Status Get",
                   "type": "array"
                 }
               }
@@ -1160,6 +1585,99 @@
         ]
       }
     },
+    "/v1/jobs/{job_id}/scorecard": {
+      "get": {
+        "operationId": "get_job_scorecard_v1_jobs__job_id__scorecard_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScorecardRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Job Scorecard",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/v1/query": {
+      "post": {
+        "operationId": "query_regulations_v1_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RAGQueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RAGQueryRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Query Regulations",
+        "tags": [
+          "regulations"
+        ]
+      }
+    },
     "/v1/regulation-proposals": {
       "get": {
         "operationId": "get_regulation_proposals_v1_regulation_proposals_get",
@@ -1185,6 +1703,63 @@
           }
         ],
         "summary": "Get Regulation Proposals",
+        "tags": [
+          "regulations"
+        ]
+      }
+    },
+    "/v1/regulation-proposals/{proposal_id}/decision": {
+      "post": {
+        "operationId": "decide_regulation_proposal_v1_regulation_proposals__proposal_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegulationProposalDecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulationProposalRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Decide Regulation Proposal",
         "tags": [
           "regulations"
         ]
