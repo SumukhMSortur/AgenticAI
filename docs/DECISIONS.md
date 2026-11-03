@@ -65,12 +65,12 @@ This document tracks all locked design decisions, conflict resolutions, and depe
 - **V-DATE-001:** An impossible range (`valid_from > valid_to`) escalates, as required by the recovery prompt; it is not treated as an ordinary compliance failure.
 - **Rationale:** This preserves the contract already consumed by the domain and scorecard tests, satisfies the required evidence trace, and avoids maintaining two competing verdict schemas.
 
-### ADR-009: Conservative Phase 6 External Verification Semantics
-- **Context:** The resume prompt requires V-EXT-001/002/003/900 and V-SANC-001/002 from Addendum A3, but `ECOCHAIN_ADDENDUM_LIVE_DATA.md` is not present in the workspace. The master prompt specifies the verifier boundary, while ADR-007 establishes snapshot-first, local-only lookups and fail-closed handling.
-- **Decision:** Implement the rules against supplied local snapshot results only: exact facility identity can pass, an exact identifier conflict fails, uncertain matches or stale/missing provenance escalate, and unavailable required providers escalate. Exact sanctions hits fail at critical priority; fuzzy sanctions hits and missing sanctions evidence escalate at critical priority. Missing pages, confidence failures, and uncertain issuer matches escalate. High-confidence issuer similarity above the review band is accepted, matching the master prompt's 0.75–0.90 review interval.
+### ADR-009: Snapshot-Only External Verification Semantics
+- **Context:** External and sanctions rules are deterministic and consume local snapshot evidence; the source Addendum A3 is now present in `docs/prompts/ECOCHAIN_ADDENDUM_LIVE_DATA.md`.
+- **Decision:** Match Addendum A3: V-EXT-001 escalates when facility identity is not found; V-EXT-002 escalates on country mismatch or fuzzy name ratios from 0.75 through 0.90; V-EXT-003 escalates on a different or unverified parent company; V-EXT-900 escalates on unavailable or stale sources. Absence is never an automatic failure. V-SANC-001 fails only exact identifier hits at critical priority; V-SANC-002 escalates name-only and fuzzy matches at or above 0.90 at critical priority. Missing external evidence remains fail-closed.
 - **Escalation priority:** Critical risk at the configured high-risk threshold or a rule explicitly marked critical yields `critical`; other escalations yield `normal`. Verdict outcomes remain unchanged by this classification.
-- **Rationale:** These conservative semantics preserve the no-network verifier and do not claim details absent from the source spec.
-- **Limitation:** These are implementation assumptions, not verified Addendum A3 semantics. Before production provider wiring, compare every external/sanctions threshold and outcome with the restored addendum and record any reconciliation.
+- **Rationale:** Local snapshot inputs keep the Verifier pure and prevent supplier lookups from causing network egress inside the rule engine.
+- **Evidence:** Boundary tests in `backend/tests/unit/test_verifier_rules.py` cover thresholds, missing values, parent-company mismatch, staleness, and critical sanctions outcomes.
 
 ### ADR-010: Validation-Only Risk Model Promotion
 - **Context:** Phase 7 requires comparable Logistic Regression, XGBoost, and CPU PyTorch LSTM models, validation-only calibration, test confidence intervals, and a versioned served artifact.
@@ -105,3 +105,9 @@ This document tracks all locked design decisions, conflict resolutions, and depe
 - **Decision:** Require an integration gate that pauses a workflow in a child process, terminates that process, restarts the local PostgreSQL container, and resumes the same thread in a new process. Verify the resulting scorecard/verdicts, persisted audit row, and audit hash chain. Also run the complete 150-case golden set through PostgreSQL-backed workflow checkpoints and audit recording.
 - **Verification:** Both PostgreSQL integration tests pass. The full suite passes (87 passed, zero skipped; 93% app coverage); Ruff and strict mypy pass. The phase is tagged `phase-9-complete`, while `phase-9-partial` remains as the historical checkpoint.
 - **Rationale:** This supplies direct evidence of durable checkpoint recovery and real database-backed workflow behavior rather than inferring it from in-memory or same-process tests.
+
+### ADR-015: Enforce audit immutability and external provenance at boundaries
+- **Context:** The conformance audit found that ORM listeners could be bypassed by raw SQL and that external `EvidenceItem` kinds accepted incomplete provenance. It also found the local Ollama checker bypassed the outbound-network import boundary.
+- **Decision:** Add database-level update/delete triggers with ORM listeners retained as defense in depth; validate `ExternalRef` for every external evidence kind; and place Ollama HTTP under `integrations/`, requiring tenant context and a successful `OutboundGuard` check before transmission.
+- **Verification:** Targeted audit/domain/privacy tests and Ruff/strict mypy pass. The SQLite test blocks raw SQL tampering. PostgreSQL verification of migration `2026_11_02_0004` remains pending because Docker Desktop's engine was unavailable.
+- **Rationale:** This preserves audit integrity and data minimization without making the deterministic domain or Verifier perform I/O.

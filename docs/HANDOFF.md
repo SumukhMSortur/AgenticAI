@@ -3,15 +3,15 @@
 | Phase | Status (done / partial / not started) | Tag | Tests | Metrics produced (file) | Deviations and ADRs | Blockers |
 |---|---|---|---|---|---|---|
 | 0 Recon, plan, skeleton | done | `phase-0-complete` | Current full gate passes | — | Historical record in `docs/PROGRESS.md` | None known |
-| 1 Foundations | done | `phase-1-complete` | Current full gate passes | — | Verdict contract reconciliation is ADR-008 | None known |
-| 2 Data | done | `phase-2-complete` | Data tests pass | `data/MANIFEST.json` | Generated data is local/ignored | None known |
-| 3 Privacy boundary | done | `phase-3-complete` | Leakage tests pass | `reports/redaction.json` | External services unavailable locally | Docker not installed |
-| 4 Extraction | done | `phase-4-complete` | Extraction tests pass | `reports/extraction.json` | Historical phase evidence is not fully recorded in `docs/PROGRESS.md` | None known |
+| 1 Foundations | partial | `phase-1-complete` | Domain/audit safety tests pass; PostgreSQL migration check pending | — | Trigger migration 0004 added; SQLite all-revisions check is blocked by pre-existing migration 0003 | Docker engine unavailable; PostgreSQL trigger not yet verified |
+| 2 Data | partial | `phase-2-complete` | Generator and manifest tests pass | `data/MANIFEST.json` | 180 PDFs do not meet "hundreds"; visual variation needs expansion | Expand the corpus and document types |
+| 3 Privacy boundary | done | `phase-3-complete` | Leakage and guard tests pass | `reports/redaction.json` | Ollama is now a tenant-scoped guarded integration; live provider adapters remain unimplemented | None for the local privacy boundary |
+| 4 Extraction | partial | `phase-4-complete` | Heuristic evaluation tests pass | `reports/extraction.json` | LayoutLMv3 fine-tuning/inference is still a stub; report uses heuristic output | Implement and evaluate the actual model |
 | 5 Compliance RAG | partial | `phase-5-complete` | Current RAG tests pass | No `reports/rag.json` found | Tag exists, but phase acceptance evidence is incomplete | RAG report/phase gate evidence |
-| 6 Deterministic verifier | done | `phase-6-complete` | Ruff, strict mypy, 63 tests; verifier package 100% statement coverage; golden result 150/150 | `reports/verifier.json` | ADR-008/009; external semantics conservatively inferred because Addendum A3 is missing | Addendum A3 semantics are unverified; no expected EXT/SANC golden labels |
+| 6 Deterministic verifier | done | `phase-6-complete` | 25 targeted tests; verifier package 100% statement coverage; golden result 150/150 | `reports/verifier.json` | ADR-008/009; external semantics were corrected against restored Addendum A3 | Golden set has no expected V-EXT/V-SANC labels |
 | 7 Predictive risk | done | `phase-7-complete` | Ruff, strict mypy, 70 tests; risk package 100% statement coverage; CPU training/inference verified | `reports/risk.json` | ADR-010; synthetic-only metrics; XGBoost selected using validation metrics | Trained weights are local/ignored and must be regenerated for inference |
 | 8 Intent router | done | `phase-8-complete` | Ruff, strict mypy, 79 tests; 93% total app coverage; repeated benchmark reproduced metrics and artifact hash | `reports/router.json` | ADR-011; DNN tied baseline and was not retained | Local MiniLM cache required; small labeled query set |
-| 9 LangGraph orchestration | done | `phase-9-complete` | Ruff, strict mypy; 87 passed, no skips; 93% total app coverage | — | ADR-012/014; process/container restart and PostgreSQL golden-set gates pass | None for Phase 9 |
+| 9 LangGraph orchestration | partial | `phase-9-complete` | Core restart/resume gate passed; no production enrich wiring | — | ADR-012/014; graph is durable, but A4 local snapshot enrich is not assembled into production services | Enrichment and service assembly |
 | 10 API, workers, SSE | partial | `phase-10-partial` | Ruff, strict mypy, 94 tests; real PostgreSQL/Redis API integration passed | `frontend/openapi.json` | JWT, tenant-scoped repositories, PDF validation, idempotent submissions, Redis rate limiting/streams, SSE replay, Celery task entrypoints | No production `WorkflowServices` factory; full job-flow and API HITL gate cannot pass |
 | 11 Frontend | not started | — | — | — | — | Frontend files/package manifest not yet verified |
 | 12 Evaluation, CI, Docker | not started | — | — | — | — | Full-stack Docker/CI implementation not started |
@@ -33,7 +33,9 @@
 - **Phase 10 evidence:** Python 3.12.10; Ruff passed for `backend` and `scripts`; strict mypy passed on 84 application files; full suite passed (94 passed, zero skipped in 117.03 seconds), 85% total application coverage. The integration test uses the real local PostgreSQL and Redis services for tenant-denial checks, rate limiting, upload abuse, SSE replay/reconnect, and fail-closed worker configuration. Migration 0003 upgraded and downgraded/re-upgraded successfully on both `ecochain` and `ecochain_test`.
 - **Phase 10 blocker:** No production pipeline assembles the graph's required `WorkflowServices`. Set `WORKFLOW_SERVICES_FACTORY=module:factory` only after a real factory exists; it must return production services, not test fakes. Until then, readiness, uploads, and review decisions correctly fail closed with 503, and Phase 10 remains partial. The integration test does not claim full job execution or API HITL resume.
 - **Step E gate:** Ruff passed (`backend`, `scripts`, `ml`); strict mypy passed across 74 app files; all Compose services were healthy, migrations upgraded both databases and rolled `ecochain_test` down/up, and Redis returned `PONG`.
-- **Prompt persistence:** `docs/prompts/RESUME_PROMPT.md` and `docs/prompts/FINISH_PROMPT.md` preserve the two available source prompts. The original `ECOCHAIN_MASTER_PROMPT.md` and `ECOCHAIN_ADDENDUM_LIVE_DATA.md` were not found in the repository or session attachments, so their contents were not fabricated. See `docs/prompts/README.md`.
+- **Prompt persistence:** All four active prompts are present under `docs/prompts/`; see `docs/prompts/README.md`. The conformance audit is recorded in `docs/CONFORMANCE.md`.
+- **Conformance fixes:** Commits `c82aa4f`, `b1122d1`, and `79e037b` add audit/provenance validation, route Ollama through the outbound guard, and align EXT/SANC rule semantics with Addendum A3. The verifier coverage test passes at 100%; `reports/verifier.json` records 150/150 core golden outcomes.
+- **Migration check limitation:** Docker Desktop's engine did not respond during this audit. SQLite `alembic upgrade head` stops at the older migration `2026_11_02_0003_api_submissions.py` (`ALTER COLUMN ... DROP DEFAULT` is unsupported there), so migration 0004 still needs the PostgreSQL service-backed check.
 - **How to run the gate on Windows PowerShell:**
 
   ```powershell
@@ -44,5 +46,5 @@
   .\.venv\Scripts\python.exe -m scripts.export_openapi
   ```
 
-- **Exact next action:** Implement the real production `WorkflowServices` assembly and validate Celery full-job processing plus API HITL pause/resume against PostgreSQL/Redis; then rerun Gate 10 before tagging `phase-10-complete`.
-- **Open risks:** The original master prompt and live-data addendum are missing, so their additional exact requirements cannot be validated. External/sanctions semantics remain assumptions in ADR-009. Phase 10 has no production graph services factory yet; Phase 11+ are not started.
+- **Exact next action:** Close Phase 5 with a real cross-encoder, at least 60 labeled retrieval queries, and reproducible `reports/rag.json`; then resume Phase 10 endpoint and production `WorkflowServices` work.
+- **Open risks:** PostgreSQL verification of audit trigger migration 0004; Phase 4 model training; Phase 10 missing endpoints and graph factory. Phase 11+ are not started.
