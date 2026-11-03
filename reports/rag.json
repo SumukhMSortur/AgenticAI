@@ -617,7 +617,7 @@
     "no_support_query_count": true,
     "supported_query_recall": true
   },
-  "generated_at": "2026-11-03T12:57:55.120806+00:00",
+  "generated_at": "2026-11-03T13:00:00.023634+00:00",
   "models": {
     "embedding": "all-MiniLM-L6-v2",
     "generator": {
@@ -1458,6 +1458,6 @@
     "ragas": "0.4.3",
     "sentence_transformers": "6.2.0"
   },
-  "source_git_sha": "f540b0a6b3f66372e6eeb85f0b94907fc19fe233",
+  "source_git_sha": "f2ccee3303d5c21f9822a32102e50cfcf5856f98",
   "status": "offline_pass_ragas_not_run"
 }
