@@ -424,6 +424,13 @@ def test_v_conf_001_risk_adjusted_thresholds_and_validation() -> None:
 
 
 def test_v_ext_001_identity_match_conflict_ambiguity_and_missing() -> None:
+    with pytest.raises(ValueError, match="between 0 and 1"):
+        v_ext_001.check(
+            _external_lookup(),
+            claim_id=_CLAIM_ID,
+            evidence_ids=_EVIDENCE_IDS,
+            not_found_threshold=1.1,
+        )
     _assert_result(
         v_ext_001.check(None, claim_id=_CLAIM_ID, evidence_ids=_EVIDENCE_IDS),
         "V-EXT-001",
@@ -857,6 +864,10 @@ def test_verifier_settings_reject_incomplete_configuration(tmp_path: Path) -> No
     invalid_thresholds = settings.model_dump()
     invalid_thresholds["issuer_fail_below"] = 0.95
     with pytest.raises(ValueError, match="issuer thresholds"):
+        VerifierSettings.model_validate(invalid_thresholds)
+    invalid_thresholds = settings.model_dump()
+    invalid_thresholds["external_name_review_min"] = 0.95
+    with pytest.raises(ValueError, match="external name review thresholds"):
         VerifierSettings.model_validate(invalid_thresholds)
     config_path = tmp_path / "empty.yaml"
     config_path.write_text("[]", encoding="utf-8")
