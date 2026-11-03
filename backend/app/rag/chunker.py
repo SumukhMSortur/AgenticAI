@@ -17,6 +17,7 @@ class RegulationChunk:
     text: str
     regulation_id: str
     version_id: str
+    parent_id: str
     jurisdiction: str
     effective_from: date
     superseded_by: str | None  # ISO date string or None
@@ -69,6 +70,7 @@ def chunk_regulations(regulations_path: Path) -> list[RegulationChunk]:
                     text=f"[Preamble] {title}\n\n{preamble}",
                     regulation_id=reg_id,
                     version_id=version_id,
+                    parent_id=version_id,
                     jurisdiction=jurisdiction,
                     effective_from=effective_from,
                     superseded_by=superseded_date,
@@ -96,6 +98,7 @@ def chunk_regulations(regulations_path: Path) -> list[RegulationChunk]:
                     text=f"[{art_num}{(' – ' + sec_title) if sec_title else ''}]\n\n{sec_text}",
                     regulation_id=reg_id,
                     version_id=version_id,
+                    parent_id=str(section.get("parent_section_id") or version_id),
                     jurisdiction=jurisdiction,
                     effective_from=effective_from,
                     superseded_by=superseded_date,

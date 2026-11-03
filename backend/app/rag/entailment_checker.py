@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
+from math import isfinite
 
+from backend.app.core.errors import EntailmentEscalationError
 from backend.app.core.logging import get_logger
 
 logger = get_logger(__name__)
@@ -79,21 +82,48 @@ class RuleBasedEntailmentChecker(IEntailmentChecker):
 
 
 class LLMEntailmentChecker(IEntailmentChecker):
-    """LLM-based entailment checker stub.
+    """LLM-based entailment checker that fails closed when no guarded judge is available."""
 
-    In production: send (claim, citation_text) to LLM via OutboundGuard.
-    Falls back to RuleBasedEntailmentChecker when no LLM key is configured.
-    """
-
-    def __init__(self) -> None:
-        self._fallback = RuleBasedEntailmentChecker()
+    def __init__(
+        self,
+        judge: Callable[[str, str], tuple[bool, float]] | None = None,
+    ) -> None:
+        self._judge = judge
 
     def check(self, claim: str, citation_text: str) -> tuple[bool, float]:
-        # Stub: always delegate to rule-based until Gemini integration is wired in Phase 9
-        logger.info("LLMEntailmentChecker: falling back to rule-based (LLM not configured)")
-        return self._fallback.check(claim, citation_text)
+        if not claim.strip() or not citation_text.strip():
+            raise EntailmentEscalationError("Claim and cited passage are required for entailment.")
+        if self._judge is None:
+            raise EntailmentEscalationError("No guarded entailment judge is configured.")
+
+        entailed, confidence = self._judge(claim, citation_text)
+        if (
+            not isinstance(entailed, bool)
+            or isinstance(confidence, bool)
+            or not isinstance(confidence, (int, float))
+            or not isfinite(confidence)
+            or not 0 <= confidence <= 1
+        ):
+            raise EntailmentEscalationError("Entailment judge returned an invalid result.")
+        logger.info(
+            "Citation entailment evaluated",
+            extra={"confidence": confidence, "entailed": entailed},
+        )
+        return entailed, round(confidence, 4)
 
 
-def get_entailment_checker() -> IEntailmentChecker:
-    """Factory: return the appropriate entailment checker."""
-    return LLMEntailmentChecker()
+def get_entailment_checker(
+    tenant_id: str | None = None,
+    tenant_opted_in: bool = False,
+) -> IEntailmentChecker:
+    """Create the guarded Gemini checker; missing tenant consent fails closed on use."""
+    if tenant_id is None:
+        return LLMEntailmentChecker()
+
+    from backend.app.integrations.gemini_entailment import GeminiEntailmentJudge
+
+    judge = GeminiEntailmentJudge(
+        tenant_id=tenant_id,
+        tenant_opted_in=tenant_opted_in,
+    )
+    return LLMEntailmentChecker(judge=judge)

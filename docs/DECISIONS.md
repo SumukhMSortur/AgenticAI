@@ -111,3 +111,15 @@ This document tracks all locked design decisions, conflict resolutions, and depe
 - **Decision:** Add database-level update/delete triggers with ORM listeners retained as defense in depth; validate `ExternalRef` for every external evidence kind; and place Ollama HTTP under `integrations/`, requiring tenant context and a successful `OutboundGuard` check before transmission.
 - **Verification:** Targeted audit/domain/privacy tests and Ruff/strict mypy pass. The SQLite test blocks raw SQL tampering. PostgreSQL verification of migration `2026_11_02_0004` remains pending because Docker Desktop's engine was unavailable.
 - **Rationale:** This preserves audit integrity and data minimization without making the deterministic domain or Verifier perform I/O.
+
+### ADR-016: Ragas Dependency Compatibility
+- **Context:** Ragas 0.4.3 imports `langchain_community.chat_models.vertexai`, which is absent from `langchain-community` 0.4.2; its import fails with that release.
+- **Decision:** Pin `langchain-community==0.3.31` and declare the OpenAI judge dependencies (`openai` and `httpx2`) explicitly. Keep the project's LangChain and LangChain Core versions unchanged.
+- **Verification:** Ragas imports successfully under Python 3.12; all 20 RAG unit tests pass; targeted strict mypy and Ruff pass.
+- **Rationale:** This is the narrowest compatibility pin that makes the selected Ragas release usable without broad framework upgrades.
+
+### ADR-017: RAG Evaluation Thresholds and External-Call Consent
+- **Context:** Phase 5 requires a reproducible golden retrieval set, citation metrics, faithfulness, and answer relevance. Completing the semantic metrics sends evaluation prompts and public regulation excerpts to third-party model providers.
+- **Decision:** Require at least 60 labeled queries, precision@5 >= 0.20, recall@5 >= 0.90, faithfulness >= 0.80, and answer relevance >= 0.80. Use a locally cached embedding model and CrossEncoder for retrieval; use guarded Gemini generation and a separately guarded OpenAI judge for Ragas. External evaluation is disabled unless the operator passes `--allow-external-model-calls`; disable Ragas telemetry before constructing the judge.
+- **Verification:** Citation-only run passes precision@5 `0.20`, recall@5 `1.00`, and MRR@5 `0.9833` on 60 queries. Ragas semantic metrics remain pending and are not represented as passed.
+- **Rationale:** With one relevant expected chunk per query, precision@5 `0.20` requires the relevant result to appear in the top five. Separate-provider judging, explicit consent, and disabled telemetry make the remaining evaluation boundary visible and auditable.

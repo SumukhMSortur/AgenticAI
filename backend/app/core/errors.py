@@ -54,6 +54,20 @@ class PrivacyViolationError(EcoChainError):
         super().__init__(message=message, code="PRIVACY_LEAKAGE_DETECTED", details=details)
 
 
+class EntailmentEscalationError(EcoChainError):
+    """Raised when citation support cannot be established safely."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message=message, code="CITATION_ENTAILMENT_UNAVAILABLE")
+
+
+class RAGGenerationError(EcoChainError):
+    """Raised when a grounded RAG response cannot be produced."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message=message, code="RAG_GENERATION_FAILED")
+
+
 class AuditChainTamperError(EcoChainError):
     """Raised when the hash-chain integrity of the append-only audit log fails."""
 

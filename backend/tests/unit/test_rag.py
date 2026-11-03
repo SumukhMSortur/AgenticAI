@@ -2,18 +2,107 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
+from collections.abc import Sequence
 from datetime import date
 from pathlib import Path
 
+import httpx2
 import pytest
+from google.genai import types
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session, sessionmaker
 
+from backend.app.core.config import settings
+from backend.app.core.errors import (
+    EntailmentEscalationError,
+    PrivacyViolationError,
+    RAGGenerationError,
+)
+from backend.app.db.audit_log import verify_chain
+from backend.app.db.models import AuditEvent
+from backend.app.db.session import Base
+from backend.app.integrations.gemini_entailment import (
+    GeminiClient,
+    GeminiEntailmentJudge,
+    GeminiModels,
+)
+from backend.app.integrations.gemini_rag import GeminiRAGAnswerer
+from backend.app.integrations.openai_ragas import GuardedOpenAIRagasJudge
 from backend.app.rag.chunker import RegulationChunk, chunk_regulations
-from backend.app.rag.entailment_checker import RuleBasedEntailmentChecker
-from backend.app.rag.retriever import HybridRetriever
+from backend.app.rag.entailment_checker import LLMEntailmentChecker, RuleBasedEntailmentChecker
+from backend.app.rag.evaluation import (
+    GoldenQuery,
+    RAGEvaluationCase,
+    citation_metrics,
+    evaluate_ragas,
+    load_golden_queries,
+)
+from backend.app.rag.retriever import CrossEncoderReranker, HybridRetriever
 from backend.app.rag.store import ChromaVectorStore
 
 REGULATIONS_FILE = Path("data/regulations/csddd_regulations.json")
+
+
+class StubPairScorer:
+    def __init__(self, scores: list[float] | None = None) -> None:
+        self.scores = scores
+        self.inputs: Sequence[tuple[str, str]] = []
+        self.options: tuple[bool, bool] | None = None
+
+    def predict(
+        self,
+        inputs: Sequence[tuple[str, str]],
+        *,
+        show_progress_bar: bool,
+        convert_to_numpy: bool,
+    ) -> list[float]:
+        self.inputs = inputs
+        self.options = (show_progress_bar, convert_to_numpy)
+        return self.scores if self.scores is not None else [1.0] * len(inputs)
+
+
+class FakeGeminiResponse:
+    def __init__(self, text: str | None) -> None:
+        self.text = text
+
+
+class FakeGeminiModels(GeminiModels):
+    def __init__(self, response_text: str) -> None:
+        self.called = False
+        self.response_text = response_text
+
+    def generate_content(
+        self,
+        *,
+        model: str,
+        contents: str,
+        config: types.GenerateContentConfig,
+    ) -> FakeGeminiResponse:
+        self.called = True
+        self.last_call = (model, contents, config)
+        return FakeGeminiResponse(self.response_text)
+
+
+class FakeGeminiClient(GeminiClient):
+    def __init__(self, models: FakeGeminiModels) -> None:
+        self.models = models
+
+
+class FakeRagasScorer:
+    def __init__(self, scores: tuple[float, float] = (0.8, 0.9)) -> None:
+        self.scores = scores
+        self.samples: list[tuple[str, str, list[str]]] = []
+
+    async def score(
+        self,
+        query: str,
+        response: str,
+        retrieved_contexts: list[str],
+    ) -> tuple[float, float]:
+        self.samples.append((query, response, retrieved_contexts))
+        return self.scores
 
 
 # ---------------------------------------------------------------------------
@@ -34,6 +123,7 @@ def test_chunker_produces_chunks() -> None:
         assert chunk.chunk_id, "chunk_id must not be empty."
         assert chunk.text, "chunk text must not be empty."
         assert chunk.effective_from, "effective_from must be set."
+        assert chunk.parent_id == chunk.version_id
 
 
 def test_chunker_date_filter_superseded() -> None:
@@ -134,7 +224,11 @@ def test_hybrid_retriever_returns_ranked_results() -> None:
         for c in chunks
     ]
 
-    retriever = HybridRetriever(vector_store=store, corpus_chunks=corpus)
+    retriever = HybridRetriever(
+        vector_store=store,
+        corpus_chunks=corpus,
+        reranker=CrossEncoderReranker(model=StubPairScorer()),
+    )
     results = retriever.retrieve(
         query="due diligence supply chain obligations",
         assessment_date=date(2026, 12, 1),
@@ -145,6 +239,125 @@ def test_hybrid_retriever_returns_ranked_results() -> None:
     for r in results:
         assert "_rrf_score" in r
         assert r["_rrf_score"] > 0
+        assert "_cross_encoder_score" in r
+
+
+def test_cross_encoder_reranks_by_pair_score() -> None:
+    """Cross-encoder scores, rather than RRF order, determine the final ranking."""
+    scorer = StubPairScorer([0.1, 0.9])
+    reranker = CrossEncoderReranker(model=scorer)
+    candidates = [
+        {"chunk_id": "first", "text": "first legal passage"},
+        {"chunk_id": "second", "text": "second legal passage"},
+    ]
+
+    results = reranker.rerank("query", candidates)
+
+    assert [item["chunk_id"] for item in results] == ["second", "first"]
+    assert [item["_cross_encoder_score"] for item in results] == [0.9, 0.1]
+    assert list(scorer.inputs) == [
+        ("query", "first legal passage"),
+        ("query", "second legal passage"),
+    ]
+
+
+def test_cross_encoder_rejects_invalid_score_count() -> None:
+    """A model returning one score per candidate is required; failures are not hidden."""
+    reranker = CrossEncoderReranker(model=StubPairScorer([0.5]))
+    candidates = [
+        {"chunk_id": "first", "text": "first legal passage"},
+        {"chunk_id": "second", "text": "second legal passage"},
+    ]
+
+    with pytest.raises(RuntimeError, match="invalid score vector"):
+        reranker.rerank("query", candidates)
+
+
+def test_golden_rag_set_has_at_least_sixty_labeled_queries() -> None:
+    queries = load_golden_queries(Path("data/golden/rag_golden_set.json"))
+    assert len(queries) >= 60
+    assert len({query.query_id for query in queries}) == len(queries)
+    assert all(query.expected_chunk_ids for query in queries)
+
+
+def test_citation_metrics_use_expected_chunk_ids() -> None:
+    query = GoldenQuery(
+        query_id="RAG-test",
+        query="What is required?",
+        assessment_date=date(2026, 1, 1),
+        jurisdiction="EU",
+        expected_chunk_ids=("expected",),
+        reference_answer="A requirement.",
+    )
+    case = RAGEvaluationCase(
+        golden_query=query,
+        retrieved_chunks=(
+            {"chunk_id": "expected", "text": "relevant"},
+            {"chunk_id": "other", "text": "unrelated"},
+        ),
+    )
+
+    result = citation_metrics([case], k=2)
+
+    assert result["citation_precision_at_k"] == 0.5
+    assert result["citation_recall_at_k"] == 1.0
+    assert result["mean_reciprocal_rank_at_k"] == 1.0
+
+
+def test_ragas_aggregation_accepts_fake_judge_without_network() -> None:
+    query = GoldenQuery(
+        query_id="RAG-test",
+        query="What is required?",
+        assessment_date=date(2026, 1, 1),
+        jurisdiction="EU",
+        expected_chunk_ids=("expected",),
+        reference_answer="A requirement.",
+    )
+    case = RAGEvaluationCase(
+        golden_query=query,
+        retrieved_chunks=({"chunk_id": "expected", "text": "The requirement."},),
+        response="The requirement is to provide evidence.",
+    )
+    fake_judge = FakeRagasScorer()
+
+    result = asyncio.run(evaluate_ragas([case], fake_judge))
+
+    assert result["faithfulness"] == 0.8
+    assert result["answer_relevance"] == 0.9
+    assert len(fake_judge.samples) == 1
+    assert fake_judge.samples[0][2] == ["The requirement."]
+
+
+def test_guarded_openai_ragas_requires_opt_in_and_allowlisted_payload(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    with pytest.raises(PrivacyViolationError, match="explicit tenant opt-in"):
+        GuardedOpenAIRagasJudge(
+            model="gpt-4o-mini",
+            tenant_id="tenant-test",
+            tenant_opted_in=False,
+        )
+
+    judge = GuardedOpenAIRagasJudge(
+        model="gpt-4o-mini",
+        tenant_id="tenant-test",
+        tenant_opted_in=True,
+    )
+    request = httpx2.Request(
+        "POST",
+        "https://api.openai.com/v1/chat/completions",
+        json={"model": "gpt-4o-mini", "messages": [], "unexpected": "blocked"},
+    )
+
+    async def verify_request() -> None:
+        try:
+            await judge._guard_request(request)
+        finally:
+            await judge.aclose()
+
+    with pytest.raises(PrivacyViolationError, match="disallowed fields"):
+        asyncio.run(verify_request())
 
 
 def test_entailment_checker_positive_case() -> None:
@@ -171,11 +384,86 @@ def test_entailment_checker_negative_case() -> None:
     assert confidence < 0.8, f"Unexpected high confidence={confidence} for non-overlapping texts."
 
 
+def test_llm_entailment_checker_uses_judge_and_fails_closed() -> None:
+    checker = LLMEntailmentChecker(lambda _claim, _citation: (False, 0.91))
+    assert checker.check("claim", "citation") == (False, 0.91)
+
+    with pytest.raises(EntailmentEscalationError, match="No guarded entailment judge"):
+        LLMEntailmentChecker().check("claim", "citation")
+    with pytest.raises(EntailmentEscalationError, match="required"):
+        checker.check("", "citation")
+    with pytest.raises(EntailmentEscalationError, match="invalid result"):
+        LLMEntailmentChecker(lambda _claim, _citation: (True, float("nan"))).check(
+            "claim", "citation"
+        )
+
+
+def test_gemini_entailment_requires_opt_in_before_call(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(settings, "GEMINI_API_KEY", "test-key")
+    models = FakeGeminiModels('{"entailed":true,"confidence":0.95}')
+    judge = GeminiEntailmentJudge(
+        tenant_id="tenant-test",
+        tenant_opted_in=False,
+        client=FakeGeminiClient(models),
+    )
+
+    with pytest.raises(PrivacyViolationError, match="has not opted in"):
+        judge(
+            "The supplier must provide a certificate.",
+            "The supplier must provide a certificate.",
+        )
+    assert models.called is False
+
+
+def test_gemini_entailment_parses_guarded_response(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(settings, "GEMINI_API_KEY", "test-key")
+    judge = GeminiEntailmentJudge(
+        tenant_id="tenant-test",
+        tenant_opted_in=True,
+        client=FakeGeminiClient(
+            FakeGeminiModels('{"entailed":true,"confidence":0.95}')
+        ),
+    )
+
+    assert judge(
+        "The supplier must provide a certificate.",
+        "The supplier must provide a certificate.",
+    ) == (True, 0.95)
+
+
+def test_gemini_rag_generation_is_guarded_and_fails_closed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "GEMINI_API_KEY", "test-key")
+    blocked_models = FakeGeminiModels("answer")
+    blocked = GeminiRAGAnswerer(
+        tenant_id="tenant-test",
+        tenant_opted_in=False,
+        client=FakeGeminiClient(blocked_models),
+    )
+    with pytest.raises(PrivacyViolationError, match="has not opted in"):
+        blocked("What does the rule require?", [{"chunk_id": "article-1", "text": "The rule."}])
+    assert blocked_models.called is False
+
+    allowed = GeminiRAGAnswerer(
+        tenant_id="tenant-test",
+        tenant_opted_in=True,
+        client=FakeGeminiClient(FakeGeminiModels("Grounded answer [article-1].")),
+    )
+    assert allowed(
+        "What does the rule require?",
+        [{"chunk_id": "article-1", "text": "The rule."}],
+    ) == "Grounded answer [article-1]."
+    with pytest.raises(RAGGenerationError, match="required"):
+        allowed("", [])
+
+
 def test_regulation_ingestion_manager_proposal_flow() -> None:
     """Verifies Addendum A - R3 idempotent proposal and approval workflow for regulation updates."""
     from backend.app.rag.ingestion import RegulationIngestionManager
 
     store = ChromaVectorStore(in_memory=True)
+    store.reset()
     manager = RegulationIngestionManager(store=store, db=None)
 
     proposal = manager.propose_update(
@@ -186,9 +474,95 @@ def test_regulation_ingestion_manager_proposal_flow() -> None:
     )
     assert proposal.status == "pending"
     assert proposal.candidate_version_id == "EU-CSDDD-2027-V2"
+    with pytest.raises(RuntimeError, match="database session is required"):
+        manager.approve_and_ingest(proposal.id, "reviewer")
+    assert store.count() == 0
 
-    # Ingest file idempotently
-    count1 = manager.ingest_file(REGULATIONS_FILE)
-    count2 = manager.ingest_file(REGULATIONS_FILE)
-    assert count1 == count2
-    assert store.count() == count1
+    # Bulk ingestion is only a one-time bootstrap; updates need persisted approval.
+    count = manager.ingest_file(REGULATIONS_FILE)
+    assert store.count() == count
+    with pytest.raises(RuntimeError, match="only for an empty store"):
+        manager.ingest_file(REGULATIONS_FILE)
+
+
+def test_versioned_ingestion_is_idempotent_and_source_scoped() -> None:
+    """A version-scoped ingest upserts only the selected source/version."""
+    from backend.app.rag.ingestion import RegulationIngestionManager
+
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(bind=engine)
+    session_factory = sessionmaker(bind=engine)
+    session: Session = session_factory()
+    try:
+        store = ChromaVectorStore(in_memory=True)
+        store.reset()
+        manager = RegulationIngestionManager(
+            store=store,
+            db=session,
+            regulations_path=REGULATIONS_FILE,
+        )
+        with pytest.raises(ValueError, match="no approved update proposal"):
+            manager.ingest("EU-ESPR-2024", "EU-ESPR-2024-1781")
+
+        proposal = manager.propose_update(
+            source="EUR-Lex Official Gazette",
+            candidate_version_id="EU-ESPR-2024-1781",
+            candidate_data=[],
+            tenant_id="tenant_test",
+        )
+        assert manager.approve_and_ingest(
+            proposal.id,
+            "reviewer-1",
+            tenant_id="tenant_test",
+        ) == 2
+
+        first_count = manager.ingest("EU-ESPR-2024", "EU-ESPR-2024-1781")
+        second_count = manager.ingest("EU-ESPR-2024", "EU-ESPR-2024-1781")
+
+        assert first_count == second_count == 2
+        assert store.count() == 2
+        with pytest.raises(ValueError, match="no approved update proposal"):
+            manager.ingest("EU-ESPR-2024", "unknown-version")
+    finally:
+        session.close()
+        engine.dispose()
+
+
+def test_approved_update_is_audited_before_ingestion() -> None:
+    """A persisted reviewer approval is audited and ingests only its candidate version."""
+    from backend.app.rag.ingestion import RegulationIngestionManager
+
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(bind=engine)
+    session_factory = sessionmaker(bind=engine)
+    session: Session = session_factory()
+    try:
+        store = ChromaVectorStore(in_memory=True)
+        store.reset()
+        manager = RegulationIngestionManager(
+            store=store,
+            db=session,
+            regulations_path=REGULATIONS_FILE,
+        )
+        proposal = manager.propose_update(
+            source="EUR-Lex Official Gazette",
+            candidate_version_id="EU-ESPR-2024-1781",
+            candidate_data=[],
+            tenant_id="tenant_test",
+        )
+
+        assert manager.approve_and_ingest(
+            proposal.id,
+            "reviewer-1",
+            tenant_id="tenant_test",
+        ) == 2
+        assert proposal.status == "approved"
+        assert proposal.reviewer_id == "reviewer-1"
+        assert store.count() == 2
+        assert verify_chain(session, "tenant_test") == (True, None)
+
+        audit_events = session.scalars(select(AuditEvent)).all()
+        assert len(audit_events) == 2
+    finally:
+        session.close()
+        engine.dispose()

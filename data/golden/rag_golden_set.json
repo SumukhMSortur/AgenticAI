@@ -1,0 +1,486 @@
+{
+  "dataset_version": "1.0.0",
+  "corpus": "data/regulations/csddd_regulations.json",
+  "queries": [
+    {
+      "query_id": "RAG-001",
+      "query": "Which operations and business relationships fall within the CSDDD's subject matter?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-01"],
+      "reference_answer": "The original directive covers in-scope companies' own operations, subsidiaries, and business partners in their chains of activities, addressing adverse human-rights and environmental impacts."
+    },
+    {
+      "query_id": "RAG-002",
+      "query": "Does the 2024 directive cover impacts at subsidiaries and business partners?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-01"],
+      "reference_answer": "Yes. The original directive includes subsidiaries and business partners in the chains of activities, as well as a company's own operations."
+    },
+    {
+      "query_id": "RAG-003",
+      "query": "What kinds of adverse impacts does the original due diligence directive address?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-01"],
+      "reference_answer": "It addresses adverse human-rights impacts and adverse environmental impacts."
+    },
+    {
+      "query_id": "RAG-004",
+      "query": "How far along a company's chain do the original CSDDD rules apply?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-01"],
+      "reference_answer": "The original rules cover the company's own operations, subsidiaries, and business partners in its chains of activities."
+    },
+    {
+      "query_id": "RAG-005",
+      "query": "What does the original CSDDD establish for in-scope companies?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-01"],
+      "reference_answer": "It lays down obligations concerning adverse human-rights and environmental impacts arising in company operations, subsidiaries, and business-partner chains."
+    },
+    {
+      "query_id": "RAG-006",
+      "query": "Are human-rights and environmental impacts both covered, including those in supplier chains?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-01"],
+      "reference_answer": "Yes. The original text covers both impact types across own operations, subsidiaries, and business partners in chains of activities."
+    },
+    {
+      "query_id": "RAG-007",
+      "query": "Under the original CSDDD, what employee and turnover thresholds set company scope?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-02"],
+      "reference_answer": "The original threshold was more than 1,000 employees on average and net worldwide turnover above EUR 450 million in the last financial year."
+    },
+    {
+      "query_id": "RAG-008",
+      "query": "How many employees and how much global revenue triggered the 2024 directive's original scope?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-02"],
+      "reference_answer": "A company was within the original threshold if it had over 1,000 employees on average and over EUR 450 million in worldwide turnover."
+    },
+    {
+      "query_id": "RAG-009",
+      "query": "What was the original CSDDD's turnover threshold for EU companies?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-02"],
+      "reference_answer": "The original worldwide net-turnover threshold was more than EUR 450 million in the last financial year, alongside an employee threshold."
+    },
+    {
+      "query_id": "RAG-010",
+      "query": "For the original scope test, was the employee count at least 1,000 or more than 1,000?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-02"],
+      "reference_answer": "The text sets the threshold at more than 1,000 employees on average, together with worldwide turnover above EUR 450 million."
+    },
+    {
+      "query_id": "RAG-011",
+      "query": "Which financial-year revenue measure did the original CSDDD use for its company threshold?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-02"],
+      "reference_answer": "It used net worldwide turnover in the last financial year, with a threshold above EUR 450 million and more than 1,000 employees on average."
+    },
+    {
+      "query_id": "RAG-012",
+      "query": "What were the original EU company-size criteria under CSDDD Article 2?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-02"],
+      "reference_answer": "Article 2's original criteria were an average workforce greater than 1,000 and net worldwide turnover greater than EUR 450 million."
+    },
+    {
+      "query_id": "RAG-013",
+      "query": "What climate transition plan did the original CSDDD require companies to put into effect?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-15"],
+      "reference_answer": "Companies had to adopt and put into effect a climate-mitigation transition plan aiming to align their business model and strategy with a sustainable economy and the 1.5°C limit."
+    },
+    {
+      "query_id": "RAG-014",
+      "query": "How did the original directive connect a company's business strategy to the 1.5 degree climate limit?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-15"],
+      "reference_answer": "The original rule required an effective climate-mitigation transition plan aimed at making the business model and strategy compatible with a sustainable economy and the 1.5°C limit."
+    },
+    {
+      "query_id": "RAG-015",
+      "query": "What was the original CSDDD's obligation concerning climate mitigation plans?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-15"],
+      "reference_answer": "Companies had to adopt and implement a transition plan for climate-change mitigation, with the aim of aligning their business model and strategy with the 1.5°C limit."
+    },
+    {
+      "query_id": "RAG-016",
+      "query": "Did the 2024 directive require a climate plan to be merely adopted or also implemented?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-15"],
+      "reference_answer": "It required companies both to adopt and to put the climate transition plan into effect."
+    },
+    {
+      "query_id": "RAG-017",
+      "query": "What sustainability objective was the original climate transition plan meant to support?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-15"],
+      "reference_answer": "The plan aimed to make the company's business model and strategy compatible with a sustainable economy and the 1.5°C limit."
+    },
+    {
+      "query_id": "RAG-018",
+      "query": "Which temperature limit appeared in the original corporate climate transition-plan rule?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-15"],
+      "reference_answer": "The original climate transition-plan rule referred to the 1.5°C limit."
+    },
+    {
+      "query_id": "RAG-019",
+      "query": "When could a company be civilly liable under the original CSDDD?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-22"],
+      "reference_answer": "The original rule required liability where a company intentionally or negligently failed to comply with obligations in Articles 7 and 8 and caused damage to a natural or legal person."
+    },
+    {
+      "query_id": "RAG-020",
+      "query": "What fault standard did the original directive use for company civil liability?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-22"],
+      "reference_answer": "The original text covered intentional or negligent failure to comply with Articles 7 and 8 where that failure caused damage."
+    },
+    {
+      "query_id": "RAG-021",
+      "query": "Which provisions were relevant to liability for damage under the original CSDDD?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-22"],
+      "reference_answer": "The original liability provision concerned failures to comply with the obligations in Articles 7 and 8."
+    },
+    {
+      "query_id": "RAG-022",
+      "query": "Could a person seek company liability for negligent due-diligence noncompliance in the original text?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-22"],
+      "reference_answer": "Yes. The original text covered damage caused by a company's intentional or negligent failure to meet Articles 7 and 8 obligations."
+    },
+    {
+      "query_id": "RAG-023",
+      "query": "Who could suffer damage for which the original CSDDD contemplated company liability?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-22"],
+      "reference_answer": "The original provision referred to damage caused to a natural or legal person."
+    },
+    {
+      "query_id": "RAG-024",
+      "query": "Did the original civil-liability rule cover only intentional breaches?",
+      "assessment_date": "2025-01-01",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2024-1760::SEC-2024-ART-22"],
+      "reference_answer": "No. It covered both intentional and negligent failure to comply with the specified obligations."
+    },
+    {
+      "query_id": "RAG-025",
+      "query": "What are the revised employee and worldwide-turnover thresholds under the 2026 CSDDD amendment?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-01"],
+      "reference_answer": "The amended scope applies strictly to companies with more than 5,000 employees on average and net worldwide turnover above EUR 1.5 billion."
+    },
+    {
+      "query_id": "RAG-026",
+      "query": "When is the single application date set by the 2026 CSDDD amendment?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-01"],
+      "reference_answer": "The amended text establishes 26 July 2029 as a single application date."
+    },
+    {
+      "query_id": "RAG-027",
+      "query": "What size of company remains in scope after the 2026 Omnibus I changes?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-01"],
+      "reference_answer": "The amendment sets scope at more than 5,000 employees on average and over EUR 1.5 billion in worldwide net turnover."
+    },
+    {
+      "query_id": "RAG-028",
+      "query": "Does the amended threshold use 5,000 employees and EUR 1.5 billion as minimums or strict greater-than tests?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-01"],
+      "reference_answer": "The amended text uses strict greater-than thresholds: more than 5,000 employees and more than EUR 1.5 billion turnover."
+    },
+    {
+      "query_id": "RAG-029",
+      "query": "Which date does the 2026 amendment establish for application of the revised CSDDD rules?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-01"],
+      "reference_answer": "It establishes a single application date of 26 July 2029."
+    },
+    {
+      "query_id": "RAG-030",
+      "query": "How did the 2026 reform change the CSDDD's company-size scope?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-01"],
+      "reference_answer": "The scope was revised to companies above 5,000 average employees and EUR 1.5 billion net worldwide turnover, with application on 26 July 2029."
+    },
+    {
+      "query_id": "RAG-031",
+      "query": "What supplier tiers must companies examine for human-rights and environmental due diligence under the 2026 text?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-05"],
+      "reference_answer": "The amended text requires risk-based due diligence across tier-1 and identified high-risk upstream suppliers."
+    },
+    {
+      "query_id": "RAG-032",
+      "query": "Which supplier evidence should be checked against accredited issuer registries?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-05"],
+      "reference_answer": "Certificates, audit reports, and bills of materials must be verified against accredited independent issuer registries."
+    },
+    {
+      "query_id": "RAG-033",
+      "query": "How does the 2026 CSDDD amendment describe supplier due diligence?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-05"],
+      "reference_answer": "Companies must conduct risk-based human-rights and environmental due diligence across tier-1 and identified high-risk upstream suppliers."
+    },
+    {
+      "query_id": "RAG-034",
+      "query": "What independent verification is required for supplier certificates and audit records?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-05"],
+      "reference_answer": "Certificates, audit reports, and bills of materials must be checked against accredited independent issuer registries."
+    },
+    {
+      "query_id": "RAG-035",
+      "query": "Does the amended supplier-risk rule apply to every upstream supplier or identified high-risk suppliers?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-05"],
+      "reference_answer": "It requires risk-based due diligence across tier-1 and identified high-risk upstream suppliers."
+    },
+    {
+      "query_id": "RAG-036",
+      "query": "Which records and materials does Article 5 tell companies to verify independently?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-05"],
+      "reference_answer": "Article 5 names certificates, audit reports, and bills of materials for verification against accredited independent issuer registries."
+    },
+    {
+      "query_id": "RAG-037",
+      "query": "What measures does the amended CSDDD require to prevent or mitigate potential adverse impacts?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-08"],
+      "reference_answer": "Companies must take appropriate measures to prevent or adequately mitigate potential adverse impacts."
+    },
+    {
+      "query_id": "RAG-038",
+      "query": "What contractual steps can companies take with direct business partners under Article 8?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-08"],
+      "reference_answer": "The text includes seeking contractual assurances from direct business partners and verifying contractual compliance through independent third-party audits."
+    },
+    {
+      "query_id": "RAG-039",
+      "query": "How should companies verify contractual terms with business partners under the 2026 rules?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-08"],
+      "reference_answer": "Companies should verify compliance with contractual terms through independent third-party audits."
+    },
+    {
+      "query_id": "RAG-040",
+      "query": "What is the required response to potential adverse impacts in the amended directive?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-08"],
+      "reference_answer": "Companies must take appropriate measures to prevent or adequately mitigate potential adverse impacts."
+    },
+    {
+      "query_id": "RAG-041",
+      "query": "Are independent audits mentioned as a way to verify partner compliance with contractual terms?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-08"],
+      "reference_answer": "Yes. The amended text specifies independent third-party audits to verify compliance with contractual terms."
+    },
+    {
+      "query_id": "RAG-042",
+      "query": "What does Article 8 say about assurances from direct business partners?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-08"],
+      "reference_answer": "Companies may seek contractual assurances from direct business partners as part of preventing or mitigating potential adverse impacts."
+    },
+    {
+      "query_id": "RAG-043",
+      "query": "What happened to the separate climate transition-plan and civil-liability provisions in the 2026 amendment?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-11"],
+      "reference_answer": "The amendment deletes Articles 15 and 22 of the 2024 directive, removing the separate climate transition-plan and civil-liability regimes."
+    },
+    {
+      "query_id": "RAG-044",
+      "query": "After the 2026 reform, is value-chain mapping a standalone liability regime?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-11"],
+      "reference_answer": "No. Value-chain mapping is described as a risk-based exercise without a standalone civil-liability regime under the directive."
+    },
+    {
+      "query_id": "RAG-045",
+      "query": "Which earlier CSDDD articles are deleted by the Omnibus I reform?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-11"],
+      "reference_answer": "The 2026 amendment deletes Articles 15 and 22 of Directive (EU) 2024/1760."
+    },
+    {
+      "query_id": "RAG-046",
+      "query": "Does the amended CSDDD retain a separate civil-liability regime?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-11"],
+      "reference_answer": "The amended text deletes Article 22 and states that value-chain mapping has no standalone civil-liability regime under the directive."
+    },
+    {
+      "query_id": "RAG-047",
+      "query": "How is value-chain mapping characterized under Article 11 of the 2026 amendment?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-11"],
+      "reference_answer": "It is conducted solely as a risk-based exercise, without a standalone civil-liability regime under the directive."
+    },
+    {
+      "query_id": "RAG-048",
+      "query": "Does the 2026 amended text still contain the original transition-plan obligation?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-CSDDD-2026-470::SEC-2026-ART-11"],
+      "reference_answer": "No. Article 15 of the 2024 directive, which contained the separate climate transition-plan provision, is deleted."
+    },
+    {
+      "query_id": "RAG-049",
+      "query": "What must a textile Digital Product Passport contain under the ESPR?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-08"],
+      "reference_answer": "The passport must contain verified composition data, certified organic or recycled fiber percentages, chemical-compliance information, and facility-origin identification."
+    },
+    {
+      "query_id": "RAG-050",
+      "query": "Which textile product details must be verifiable in a Digital Product Passport?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-08"],
+      "reference_answer": "The ESPR text lists verified composition, certified organic or recycled fiber percentages, chemical compliance, and facility origin."
+    },
+    {
+      "query_id": "RAG-051",
+      "query": "Does the ESPR require a passport to identify the facility where a textile product originated?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-08"],
+      "reference_answer": "Yes. Facility-origin identification is one of the listed Digital Product Passport requirements for textiles."
+    },
+    {
+      "query_id": "RAG-052",
+      "query": "What fiber-content information is required for textile product passports?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-08"],
+      "reference_answer": "The passport must include certified percentages of organic or recycled fibers."
+    },
+    {
+      "query_id": "RAG-053",
+      "query": "What does Article 8 of the ESPR require about chemical compliance in textile passports?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-08"],
+      "reference_answer": "The passport must contain chemical-compliance information, including substances of very high concern below threshold."
+    },
+    {
+      "query_id": "RAG-054",
+      "query": "Which product passport rule applies to textiles placed on the European market?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-08"],
+      "reference_answer": "Textiles placed on the European market must have a Digital Product Passport containing verified composition, certified fiber percentages, chemical compliance, and facility origin."
+    },
+    {
+      "query_id": "RAG-055",
+      "query": "What documents substantiate recycled-content or organic-origin claims under the ESPR?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-10"],
+      "reference_answer": "Claims must be substantiated by transaction certificates, bills of materials, and chain-of-custody documentation issued by accredited conformity-assessment bodies."
+    },
+    {
+      "query_id": "RAG-056",
+      "query": "Who should issue chain-of-custody documentation for product-origin claims?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-10"],
+      "reference_answer": "The listed transaction certificates, bills of materials, and chain-of-custody documents should be issued by accredited conformity-assessment bodies."
+    },
+    {
+      "query_id": "RAG-057",
+      "query": "How must economic operators substantiate claims about recycled content?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-10"],
+      "reference_answer": "Recycled-content claims must be supported by transaction certificates, bills of materials, and chain-of-custody documentation from accredited conformity-assessment bodies."
+    },
+    {
+      "query_id": "RAG-058",
+      "query": "Which evidence supports a claim that a product is of organic origin?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-10"],
+      "reference_answer": "The text requires transaction certificates, bills of materials, and chain-of-custody documentation issued by accredited conformity-assessment bodies."
+    },
+    {
+      "query_id": "RAG-059",
+      "query": "What traceability records are required for product-content and origin claims?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-10"],
+      "reference_answer": "Economic operators must support recycled-content or organic-origin claims with transaction certificates, bills of materials, and chain-of-custody records."
+    },
+    {
+      "query_id": "RAG-060",
+      "query": "What evidence must accredited conformity-assessment bodies issue for chain-of-custody purposes?",
+      "assessment_date": "2026-11-02",
+      "jurisdiction": "EU",
+      "expected_chunk_ids": ["EU-ESPR-2024-1781::SEC-ESPR-ART-10"],
+      "reference_answer": "The ESPR identifies transaction certificates, bills of materials, and chain-of-custody documentation issued by accredited conformity-assessment bodies."
+    }
+  ]
+}

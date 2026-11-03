@@ -21,18 +21,18 @@ implementation exists but misses a stated requirement or lacks required evidence
 | Phase 3: OCR returns word boxes in normalized space | partial | PyMuPDF text/word extraction exists; Tesseract and scanned-document OCR are not wired (`backend/app/privacy/ocr.py`) |
 | Phase 3: Presidio/custom recognizers, reversible tenant vault, redaction report | met | `backend/app/privacy/`; `config/recognizers.yaml`; `reports/redaction.json` |
 | Phase 3: Ollama second-pass fails closed when enabled/unavailable | met | `backend/app/privacy/llama_checker.py`; privacy checker tests |
-| Phase 3: every external network call is guarded and network imports are confined | met | Ollama HTTP is isolated under `integrations/`, requires tenant context, and calls the outbound guard before sending; import-boundary and guard tests pass (`backend/app/integrations/ollama.py`; `backend/tests/leakage/test_privacy_leakage.py`; `backend/tests/unit/test_privacy_boundary.py`) |
+| Phase 3: every external network call is guarded and network imports are confined | met | Ollama, Gemini entailment/answer generation, and OpenAI Ragas judging are isolated under `integrations/` and guarded before transmission; import-boundary and provider guard tests pass (`backend/app/integrations/`; `backend/tests/leakage/test_privacy_leakage.py`; `backend/tests/unit/test_privacy_boundary.py`; `backend/tests/unit/test_rag.py`) |
 | Phase 3: seeded values never leak; entity recall is reported | partial | Report covers synthetic redaction/outbound payloads, but not every external-call path (`reports/redaction.json`; `backend/tests/leakage/test_privacy_leakage.py`) |
 | Phase 4: extractor interface, heuristic fallback, normalizers | met | `backend/app/extraction/base.py`; `backend/app/extraction/heuristic.py`; `backend/app/extraction/normalizers.py` |
 | Phase 4: actual LayoutLMv3 fine-tuning, resume, and model inference | missing | Trainer is evaluation-only and adapter always calls heuristic (`ml/train_layoutlm.py`; `backend/app/extraction/layoutlmv3.py`) |
 | Phase 4: per-field F1 and bounding-box IoU evidence | partial | Report exists, but evaluation uses heuristic output and substitutes IoU `0.85` when no IoU is measured (`reports/extraction.json`; `ml/train_layoutlm.py`) |
-| Phase 5: legal-structure chunking and regulation provenance metadata | met | `backend/app/rag/chunker.py`; `backend/tests/unit/test_rag.py` |
+| Phase 5: legal-structure chunking, parent linkage, and regulation provenance | met | `backend/app/rag/chunker.py`; `backend/app/rag/store.py`; `backend/tests/unit/test_rag.py` |
 | Phase 5: Chroma metadata/date/jurisdiction filtering | met | `backend/app/rag/store.py`; date-filter tests |
 | Phase 5: BM25+dense hybrid retrieval with reciprocal-rank fusion | met | `backend/app/rag/retriever.py`; RAG unit tests |
-| Phase 5: real cross-encoder reranking | missing | Retriever identifies reranker as a stub (`backend/app/rag/retriever.py`) |
-| Phase 5: LLM entailment through guard, failure escalates | partial | `LLMEntailmentChecker` delegates to rule-based behavior; no guarded LLM entailment evidence (`backend/app/rag/entailment_checker.py`) |
-| Phase 5: >=60-query golden retrieval set and citation/Ragas evaluation | missing | No golden retrieval set or `reports/rag.json` found |
-| Phase 5 / R3: version-aware idempotent ingestion, human proposal/approval, audit decision | partial | Proposal/approval flow exists, but version-aware idempotent `ingest(source_id, version_id)` is not evidenced (`backend/app/rag/ingestion.py`; `backend/app/db/audit_log.py`) |
+| Phase 5: real cross-encoder reranking | met | `backend/app/rag/retriever.py`; `scripts/evaluate_rag.py`; locally executed reranker report in `reports/rag.json` |
+| Phase 5: LLM entailment through guard, failure escalates | met | `backend/app/integrations/gemini_entailment.py`; fail-closed checker and guarded-call tests (`backend/app/rag/entailment_checker.py`; `backend/tests/unit/test_rag.py`) |
+| Phase 5: >=60-query golden retrieval set and citation/Ragas evaluation | partial | 60 labeled queries and citation metrics are recorded; Ragas metrics await explicit external-model approval (`data/golden/rag_golden_set.json`; `reports/rag.json`) |
+| Phase 5 / R3: version-aware idempotent ingestion, human proposal/approval, audit decision | met | Source/version-scoped upsert, persisted approval, and audit-chain tests (`backend/app/rag/ingestion.py`; `backend/tests/unit/test_rag.py`) |
 | Phase 6: 11 Master Verifier rules and deterministic engine | met | `backend/app/verifier/engine.py`; `backend/tests/unit/test_verifier_rules.py`; `reports/verifier.json` |
 | Phase 6 / A3: V-EXT-001/002/003/900 and V-SANC-001/002 semantics | met | Corrected not-found escalation, country/name band, parent-company, stale-source, exact-ID, and name-only/fuzzy outcomes are covered (`backend/app/verifier/rules/`; `backend/tests/unit/test_verifier_rules.py`) |
 | Phase 6: registry loader announces MOCK data; critical/normal priorities | met | `backend/app/verifier/registry.py`; `backend/app/verifier/engine.py`; verifier tests |
@@ -53,12 +53,12 @@ implementation exists but misses a stated requirement or lacks required evidence
 | R1: external source/snapshot/record/watchlist/proposal tables | met | `backend/app/db/alembic/versions/2026_11_02_0002_addendum_a_tables.py`; DB models |
 | R1: required external audit event types and write paths | partial | Generic audit event type is supported; dedicated event writes for every listed operation are not evidenced (`backend/app/db/audit_log.py`; integration/ingestion modules) |
 | R2: tenant opt-in, provider field allowlists, payload size limit | met | `backend/app/privacy/outbound_guard.py`; privacy tests |
-| R2: guard is sole door to all external calls; no exception paths | met | Network import confinement has no checker exception; Ollama request tests prove guard-before-send and block tenant vault values |
-| R3: corpus never changes autonomously; human approval recorded | partial | Proposal approval exists; idempotency/version key and complete audit evidence need verification (`backend/app/rag/ingestion.py`) |
+| R2: guard is sole door to all external calls; no exception paths | met | Runtime Ollama/Gemini calls verify before send; OpenAI's HTTP request hook validates every Ragas judge request; provider guard tests pass |
+| R3: corpus never changes autonomously; human approval recorded | met | Version-scoped idempotent upsert is reached through persisted approval with an audit decision; tests prove pending proposals do not ingest (`backend/app/rag/ingestion.py`; `backend/tests/unit/test_rag.py`) |
 | R4: external evidence refs require source/fetched_at/snapshot_hash/record_key | met | Pydantic validates required keys and datetime values for all three external evidence kinds |
 | Acceptance 1: full Docker stack and golden-case demo | missing | Current compose is infra-only; no full-stack demo evidence (`docker/compose.dev.yml`; `docs/HANDOFF.md`) |
 | Acceptance 2: zero seeded outbound leakage and per-entity recall | partial | Synthetic redaction report/test exists; external network paths are not covered |
-| Acceptance 3: all cloud LLM calls use outbound guard | met | LLM adapter and AST/leakage checks (`backend/app/llm/`; privacy tests) |
+| Acceptance 3: all cloud LLM calls use outbound guard | met | Gemini entailment/answer and OpenAI Ragas adapters guard their requests (`backend/app/integrations/`; provider tests) |
 | Acceptance 4: deterministic Verifier unaffected by adversarial LLM output | partial | Pure deterministic rules exist; explicit prompt-injection invariance gate is not evidenced |
 | Acceptance 5: every scorecard line has evidence, hash, page/bbox, regulation version | partial | Domain fields and workflow evidence links exist; explicit rendered-scorecard completeness gate/API absent |
 | Acceptance 6: no superseded law cited after its effective date | met | `backend/app/rag/store.py`; date-filter tests |
@@ -73,13 +73,13 @@ implementation exists but misses a stated requirement or lacks required evidence
 | Acceptance 15: no external call bypasses guard; seeded PII excluded | met | Import-boundary and guarded Ollama payload tests; live provider adapters are not yet implemented |
 | Acceptance 16: external scorecard facts show source/as-of and replay from audit/snapshot hash | partial | Snapshot provenance schema exists; no complete live lookup-to-scorecard evidence |
 | Acceptance 17: sanctions exact match fail+critical; fuzzy/outage escalate | met | V-SANC tests and V-EXT-900 tests |
-| Acceptance 18: regulation changes require recorded human approval | partial | Proposal model/approval flow exists; full API decision and audit proof absent |
+| Acceptance 18: regulation changes require recorded human approval | partial | Service-level persisted approval and audit proof pass; Phase 10 proposal approve/reject API remains absent (`backend/app/rag/ingestion.py`; `backend/tests/unit/test_rag.py`; `backend/app/api/router.py`) |
 | Acceptance 19: provider terms/endpoints documented from official docs with check date | partial | ADR-007 documents sources; no complete current verification record for all providers |
 | Acceptance 20: external-data limitations documented and no LSTM contamination | partial | ADR-007 records snapshot-first/no-LSTM decision; final Known Limitations docs absent |
 
 ## Highest-priority gaps
 
-1. Complete Phase 5 with a real cross-encoder, >=60 labeled retrieval queries, and reproducible `reports/rag.json`.
+1. Complete Phase 5 by running the guarded Gemini generator and separate-family OpenAI Ragas judge; citation-only report currently has 60/60 recall@5.
 2. Keep Phase 10 partial until required routes and a production `WorkflowServices` factory pass real-service integration tests.
 3. Verify migration `2026_11_02_0004` against PostgreSQL; Docker Desktop's engine was unavailable during this audit.
 4. Close Phase 4 with actual LayoutLMv3 fine-tuning/inference and an honest held-out evaluation.

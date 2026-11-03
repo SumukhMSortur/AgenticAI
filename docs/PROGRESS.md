@@ -95,9 +95,10 @@ This document tracks progress across all phases, recording what was built, what 
 
 ## Phase 5: Compliance RAG
 
-- **Status:** Partial. Legal chunking, Chroma date filters, and hybrid retrieval exist; reranking and measured retrieval evidence are missing.
-- **Evidence:** `backend/app/rag/retriever.py` has no real cross-encoder; no >=60-query golden retrieval set or `reports/rag.json` exists. `LLMEntailmentChecker` still delegates to rule-based behavior.
-- **Next:** Close Phase 5 before resuming Phase 10, per the active prompts.
+- **Status:** Partial. Real local CrossEncoder reranking, parent-linked regulation chunks, version-aware idempotent ingestion, guarded Gemini entailment/answer generation, and a 60-query labeled set are implemented.
+- **Evidence:** `reports/rag.json` records precision@5 `0.20`, recall@5 `1.00`, MRR@5 `0.9833` across 60 queries. The Ragas faithfulness and answer-relevance fields remain null and gates pending; the evaluator requires `--allow-external-model-calls` before sending prompts to Gemini/OpenAI. RAG unit tests pass (20 tests); Ruff and strict mypy are being rechecked.
+- **Dependencies:** `langchain-community==0.3.31` keeps the Ragas compatibility import available; ADR-016 records the compatibility pin. ADR-017 records metric thresholds and the external-evaluation privacy/cost boundary.
+- **Next:** Obtain explicit approval, run the guarded Ragas evaluation, and close its gates before resuming Phase 10.
 
 ---
 

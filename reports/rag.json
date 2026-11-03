@@ -1,0 +1,836 @@
+{
+  "citation_metrics": {
+    "citation_precision_at_k": 0.2,
+    "citation_recall_at_k": 1.0,
+    "k": 5,
+    "mean_reciprocal_rank_at_k": 0.9833333333333333,
+    "queries": 60
+  },
+  "corpus_chunk_count": 10,
+  "dataset_sha256": "2bcf2ff3c82a8c65baffaba502548621d10a7a67df4f86737f9958b9aff56eed",
+  "evaluation_config": {
+    "minimum_queries": 60,
+    "thresholds": {
+      "answer_relevance": 0.8,
+      "citation_precision_at_5": 0.2,
+      "citation_recall_at_5": 0.9,
+      "faithfulness": 0.8
+    },
+    "top_k": 5
+  },
+  "external_model_calls_enabled": false,
+  "gates": {
+    "answer_relevance": null,
+    "citation_precision_at_5": true,
+    "citation_recall_at_5": true,
+    "faithfulness": null,
+    "golden_query_count": true
+  },
+  "generated_at": "2026-11-03T12:31:06.670279+00:00",
+  "models": {
+    "embedding": "all-MiniLM-L6-v2",
+    "generator": {
+      "family": "gemini",
+      "model": "gemini-2.5-flash",
+      "provider": "google-genai"
+    },
+    "judge": {
+      "answer_relevancy_strictness": 1,
+      "family": "openai",
+      "model": "gpt-4o-mini",
+      "provider": "openai"
+    },
+    "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  },
+  "per_query": [
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01"
+      ],
+      "query_id": "RAG-001",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01"
+      ],
+      "query_id": "RAG-002",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01"
+      ],
+      "query_id": "RAG-003",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01"
+      ],
+      "query_id": "RAG-004",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01"
+      ],
+      "query_id": "RAG-005",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01"
+      ],
+      "query_id": "RAG-006",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02"
+      ],
+      "query_id": "RAG-007",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02"
+      ],
+      "query_id": "RAG-008",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02"
+      ],
+      "query_id": "RAG-009",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02"
+      ],
+      "query_id": "RAG-010",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02"
+      ],
+      "query_id": "RAG-011",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02"
+      ],
+      "query_id": "RAG-012",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ],
+      "query_id": "RAG-013",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ],
+      "query_id": "RAG-014",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ],
+      "query_id": "RAG-015",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ],
+      "query_id": "RAG-016",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ],
+      "query_id": "RAG-017",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ],
+      "query_id": "RAG-018",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22"
+      ],
+      "query_id": "RAG-019",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22"
+      ],
+      "query_id": "RAG-020",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22"
+      ],
+      "query_id": "RAG-021",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22"
+      ],
+      "query_id": "RAG-022",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22"
+      ],
+      "query_id": "RAG-023",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-15",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22"
+      ],
+      "query_id": "RAG-024",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2024-1760::SEC-2024-ART-22",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-01",
+        "EU-CSDDD-2024-1760::SEC-2024-ART-02",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ],
+      "query_id": "RAG-025",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ],
+      "query_id": "RAG-026",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ],
+      "query_id": "RAG-027",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ],
+      "query_id": "RAG-028",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ],
+      "query_id": "RAG-029",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ],
+      "query_id": "RAG-030",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ],
+      "query_id": "RAG-031",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ],
+      "query_id": "RAG-032",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ],
+      "query_id": "RAG-033",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ],
+      "query_id": "RAG-034",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ],
+      "query_id": "RAG-035",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ],
+      "query_id": "RAG-036",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ],
+      "query_id": "RAG-037",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ],
+      "query_id": "RAG-038",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ],
+      "query_id": "RAG-039",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ],
+      "query_id": "RAG-040",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ],
+      "query_id": "RAG-041",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ],
+      "query_id": "RAG-042",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ],
+      "query_id": "RAG-043",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ],
+      "query_id": "RAG-044",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ],
+      "query_id": "RAG-045",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ],
+      "query_id": "RAG-046",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ],
+      "query_id": "RAG-047",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ],
+      "query_id": "RAG-048",
+      "retrieved_chunk_ids": [
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ],
+      "query_id": "RAG-049",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ],
+      "query_id": "RAG-050",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ],
+      "query_id": "RAG-051",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ],
+      "query_id": "RAG-052",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ],
+      "query_id": "RAG-053",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08"
+      ],
+      "query_id": "RAG-054",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ],
+      "query_id": "RAG-055",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ],
+      "query_id": "RAG-056",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ],
+      "query_id": "RAG-057",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-01"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ],
+      "query_id": "RAG-058",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ],
+      "query_id": "RAG-059",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11"
+      ]
+    },
+    {
+      "expected_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10"
+      ],
+      "query_id": "RAG-060",
+      "retrieved_chunk_ids": [
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-10",
+        "EU-CSDDD-2026-470::SEC-2026-ART-05",
+        "EU-ESPR-2024-1781::SEC-ESPR-ART-08",
+        "EU-CSDDD-2026-470::SEC-2026-ART-11",
+        "EU-CSDDD-2026-470::SEC-2026-ART-08"
+      ]
+    }
+  ],
+  "query_count": 60,
+  "ragas_metrics": null,
+  "report_version": "1.0.0",
+  "software": {
+    "ragas": "0.4.3",
+    "sentence_transformers": "6.2.0"
+  },
+  "source_git_sha": "ad3fd7fef34ca309ce2c64dd61fb3246756ca9e6",
+  "status": "pending_ragas_judge"
+}

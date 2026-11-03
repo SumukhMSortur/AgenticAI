@@ -19,11 +19,11 @@ from sentence_transformers import SentenceTransformer
 
 from backend.app.core.logging import get_logger
 from backend.app.rag.chunker import RegulationChunk
+from backend.app.rag.models import EMBED_MODEL_NAME
 
 logger = get_logger(__name__)
 
 # Embedding model — fully offline, small, fast
-EMBED_MODEL_NAME = "all-MiniLM-L6-v2"
 COLLECTION_NAME = "regulations"
 
 
@@ -80,7 +80,10 @@ class ChromaVectorStore(IVectorStore):
             metadata={"hnsw:space": "cosine"},
         )
         logger.info(f"Loading embedding model: {embed_model}")
-        self._embedder: SentenceTransformer = SentenceTransformer(embed_model)
+        self._embedder: SentenceTransformer = SentenceTransformer(
+            embed_model,
+            local_files_only=True,
+        )
         logger.info("Embedding model ready.")
 
     def _embed(self, texts: list[str]) -> list[list[float]]:
@@ -99,6 +102,7 @@ class ChromaVectorStore(IVectorStore):
             {
                 "regulation_id": c.regulation_id,
                 "version_id": c.version_id,
+                "parent_id": c.parent_id,
                 "jurisdiction": c.jurisdiction,
                 "effective_from": c.effective_from.isoformat(),
                 "superseded_by": c.superseded_by or "",
@@ -171,6 +175,7 @@ class ChromaVectorStore(IVectorStore):
                     "score": float(1.0 - dist),  # cosine similarity
                     "regulation_id": meta_dict.get("regulation_id", ""),
                     "version_id": meta_dict.get("version_id", ""),
+                    "parent_id": meta_dict.get("parent_id", ""),
                     "jurisdiction": meta_dict.get("jurisdiction", ""),
                     "effective_from": eff_from,
                     "superseded_by": sup_by,

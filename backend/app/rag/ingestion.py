@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import uuid
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -16,13 +17,23 @@ from backend.app.rag.store import ChromaVectorStore
 
 logger = get_logger(__name__)
 
+DEFAULT_REGULATIONS_PATH = (
+    Path(__file__).resolve().parents[3] / "data" / "regulations" / "csddd_regulations.json"
+)
+
 
 class RegulationIngestionManager:
     """Manages versioned, idempotent regulation ingestion into RAG and tracks candidate proposals."""
 
-    def __init__(self, store: ChromaVectorStore, db: Session | None = None) -> None:
+    def __init__(
+        self,
+        store: ChromaVectorStore,
+        db: Session | None = None,
+        regulations_path: Path = DEFAULT_REGULATIONS_PATH,
+    ) -> None:
         self.store = store
         self.db = db
+        self.regulations_path = regulations_path
 
     def propose_update(
         self,
@@ -70,19 +81,29 @@ class RegulationIngestionManager:
         self,
         proposal_id: str,
         reviewer_id: str,
-        regulations_path: Path,
+        regulations_path: Path | None = None,
         tenant_id: str = "system",
         notes: str | None = None,
     ) -> int:
-        """Human approval action: records decision to audit log and idempotently ingests into vector store."""
-        if self.db is not None:
-            proposal = self.db.query(RegulationUpdateProposal).filter_by(id=proposal_id).first()
-            if proposal is None:
-                raise ValueError(f"Proposal '{proposal_id}' not found.")
+        """Record a human decision before idempotently ingesting the approved version."""
+        if self.db is None:
+            raise RuntimeError("A database session is required to approve a regulation update.")
+
+        proposal = self.db.query(RegulationUpdateProposal).filter_by(id=proposal_id).first()
+        if proposal is None:
+            raise ValueError(f"Proposal '{proposal_id}' not found.")
+        if proposal.status == "rejected":
+            raise ValueError(f"Rejected proposal '{proposal_id}' cannot be ingested.")
+
+        source_id = self._source_id_for_version(
+            regulations_path or self.regulations_path,
+            proposal.candidate_version_id,
+        )
+        if proposal.status == "pending":
             proposal.status = "approved"
             proposal.reviewer_id = reviewer_id
+            proposal.decided_at = datetime.now(UTC)
             proposal.notes = notes
-            self.db.commit()
 
             append_audit_event(
                 db=self.db,
@@ -93,12 +114,75 @@ class RegulationIngestionManager:
                 payload={"proposal_id": proposal_id, "notes": notes},
             )
 
-        count = self.ingest_file(regulations_path)
+        count = self._ingest_version(
+            source_id,
+            proposal.candidate_version_id,
+            regulations_path or self.regulations_path,
+        )
         logger.info(f"Proposal '{proposal_id}' approved by reviewer '{reviewer_id}'. Ingested {count} chunks.")
         return count
 
+    def ingest(
+        self,
+        source_id: str,
+        version_id: str,
+        regulations_path: Path | None = None,
+    ) -> int:
+        """Idempotently ingest a version only after a persisted human approval."""
+        if self.db is None:
+            raise RuntimeError("A database session is required for approved version ingestion.")
+        proposal = (
+            self.db.query(RegulationUpdateProposal)
+            .filter_by(candidate_version_id=version_id, status="approved")
+            .first()
+        )
+        if proposal is None:
+            raise ValueError(f"Version '{version_id}' has no approved update proposal.")
+        return self._ingest_version(
+            source_id,
+            version_id,
+            regulations_path or self.regulations_path,
+        )
+
+    def _ingest_version(
+        self,
+        source_id: str,
+        version_id: str,
+        regulations_path: Path,
+    ) -> int:
+        chunks = chunk_regulations(regulations_path)
+        selected = [
+            chunk
+            for chunk in chunks
+            if chunk.regulation_id == source_id and chunk.version_id == version_id
+        ]
+        if not selected:
+            raise ValueError(
+                f"No regulation chunks found for source '{source_id}' and version '{version_id}'."
+            )
+        self.store.upsert_chunks(selected)
+        return len(selected)
+
     def ingest_file(self, regulations_path: Path) -> int:
-        """Idempotently chunks and upserts regulations into ChromaDB."""
+        """Bootstrap an empty vector store from the checked-in regulation corpus."""
+        if self.store.count() != 0:
+            raise RuntimeError(
+                "Bulk regulation bootstrap is allowed only for an empty store; "
+                "use an approved version update."
+            )
         chunks = chunk_regulations(regulations_path)
         self.store.upsert_chunks(chunks)
         return len(chunks)
+
+    @staticmethod
+    def _source_id_for_version(regulations_path: Path, version_id: str) -> str:
+        sources = {
+            chunk.regulation_id
+            for chunk in chunk_regulations(regulations_path)
+            if chunk.version_id == version_id
+        }
+        if len(sources) != 1:
+            raise ValueError(
+                f"Expected exactly one regulation source for version '{version_id}', found {len(sources)}."
+            )
+        return next(iter(sources))

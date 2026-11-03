@@ -7,7 +7,7 @@
 | 2 Data | partial | `phase-2-complete` | Generator and manifest tests pass | `data/MANIFEST.json` | 180 PDFs do not meet "hundreds"; visual variation needs expansion | Expand the corpus and document types |
 | 3 Privacy boundary | done | `phase-3-complete` | Leakage and guard tests pass | `reports/redaction.json` | Ollama is now a tenant-scoped guarded integration; live provider adapters remain unimplemented | None for the local privacy boundary |
 | 4 Extraction | partial | `phase-4-complete` | Heuristic evaluation tests pass | `reports/extraction.json` | LayoutLMv3 fine-tuning/inference is still a stub; report uses heuristic output | Implement and evaluate the actual model |
-| 5 Compliance RAG | partial | `phase-5-complete` | Current RAG tests pass | No `reports/rag.json` found | Tag exists, but phase acceptance evidence is incomplete | RAG report/phase gate evidence |
+| 5 Compliance RAG | partial | Historical `phase-5-complete` tag is not a closure claim | 20 RAG unit tests pass; targeted Ruff and strict mypy pass | `reports/rag.json`: 60 queries, precision@5 0.20, recall@5 1.00, MRR@5 0.9833; Ragas fields pending | ADR-016/017 | Explicit approval required before Gemini generation/OpenAI judging |
 | 6 Deterministic verifier | done | `phase-6-complete` | 25 targeted tests; verifier package 100% statement coverage; golden result 150/150 | `reports/verifier.json` | ADR-008/009; external semantics were corrected against restored Addendum A3 | Golden set has no expected V-EXT/V-SANC labels |
 | 7 Predictive risk | done | `phase-7-complete` | Ruff, strict mypy, 70 tests; risk package 100% statement coverage; CPU training/inference verified | `reports/risk.json` | ADR-010; synthetic-only metrics; XGBoost selected using validation metrics | Trained weights are local/ignored and must be regenerated for inference |
 | 8 Intent router | done | `phase-8-complete` | Ruff, strict mypy, 79 tests; 93% total app coverage; repeated benchmark reproduced metrics and artifact hash | `reports/router.json` | ADR-011; DNN tied baseline and was not retained | Local MiniLM cache required; small labeled query set |
@@ -46,5 +46,6 @@
   .\.venv\Scripts\python.exe -m scripts.export_openapi
   ```
 
-- **Exact next action:** Close Phase 5 with a real cross-encoder, at least 60 labeled retrieval queries, and reproducible `reports/rag.json`; then resume Phase 10 endpoint and production `WorkflowServices` work.
+- **Phase 5 checkpoint (2026-11-03):** Real local CrossEncoder and 60-query golden retrieval evaluation are implemented. Citation gates pass in `reports/rag.json`; Ragas faithfulness and answer relevance are intentionally pending because completing them sends prompts to Gemini and OpenAI and may incur charges.
+- **Exact next action:** Obtain explicit approval for external Gemini/OpenAI evaluation, run the guarded evaluator, then resume Phase 10 endpoint and production `WorkflowServices` work. Do not mark Phase 5 complete until Ragas evidence passes.
 - **Open risks:** PostgreSQL verification of audit trigger migration 0004; Phase 4 model training; Phase 10 missing endpoints and graph factory. Phase 11+ are not started.

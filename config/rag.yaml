@@ -1,0 +1,20 @@
+retriever:
+  reranker_model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  top_k: 5
+evaluation:
+  golden_set: data/golden/rag_golden_set.json
+  report: reports/rag.json
+  minimum_queries: 60
+  gates:
+    citation_precision_at_5: 0.2
+    citation_recall_at_5: 0.9
+    faithfulness: 0.8
+    answer_relevance: 0.8
+  generator:
+    provider: google-genai
+    family: gemini
+  judge:
+    provider: openai
+    family: openai
+    model: gpt-4o-mini
+    answer_relevancy_strictness: 1
