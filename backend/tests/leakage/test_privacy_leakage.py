@@ -52,9 +52,9 @@ def test_no_direct_network_calls_outside_integrations_and_llm() -> None:
     violations: list[str] = []
 
     for py_file in backend_root.rglob("*.py"):
-        # Allow inside integrations, llm, or local privacy checker (ollama)
+        # Network clients are confined to the guarded integrations and LLM adapters.
         parts = py_file.parts
-        if "integrations" in parts or "llm" in parts or py_file.name == "llama_checker.py":
+        if "integrations" in parts or "llm" in parts:
             continue
 
         with open(py_file, encoding="utf-8") as f:

@@ -3,7 +3,7 @@
 import pytest
 
 from backend.app.core.errors import PrivacyViolationError
-from backend.app.privacy.llama_checker import FakeLlamaChecker
+from backend.app.privacy.llama_checker import FakeLlamaChecker, OllamaLlamaChecker
 from backend.app.privacy.outbound_guard import OutboundGuard
 from backend.app.privacy.vault import TokenVault
 
@@ -75,6 +75,60 @@ def test_llama_checker_fail_closed() -> None:
     checker = FakeLlamaChecker(should_fail=True)
     with pytest.raises(PrivacyViolationError):
         checker.check_residual_pii("Some text")
+
+
+def test_ollama_checker_guards_payload_before_network_call(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Ollama requests must pass the tenant-scoped outbound privacy guard first."""
+    from backend.app.core.config import settings
+
+    monkeypatch.setattr(settings, "LLAMA_REDACTION_ENABLED", True)
+    tenant = "tenant_ollama"
+    vault = TokenVault(master_key="ollama-guard-test-key")
+    vault.tokenize(tenant, "PERSON", "Sensitive Supplier")
+    guard = OutboundGuard(vault=vault)
+    called = False
+
+    class FakeResponse:
+        status_code = 200
+
+        def json(self) -> dict[str, str]:
+            return {"response": "CLEAN"}
+
+    class FakeClient:
+        def __init__(self, timeout: float) -> None:
+            assert timeout == 10.0
+
+        def __enter__(self) -> "FakeClient":
+            return self
+
+        def __exit__(self, *_args: object) -> None:
+            return None
+
+        def post(self, _url: str, *, json: dict[str, object]) -> FakeResponse:
+            nonlocal called
+            called = True
+            assert "redacted text" in str(json["prompt"])
+            return FakeResponse()
+
+    monkeypatch.setattr("backend.app.integrations.ollama.httpx.Client", FakeClient)
+    checker = OllamaLlamaChecker(guard=guard)
+    assert checker.check_residual_pii("redacted text", tenant_id=tenant) == []
+    assert called
+
+    called = False
+    with pytest.raises(PrivacyViolationError, match="vault-known"):
+        checker.check_residual_pii("Sensitive Supplier", tenant_id=tenant)
+    assert not called
+
+
+def test_ollama_checker_requires_tenant_for_guard(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Enabled local network inspection cannot run without tenant-scoped guard context."""
+    from backend.app.core.config import settings
+
+    monkeypatch.setattr(settings, "LLAMA_REDACTION_ENABLED", True)
+    checker = OllamaLlamaChecker()
+    with pytest.raises(PrivacyViolationError, match="Tenant ID is required"):
+        checker.check_residual_pii("redacted text")
 
 
 def test_external_call_policy_and_guard() -> None:
