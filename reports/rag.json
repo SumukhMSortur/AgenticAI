@@ -26,7 +26,7 @@
     "faithfulness": null,
     "golden_query_count": true
   },
-  "generated_at": "2026-11-03T12:31:06.670279+00:00",
+  "generated_at": "2026-11-03T12:34:20.289591+00:00",
   "models": {
     "embedding": "all-MiniLM-L6-v2",
     "generator": {
@@ -831,6 +831,6 @@
     "ragas": "0.4.3",
     "sentence_transformers": "6.2.0"
   },
-  "source_git_sha": "ad3fd7fef34ca309ce2c64dd61fb3246756ca9e6",
+  "source_git_sha": "fcad136c4d4145af7f5abd75ab79136cff3a4052",
   "status": "pending_ragas_judge"
 }
