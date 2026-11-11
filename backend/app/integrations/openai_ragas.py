@@ -4,13 +4,13 @@ import json
 import os
 
 import httpx2 as httpx
-from openai import AsyncOpenAI
 from ragas.llms import llm_factory
 from ragas.llms.base import InstructorBaseRagasLLM
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import settings
 from backend.app.core.errors import PrivacyViolationError
+from backend.app.llm.openai_client import create_openai_client
 from backend.app.privacy.outbound_guard import (
     ExternalCallPolicy,
     OutboundGuard,
@@ -70,11 +70,7 @@ class GuardedOpenAIRagasJudge:
             timeout=60.0,
             event_hooks={"request": [self._guard_request]},
         )
-        self.client = AsyncOpenAI(
-            api_key=api_key,
-            base_url="https://api.openai.com/v1",
-            http_client=self.http_client,
-        )
+        self.client = create_openai_client(api_key, self.http_client)
         os.environ["RAGAS_DO_NOT_TRACK"] = "true"
         self.llm: InstructorBaseRagasLLM = llm_factory(
             model,

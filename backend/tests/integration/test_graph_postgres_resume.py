@@ -374,5 +374,21 @@ def test_postgres_audit_events_are_append_only() -> None:
                 )
             session.rollback()
             assert verify_chain(session, tenant_id) == (True, None)
+
+            session.add(
+                AuditEvent(
+                    tenant_id=tenant_id,
+                    sequence=event.sequence + 1,
+                    event_type="integration.audit-tamper",
+                    prev_hash=event.event_hash,
+                    event_hash="f" * 64,
+                    payload={"tampered": True},
+                )
+            )
+            session.commit()
+            valid, reason = verify_chain(session, tenant_id)
+            assert valid is False
+            assert reason is not None
+            assert "Payload tampering detected" in reason
     finally:
         engine.dispose()

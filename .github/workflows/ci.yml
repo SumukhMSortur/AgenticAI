@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  check:
-    name: Lint, Type Check & Test
+  backend:
+    name: Backend checks and real-service integration
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -25,17 +25,138 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: |
-          uv pip install -r requirements.txt --system
+        run: uv pip install --system -r requirements.txt
 
-      - name: Run Ruff Linter
+      - name: Download pinned local ML models and rebuild runtime artifacts
         run: |
-          ruff check backend
+          python -m scripts.download_rag_models
+          python -m ml.train_risk
+          python -m ml.train_router
 
-      - name: Run Mypy Type Checker
+      - name: Create local Compose environment
         run: |
-          mypy backend/app
+          printf '%s\n' \
+            'POSTGRES_DB=ecochain' \
+            'POSTGRES_USER=ecochain' \
+            'POSTGRES_PASSWORD=ecochain_dev_only' \
+            'POSTGRES_PORT=5432' \
+            'REDIS_PORT=6379' \
+            'TEST_DATABASE_URL=postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain_test' \
+            'REDIS_URL=redis://127.0.0.1:6379/0' > .env
 
-      - name: Run Pytest Suite
+      - name: Start real PostgreSQL and Redis services
+        run: docker compose --env-file .env -f docker/compose.dev.yml up -d --wait
+
+      - name: Apply database migrations
+        env:
+          DATABASE_URL: postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain
+        run: python -m alembic upgrade head
+
+      - name: Apply test database migrations
+        env:
+          DATABASE_URL: postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain_test
+        run: python -m alembic upgrade head
+
+      - name: Run Ruff
+        run: ruff check backend scripts ml
+
+      - name: Run strict mypy
+        run: mypy --strict backend/app
+
+      - name: Run backend tests against real services
+        env:
+          ECOCHAIN_TEST_POSTGRES_URL: postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain_test
+          ECOCHAIN_TEST_REDIS_URL: redis://127.0.0.1:6379/0
+          DATABASE_URL: postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain
+          TEST_DATABASE_URL: postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain_test
+        run: pytest backend/tests -v --cov=backend/app --cov-report=xml
+
+      - name: Run evaluation regression gate
+        run: make PYTHON=python eval demo
+
+      - name: Export API schema
+        run: python -m scripts.export_openapi
+
+      - name: Ensure generated API schema is current
+        run: git diff --exit-code -- frontend/openapi.json
+
+      - name: Stop local service containers
+        if: always()
+        run: docker compose --env-file .env -f docker/compose.dev.yml down --volumes
+
+      - name: Upload generated runtime artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-model-artifacts
+          path: |
+            artifacts/risk/risk_model_v1.joblib
+            artifacts/router/router_logreg_v1.joblib
+          if-no-files-found: error
+
+  frontend:
+    name: Frontend checks and browser E2E
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run strict typecheck
+        run: npm run typecheck
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser E2E
+        run: npm run test:e2e
+
+  containers:
+    name: Build and smoke-test full stack
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download runtime model artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: runtime-model-artifacts
+          path: artifacts
+
+      - name: Build application images
+        run: docker compose build
+
+      - name: Start application stack
+        run: docker compose up -d --wait
+
+      - name: Verify API, frontend, and golden demo
         run: |
-          pytest backend/tests -v --cov=backend/app --cov-report=xml
+          curl --fail http://127.0.0.1:8000/readyz
+          curl --fail http://127.0.0.1:3000/login
+          docker compose exec -T api python -m scripts.run_demo
+
+      - name: Stop application stack
+        if: always()
+        run: docker compose down --volumes

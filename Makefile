@@ -1,4 +1,4 @@
-.PHONY: setup check test test-int lint fmt data train eval openapi build up down infra-up infra-down infra-reset seed demo
+.PHONY: setup runtime-lock check test test-int lint fmt data train eval openapi build up down infra-up infra-down infra-reset seed demo
 
 PYTHON ?= .venv/bin/python
 ifeq ($(OS),Windows_NT)
@@ -15,7 +15,10 @@ endif
 setup:
 	uv pip install -r requirements.txt --python $(PYTHON)
 
-check: lint test openapi
+runtime-lock:
+	uv pip compile requirements-runtime.in --python-version 3.12 --python-platform x86_64-manylinux_2_28 --index-strategy unsafe-best-match --no-emit-package nvidia-nccl-cu13 --no-annotate -o requirements-runtime.txt
+
+check: lint test openapi eval
 
 test:
 	$(PYTEST) backend/tests -v --cov=backend/app --cov-report=term-missing
@@ -44,7 +47,7 @@ openapi:
 build: openapi
 
 up:
-	docker compose up -d
+	docker compose up -d --build --wait
 
 down:
 	docker compose down

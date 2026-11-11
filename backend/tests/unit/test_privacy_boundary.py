@@ -131,6 +131,38 @@ def test_ollama_checker_requires_tenant_for_guard(monkeypatch: pytest.MonkeyPatc
         checker.check_residual_pii("redacted text")
 
 
+def test_ollama_checker_outage_fails_closed(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A local checker outage must stop processing rather than treating content as clean."""
+    import httpx
+
+    from backend.app.core.config import settings
+
+    monkeypatch.setattr(settings, "LLAMA_REDACTION_ENABLED", True)
+    called = False
+
+    class OfflineClient:
+        def __init__(self, timeout: float) -> None:
+            assert timeout == 10.0
+
+        def __enter__(self) -> "OfflineClient":
+            return self
+
+        def __exit__(self, *_args: object) -> None:
+            return None
+
+        def post(self, *_args: object, **_kwargs: object) -> None:
+            nonlocal called
+            called = True
+            raise httpx.ConnectError("Ollama is unavailable")
+
+    monkeypatch.setattr("backend.app.integrations.ollama.httpx.Client", OfflineClient)
+    checker = OllamaLlamaChecker(guard=OutboundGuard())
+
+    with pytest.raises(PrivacyViolationError, match="escalating to review"):
+        checker.check_residual_pii("redacted text", tenant_id="tenant_outage")
+    assert called
+
+
 def test_external_call_policy_and_guard() -> None:
     """Tests Addendum A - R2 ExternalCallPolicy enforcement in OutboundGuard."""
     from backend.app.privacy.outbound_guard import ExternalCallPolicy

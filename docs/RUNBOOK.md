@@ -12,10 +12,14 @@ docker info
 
 ## Local environment
 
-Copy the example once, then keep `.env` local and uncommitted:
+Create `.env` from the example only when it does not already exist. Keep it
+local and uncommitted; if it exists, inspect it and merge missing settings
+without overwriting local values:
 
 ```powershell
-Copy-Item .env.example .env
+if (-not (Test-Path .env)) {
+    Copy-Item .env.example .env
+}
 ```
 
 The checked-in PostgreSQL credentials are **development-only defaults** for
@@ -62,15 +66,65 @@ $env:DATABASE_URL = "postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5
 docker compose --env-file .env -f docker/compose.dev.yml exec -T redis redis-cli ping
 ```
 
-To run service-backed integration tests, configure `TEST_DATABASE_URL` in
-`.env` or in the current PowerShell session, then run:
+To run service-backed integration tests, configure the application/test database
+and Redis URLs in `.env` or in the current PowerShell session. For the default
+development Compose ports and credentials from `.env.example`:
 
 ```powershell
+$env:DATABASE_URL = "postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain"
+$env:TEST_DATABASE_URL = "postgresql+psycopg://ecochain:ecochain_dev_only@127.0.0.1:5432/ecochain_test"
+$env:REDIS_URL = "redis://127.0.0.1:6379/0"
+$env:ECOCHAIN_TEST_POSTGRES_URL = $env:TEST_DATABASE_URL
+$env:ECOCHAIN_TEST_REDIS_URL = $env:REDIS_URL
+
 .\scripts\test_integration.ps1
 ```
 
 The script executes only tests marked `integration`. It does not silently
-replace unavailable services with mocks.
+replace unavailable services with mocks. The Phase 13 outage test stops and
+restarts the development Compose PostgreSQL and Redis services; do not run
+that test against production or shared services. If local PowerShell execution
+policy blocks the unsigned script, run the equivalent command directly from the
+repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest backend\tests -m integration -v
+```
+
+For the complete backend suite and coverage report, use:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest backend\tests -v --cov=backend/app --cov-report=term-missing
+```
+
+## Dependency outage and recovery
+
+The API readiness check requires both PostgreSQL and Redis. If `/readyz`
+returns HTTP 503, inspect the service health before accepting new work:
+
+```powershell
+docker compose --env-file .env -f docker/compose.dev.yml ps
+docker compose --env-file .env -f docker/compose.dev.yml logs --tail 200 postgres redis
+docker compose --env-file .env -f docker/compose.dev.yml up -d --wait postgres redis
+```
+
+The rate-limited API rejects requests when Redis is unavailable. A worker
+failure is logged and marked failed when the database is reachable; if
+PostgreSQL itself is down, the job may remain `processing` because its failure
+cannot be persisted during the outage. After dependencies recover, inspect
+the job and worker logs before retrying; never infer compliance from a stale
+status. Confirm `/readyz`, Redis `PING`, PostgreSQL readiness, and the Alembic
+head before resuming normal operation.
+
+Run the real-service outage regression only against the isolated development
+Compose project:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest backend\tests\integration\test_api_postgres_redis.py::test_postgres_and_redis_outages_fail_closed_and_recover -v
+```
+
+The test restarts services in a `finally` path, but operators should still
+check Compose health if the test process or Docker engine is interrupted.
 
 ## API and worker
 

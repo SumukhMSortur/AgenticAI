@@ -90,8 +90,10 @@ All components adhere to clean, decoupled abstract interfaces with comprehensive
   - Next.js + TypeScript strict + Tailwind + shadcn/ui. Source viewer with bounding-box overlay, risk gauge, review queue, SSE live streaming hook.
   - *Gate:* TypeScript strict and frontend tests pass.
 - **Phase 12: Evaluation, CI Gates, Packaging**
-  - `make eval` generates `reports/evaluation_report.md`. CI gate (`eval-gate.yml`) checks regressions against thresholds. Multi-stage Dockerfile and docker-compose.
-  - *Gate:* `docker compose up` brings stack to ready; `make demo` executes golden scenario.
+  - `make eval` writes `reports/evaluation_report.md` from the current verifier golden-set run and threshold-checked evaluation reports. The CI workflow checks backend quality/integration, frontend unit/browser tests, evaluation/demo gates, and image readiness.
+  - Root `Dockerfile` builds the Python API/worker from the pinned CPU-only runtime lock and the standalone Next.js frontend; root `docker-compose.yml` runs PostgreSQL, Redis, migrations, API, worker, and frontend. Database/cache host ports default to 5433/6380 to avoid colliding with `docker/compose.dev.yml`.
+  - Local commands: `docker compose build`, `docker compose up -d --wait`, `make demo`, and `docker compose down`. The default database password and built-in app keys are development-only; inject deployment secrets before any non-development use.
+  - *Gate:* `docker compose up --wait` brings the stack to API/frontend readiness; `make demo` executes the 150-case golden scenario. Optional Ragas external-model metrics remain a separately gated, credentialed evaluation.
 - **Phase 13: Hardening and Final Audit**
   - Red-team prompt injection resilience tests, security audit, RUNBOOK, SECURITY, MODEL_CARDS, README.
 

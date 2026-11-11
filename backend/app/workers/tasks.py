@@ -12,7 +12,9 @@ from typing import Any, Literal, cast
 
 from pydantic import BaseModel
 from redis import Redis
+from redis.exceptions import RedisError
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import settings
@@ -246,7 +248,12 @@ def _run_job(job_id: str, tenant_id: str, *, resume: ReviewDecision | None = Non
     lock_value = uuid.uuid4().hex
     lock_key = f"ecochain:job:{tenant_id}:{job_id}:worker-lock"
     redis = Redis.from_url(settings.REDIS_URL, decode_responses=True)
-    acquired = redis.set(lock_key, lock_value, nx=True, ex=3600)
+    try:
+        acquired = redis.set(lock_key, lock_value, nx=True, ex=3600)
+    except RedisError:
+        redis.close()
+        logger.exception("Worker could not acquire the job lock; job was not started")
+        raise
     if not acquired:
         redis.close()
         return "already_running"
@@ -279,13 +286,23 @@ def _run_job(job_id: str, tenant_id: str, *, resume: ReviewDecision | None = Non
             _publish(redis, job.id, terminal_event, summary)
             return terminal_event
     except Exception:
-        _mark_failed(job_id, tenant_id)
-        _publish(redis, job_id, "failed", "Workflow failed; inspect worker logs.")
+        try:
+            _mark_failed(job_id, tenant_id)
+        except SQLAlchemyError:
+            logger.exception("Worker could not persist the failed state for job %s", job_id)
+        try:
+            _publish(redis, job_id, "failed", "Workflow failed; inspect worker logs.")
+        except RedisError:
+            logger.exception("Worker could not publish the failure event for job %s", job_id)
         logger.exception("Workflow task failed for job %s", job_id)
         raise
     finally:
-        redis.eval(_RELEASE_LOCK, 1, lock_key, lock_value)
-        redis.close()
+        try:
+            redis.eval(_RELEASE_LOCK, 1, lock_key, lock_value)
+        except RedisError:
+            logger.exception("Worker could not release the Redis lock for job %s", job_id)
+        finally:
+            redis.close()
 
 
 @celery_app.task(name="ecochain.process_job")  # type: ignore[untyped-decorator]

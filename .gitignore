@@ -4,6 +4,12 @@ data/chroma_db/
 data/uploads/
 artifacts/risk/
 artifacts/router/
+frontend/node_modules/
+frontend/.next/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+frontend/tsconfig.tsbuildinfo
 *.db
 *.sqlite
 *.sqlite3

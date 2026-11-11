@@ -1,61 +1,25 @@
 """Guarded Gemini adapter for citation-entailment checks."""
 
 import json
-from typing import Protocol
 
-from google import genai
-from google.genai import errors, types
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import settings
 from backend.app.core.errors import EntailmentEscalationError
+from backend.app.llm.gemini_client import (
+    GeminiClient,
+    GeminiGenerateConfig,
+    GeminiModels,
+    GeminiProviderError,
+    create_gemini_client,
+)
 from backend.app.privacy.outbound_guard import (
     ExternalCallPolicy,
     OutboundGuard,
     outbound_guard,
 )
 
-
-class GeminiResponse(Protocol):
-    @property
-    def text(self) -> str | None: ...
-
-
-class GeminiModels(Protocol):
-    def generate_content(
-        self,
-        *,
-        model: str,
-        contents: str,
-        config: types.GenerateContentConfig,
-    ) -> GeminiResponse: ...
-
-
-class GeminiClient(Protocol):
-    models: GeminiModels
-
-
-class GoogleGenAIModelsAdapter:
-    def __init__(self, client: genai.Client) -> None:
-        self._client = client
-
-    def generate_content(
-        self,
-        *,
-        model: str,
-        contents: str,
-        config: types.GenerateContentConfig,
-    ) -> GeminiResponse:
-        return self._client.models.generate_content(
-            model=model,
-            contents=contents,
-            config=config,
-        )
-
-
-class GoogleGenAIClientAdapter:
-    def __init__(self, client: genai.Client) -> None:
-        self.models: GeminiModels = GoogleGenAIModelsAdapter(client)
+__all__ = ["GeminiClient", "GeminiEntailmentJudge", "GeminiModels"]
 
 
 class GeminiEntailmentJudge:
@@ -89,9 +53,7 @@ class GeminiEntailmentJudge:
         if client is not None:
             self.client = client
         else:
-            self.client = GoogleGenAIClientAdapter(
-                genai.Client(api_key=settings.GEMINI_API_KEY)
-            )
+            self.client = create_gemini_client(settings.GEMINI_API_KEY)
 
     def __call__(self, claim: str, citation_text: str) -> tuple[bool, float]:
         prompt = (
@@ -118,12 +80,12 @@ class GeminiEntailmentJudge:
             response = self.client.models.generate_content(
                 model=self.model,
                 contents=prompt,
-                config=types.GenerateContentConfig(
+                config=GeminiGenerateConfig(
                     response_mime_type="application/json",
                     temperature=0.0,
                 ),
             )
-        except errors.APIError as exc:
+        except GeminiProviderError as exc:
             raise EntailmentEscalationError(
                 "Gemini entailment service failed; citation requires human review."
             ) from exc

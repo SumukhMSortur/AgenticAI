@@ -1,0 +1,117 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ecochain}
+      POSTGRES_USER: ${POSTGRES_USER:-ecochain}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecochain_dev_only}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/initdb/01-create-test-db.sql:/docker-entrypoint-initdb.d/01-create-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  redis:
+    image: redis:7
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6380}:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  migrate:
+    build:
+      context: .
+      target: backend-runtime
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ecochain}:${POSTGRES_PASSWORD:-ecochain_dev_only}@postgres:5432/${POSTGRES_DB:-ecochain}
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      target: backend-runtime
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ecochain}:${POSTGRES_PASSWORD:-ecochain_dev_only}@postgres:5432/${POSTGRES_DB:-ecochain}
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      WORKFLOW_SERVICES_FACTORY: ${WORKFLOW_SERVICES_FACTORY:-backend.app.graph.services:create_workflow_services}
+      LLM_PROVIDER: fake
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    command: ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+  worker:
+    build:
+      context: .
+      target: backend-runtime
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ecochain}:${POSTGRES_PASSWORD:-ecochain_dev_only}@postgres:5432/${POSTGRES_DB:-ecochain}
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      WORKFLOW_SERVICES_FACTORY: ${WORKFLOW_SERVICES_FACTORY:-backend.app.graph.services:create_workflow_services}
+      LLM_PROVIDER: fake
+    command: ["celery", "-A", "backend.app.workers.celery_app:celery_app", "worker", "--loglevel=INFO"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      target: frontend-runtime
+    environment:
+      ECOCHAIN_API_URL: http://api:8000
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+volumes:
+  postgres_data:
+  redis_data:

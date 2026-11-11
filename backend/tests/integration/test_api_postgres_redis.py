@@ -2,11 +2,15 @@
 
 import json
 import os
+import shutil
 import subprocess
 import sys
+import threading
 import time
 import uuid
 from collections.abc import Iterator
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -17,10 +21,11 @@ from fastapi.testclient import TestClient
 from redis import Redis
 from redis.exceptions import RedisError
 from sqlalchemy import create_engine, delete
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
 
 from backend.app.api.events import job_stream_key
-from backend.app.api.security import hash_password
+from backend.app.api.security import create_access_token, hash_password
 from backend.app.core.config import settings
 from backend.app.db.audit_log import verify_chain
 from backend.app.db.models import (
@@ -41,6 +46,7 @@ from backend.app.db.session import get_db
 from backend.app.main import app
 
 pytestmark = pytest.mark.integration
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 def _service_urls() -> tuple[str, str]:
@@ -212,6 +218,48 @@ def _cleanup_tenants(
         session.commit()
 
 
+def _set_compose_service(service: str, *, running: bool) -> None:
+    docker = shutil.which("docker")
+    if docker is None:
+        local_app_data = os.environ.get("LOCALAPPDATA")
+        if local_app_data:
+            candidate = (
+                Path(local_app_data)
+                / "Programs"
+                / "DockerDesktop"
+                / "resources"
+                / "bin"
+                / "docker.exe"
+            )
+            if candidate.exists():
+                docker = str(candidate)
+    if docker is None:
+        pytest.fail("Docker CLI is required for real-service outage integration tests.")
+
+    action = ["up", "-d", "--wait", service] if running else ["stop", service]
+    result = subprocess.run(
+        [
+            docker,
+            "compose",
+            "--env-file",
+            ".env",
+            "-f",
+            "docker/compose.dev.yml",
+            *action,
+        ],
+        cwd=_PROJECT_ROOT,
+        capture_output=True,
+        check=False,
+        text=True,
+        timeout=120,
+    )
+    if result.returncode:
+        pytest.fail(
+            f"Could not {'start' if running else 'stop'} Compose service {service}:\n"
+            f"{result.stdout}\n{result.stderr}"
+        )
+
+
 def test_tenant_isolation_sse_replay_and_rate_limit(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -299,6 +347,14 @@ def test_tenant_isolation_sse_replay_and_rate_limit(
                 == 404
             )
             assert client.get("/v1/jobs", headers=headers).json()[0]["id"] == own["job_id"]
+            assert (
+                client.post(
+                    f"/v1/reviews/{foreign['review_id']}/decision",
+                    headers=headers,
+                    json={"decision": "approved", "notes": "Cross-tenant check"},
+                ).status_code
+                == 404
+            )
             scorecard = client.get(
                 f"/v1/jobs/{own['job_id']}/scorecard",
                 headers=headers,
@@ -467,6 +523,77 @@ def test_tenant_isolation_sse_replay_and_rate_limit(
         if own is not None and foreign is not None:
             _cleanup_tenants(test_session_factory, tenant_ids)
         redis.close()
+        engine.dispose()
+
+
+def test_authentication_and_role_authorization_fail_closed() -> None:
+    database_url, _ = _service_urls()
+    engine = create_engine(database_url, pool_pre_ping=True)
+    test_session_factory = sessionmaker(
+        bind=engine,
+        autoflush=False,
+        expire_on_commit=False,
+    )
+    tenant_id = str(uuid.uuid4())
+    user_id = str(uuid.uuid4())
+    email = f"{uuid.uuid4().hex}@example.test"
+
+    def override_db() -> Iterator[Session]:
+        with test_session_factory() as session:
+            yield session
+
+    app.dependency_overrides[get_db] = override_db
+    try:
+        with test_session_factory() as session:
+            session.add(Tenant(id=tenant_id, name="Authorization tenant"))
+            session.add(
+                User(
+                    id=user_id,
+                    tenant_id=tenant_id,
+                    email=email,
+                    hashed_password=hash_password("test-password"),
+                    role="viewer",
+                )
+            )
+            session.commit()
+
+        with TestClient(app) as client:
+            assert client.get("/v1/jobs").status_code == 401
+            assert client.get(
+                "/v1/jobs",
+                headers={"Authorization": "Bearer malformed"},
+            ).status_code == 401
+            assert (
+                client.post(
+                    "/v1/auth/token",
+                    data={"username": email, "password": "wrong-password"},
+                ).status_code
+                == 401
+            )
+            token = _token(client, email)
+            headers = {"Authorization": f"Bearer {token}"}
+            assert client.get("/v1/reviews", headers=headers).status_code == 403
+            assert (
+                client.put(
+                    "/v1/settings/live-lookup",
+                    headers=headers,
+                    json={"enabled": True},
+                ).status_code
+                == 403
+            )
+
+            forged_subject, _ = create_access_token(
+                user_id="not-a-uuid",
+                tenant_id=tenant_id,
+                role="tenant_admin",
+            )
+            assert client.get(
+                "/v1/jobs",
+                headers={"Authorization": f"Bearer {forged_subject}"},
+            ).status_code == 401
+    finally:
+        app.dependency_overrides.pop(get_db, None)
+        _cleanup_tenants(test_session_factory, [tenant_id])
         engine.dispose()
 
 
@@ -759,4 +886,127 @@ def test_real_local_workflow_pauses_and_resumes_through_api(
                 session.commit()
         _cleanup_tenants(test_session_factory, [tenant_id])
         redis.close()
+
+
+def test_postgres_and_redis_outages_fail_closed_and_recover(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    database_url, redis_url = _service_urls()
+    engine = create_engine(database_url, pool_pre_ping=True)
+    test_session_factory = sessionmaker(
+        bind=engine,
+        autoflush=False,
+        expire_on_commit=False,
+    )
+    redis = Redis.from_url(redis_url, decode_responses=True)
+    tenant_id = str(uuid.uuid4())
+    user_id = str(uuid.uuid4())
+    email = f"{uuid.uuid4().hex}@example.test"
+    job: dict[str, str] | None = None
+
+    def override_db() -> Iterator[Session]:
+        with test_session_factory() as session:
+            yield session
+
+    from backend.app.workers import tasks
+
+    monkeypatch.setattr(tasks, "SessionLocal", test_session_factory)
+    app.dependency_overrides[get_db] = override_db
+    try:
+        with test_session_factory() as session:
+            job = _create_tenant_data(
+                session,
+                tenant_id=tenant_id,
+                user_id=user_id,
+                email=email,
+                prefix="outage",
+                live_lookup_enabled=False,
+            )
+            queued_job = session.get(Job, job["job_id"])
+            assert queued_job is not None
+            queued_job.status = "queued"
+            session.commit()
+
+        with TestClient(app, raise_server_exceptions=False) as client:
+            headers = {"Authorization": f"Bearer {_token(client, email)}"}
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                for service, expected_error in (
+                    ("postgres", SQLAlchemyError),
+                    ("redis", RedisError),
+                ):
+                    with test_session_factory() as session:
+                        queued_job = session.get(Job, job["job_id"])
+                        assert queued_job is not None
+                        queued_job.status = "queued"
+                        session.commit()
+
+                    started = threading.Event()
+                    resume = threading.Event()
+
+                    def blocked_graph(
+                        *_args: object,
+                        started_event: threading.Event = started,
+                        resume_event: threading.Event = resume,
+                        **_kwargs: object,
+                    ) -> tuple[dict[str, object], bool]:
+                        started_event.set()
+                        if not resume_event.wait(timeout=30):
+                            raise TimeoutError("test worker was not released")
+                        return {}, False
+
+                    monkeypatch.setattr(tasks, "_run_graph", blocked_graph)
+                    worker_result = executor.submit(
+                        tasks.process_job.run,
+                        job["job_id"],
+                        tenant_id,
+                    )
+                    assert started.wait(timeout=30), "worker did not enter the graph"
+                    try:
+                        _set_compose_service(service, running=False)
+                        assert client.get("/readyz").status_code == 503
+                        if service == "redis":
+                            limited_request = client.get("/v1/jobs", headers=headers)
+                            assert limited_request.status_code == 503
+                            assert limited_request.json()["detail"] == (
+                                "Rate limiting service is unavailable"
+                            )
+                        resume.set()
+                        with pytest.raises(expected_error):
+                            worker_result.result(timeout=30)
+                    finally:
+                        resume.set()
+                        try:
+                            if not worker_result.done():
+                                with suppress(SQLAlchemyError, RedisError):
+                                    worker_result.result(timeout=30)
+                        finally:
+                            _set_compose_service(service, running=True)
+
+                    assert client.get("/readyz").status_code == 200
+                    with test_session_factory() as session:
+                        recovered_job = session.get(Job, job["job_id"])
+                        assert recovered_job is not None
+                        if service == "postgres":
+                            assert recovered_job.status == "processing"
+                            recovered_job.status = "queued"
+                            session.commit()
+                            monkeypatch.setattr(
+                                tasks,
+                                "_run_graph",
+                                lambda *_args, **_kwargs: ({}, False),
+                            )
+                            assert (
+                                tasks.process_job.run(job["job_id"], tenant_id) == "completed"
+                            )
+                        else:
+                            assert recovered_job.status == "failed"
+                    if service == "redis":
+                        assert client.get("/v1/jobs", headers=headers).status_code == 200
+    finally:
+        app.dependency_overrides.pop(get_db, None)
+        if job is not None:
+            redis.delete(job_stream_key(job["job_id"]))
+            _cleanup_tenants(test_session_factory, [tenant_id])
+        redis.close()
+        engine.dispose()
         engine.dispose()

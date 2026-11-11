@@ -3,15 +3,15 @@
 import json
 from collections.abc import Mapping, Sequence
 
-from google import genai
-from google.genai import errors, types
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import settings
 from backend.app.core.errors import RAGGenerationError
-from backend.app.integrations.gemini_entailment import (
+from backend.app.llm.gemini_client import (
     GeminiClient,
-    GoogleGenAIClientAdapter,
+    GeminiGenerateConfig,
+    GeminiProviderError,
+    create_gemini_client,
 )
 from backend.app.privacy.outbound_guard import (
     ExternalCallPolicy,
@@ -51,9 +51,7 @@ class GeminiRAGAnswerer:
         if client is not None:
             self.client = client
         else:
-            self.client = GoogleGenAIClientAdapter(
-                genai.Client(api_key=settings.GEMINI_API_KEY)
-            )
+            self.client = create_gemini_client(settings.GEMINI_API_KEY)
 
     def __call__(
         self,
@@ -94,12 +92,12 @@ class GeminiRAGAnswerer:
             response = self.client.models.generate_content(
                 model=self.model,
                 contents=prompt,
-                config=types.GenerateContentConfig(
+                config=GeminiGenerateConfig(
                     temperature=0.0,
                     max_output_tokens=1024,
                 ),
             )
-        except errors.APIError as exc:
+        except GeminiProviderError as exc:
             raise RAGGenerationError(
                 "Gemini response generation failed; no answer was produced."
             ) from exc

@@ -42,3 +42,22 @@
 ### Gemini API (Configurable via `GEMINI_MODEL`)
 - **Role:** Drafts explanations and human-readable compliance summaries from locked Verifier verdicts.
 - **Choke Point:** Invocations pass exclusively through `outbound_guard.py`. Raw text and images are strictly blocked; only redacted, pseudonymized text reaches the API.
+
+## 5. Security and Limitations
+
+- Document text and user queries are untrusted inputs and may contain
+  prompt-injection instructions. Deterministic verifier results are the source
+  of compliance outcomes; generated explanations cannot change them. The
+  tested red-team cases do not prove universal prompt-injection immunity.
+- Redaction and outbound guards reduce exposure but can miss PII. Review
+  `reports/redaction.json` for synthetic per-entity recall; synthetic recall
+  is not a production guarantee.
+- The issuer registry is mock data, and the regulation corpus is manually
+  curated. Risk and extraction metrics are based on synthetic/held-out project
+  data and must not be interpreted as production performance.
+- The local workflow uses a fake explanation provider and local snapshots.
+  Live integrations are outside this phase; no external provider should be
+  enabled without explicit tenant opt-in, guard checks, and operational review.
+- LayoutLMv3 pretrained weights are subject to the non-commercial
+  CC BY-NC-SA 4.0 license noted above. Confirm the license of the actual
+  weights and intended use before deployment.

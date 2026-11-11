@@ -68,7 +68,8 @@ implementation exists but misses a stated requirement or lacks required evidence
 | Acceptance 10: router baseline benchmark and decision documented | met | `reports/router.json`; ADR-011 |
 | Acceptance 11: CI evaluation regression gate and reports regenerate | missing | `eval-gate.yml` / threshold-driven report regeneration not evidenced |
 | Acceptance 12: cross-tenant denial, upload abuse, rate limiting | met | `backend/tests/integration/test_api_postgres_redis.py` |
-| Acceptance 13: frontend bbox source viewer and SSE reconnect | missing | Phase 11 not started (`docs/HANDOFF.md`) |
+| Phase 11: frontend auth, tenant-scoped jobs, scorecard, reviews, factory risk, audit, integrations, regulation approvals | partial | Implemented under `frontend/src/`; lint/typecheck/unit/build pass; Playwright and backend-service flows remain unverified |
+| Acceptance 13: frontend bbox source viewer and SSE reconnect | partial | Authenticated same-origin SSE proxy and evidence bbox viewer implemented; 7 frontend unit tests pass; Playwright browser missing (`frontend/src/`) |
 | Acceptance 14: Known Limitations across required docs | partial | Some limits recorded; final README/runbook/security/model cards/evaluation report are not complete |
 | Acceptance 15: no external call bypasses guard; seeded PII excluded | met | Import-boundary and guarded Ollama payload tests; live provider adapters are not yet implemented |
 | Acceptance 16: external scorecard facts show source/as-of and replay from audit/snapshot hash | partial | Snapshot provenance schema exists; no complete live lookup-to-scorecard evidence |
@@ -90,3 +91,9 @@ workflow and synthetic-risk limitations. The all-revisions SQLite smoke test is 
 pre-existing migration `2026_11_02_0003_api_submissions.py`, which uses SQLite-unsupported
 `ALTER COLUMN ... DROP DEFAULT`; the new trigger migration therefore still needs a PostgreSQL
 service-backed check.
+
+The current downloaded checkout has no Git metadata, Docker, or configured PostgreSQL/Redis
+integration services. Its local frontend checks pass, but Chromium is not installed, so
+Playwright E2E remains unverified. These current-checkout limitations are recorded in
+`docs/PROGRESS.md` and `docs/HANDOFF.md`; the historical service-backed gate above must not
+be treated as a fresh result for this environment.
