@@ -15,7 +15,7 @@ implementation exists but misses a stated requirement or lacks required evidence
 | Phase 1: claims without evidence are rejected before verification/rendering | met | `backend/app/verifier/engine.py`; `backend/tests/unit/test_verifier_rules.py` |
 | Phase 2: reproducible manifest and 150-case labeled golden set | met | `scripts/generate_synthetic_data.py`; `data/MANIFEST.json`; `data/golden/golden_set.json` |
 | Phase 2: 400+ factories with 36-month histories and factory splits | met | `scripts/generate_audit_histories.py`; `data/MANIFEST.json` |
-| Phase 2: hundreds of annotated PDFs with required document diversity/adversarial variants | partial | Generator creates 180 PDFs; scan noise, skew, stamps/signatures and all requested document types are not evidenced (`scripts/generate_documents.py`; `docs/PROGRESS.md`) |
+| Phase 2: hundreds of annotated PDFs with required document diversity/adversarial variants | met | Reproducible generator creates 480 PDFs across four document types, with 320 clean and 160 adversarial examples; seeded regeneration and all per-PDF annotation hashes verified (`scripts/generate_documents.py`; `backend/tests/unit/test_data_generation.py`; `data/synthetic/documents_v2/annotations.json`) |
 | Phase 2: versioned regulations include a superseded version | met | `data/regulations/csddd_regulations.json`; RAG date-filter tests |
 | Phase 2: mock issuer registry clearly labeled | met | `data/registry/approved_issuers.csv`; `backend/app/verifier/registry.py` |
 | Phase 3: OCR returns word boxes in normalized space | partial | PyMuPDF text/word extraction exists; Tesseract and scanned-document OCR are not wired (`backend/app/privacy/ocr.py`) |
@@ -24,8 +24,8 @@ implementation exists but misses a stated requirement or lacks required evidence
 | Phase 3: every external network call is guarded and network imports are confined | met | Ollama, Gemini entailment/answer generation, and OpenAI Ragas judging are isolated under `integrations/` and guarded before transmission; import-boundary and provider guard tests pass (`backend/app/integrations/`; `backend/tests/leakage/test_privacy_leakage.py`; `backend/tests/unit/test_privacy_boundary.py`; `backend/tests/unit/test_rag.py`) |
 | Phase 3: seeded values never leak; entity recall is reported | partial | Report covers synthetic redaction/outbound payloads, but not every external-call path (`reports/redaction.json`; `backend/tests/leakage/test_privacy_leakage.py`) |
 | Phase 4: extractor interface, heuristic fallback, normalizers | met | `backend/app/extraction/base.py`; `backend/app/extraction/heuristic.py`; `backend/app/extraction/normalizers.py` |
-| Phase 4: actual LayoutLMv3 fine-tuning, resume, and model inference | missing | Trainer is evaluation-only and adapter always calls heuristic (`ml/train_layoutlm.py`; `backend/app/extraction/layoutlmv3.py`) |
-| Phase 4: per-field F1 and bounding-box IoU evidence | partial | Report exists, but evaluation uses heuristic output and substitutes IoU `0.85` when no IoU is measured (`reports/extraction.json`; `ml/train_layoutlm.py`) |
+| Phase 4: actual LayoutLMv3 fine-tuning, resume, and model inference | partial | Token-classification fine-tuning and local inference are implemented; a 16-document/18-page smoke training run completed, but there is no completed full-corpus run or validated saved model (`ml/train_layoutlm.py`; `backend/app/extraction/layoutlmv3.py`) |
+| Phase 4: per-field F1 and bounding-box IoU evidence | partial | New diagnostics compute exact BIO-span F1 and measured bbox IoU; the checked-in report is legacy heuristic output, and a 20-document/4-held-out diagnostic is too small to close acceptance (`reports/extraction.json`; `reports/extraction-balanced-diagnostic.json` is temporary evidence only) |
 | Phase 5: legal-structure chunking, parent linkage, and regulation provenance | met | `backend/app/rag/chunker.py`; `backend/app/rag/store.py`; `backend/tests/unit/test_rag.py` |
 | Phase 5: Chroma metadata/date/jurisdiction filtering | met | `backend/app/rag/store.py`; date-filter tests |
 | Phase 5: BM25+dense hybrid retrieval with reciprocal-rank fusion | met | `backend/app/rag/retriever.py`; RAG unit tests |
@@ -83,17 +83,11 @@ implementation exists but misses a stated requirement or lacks required evidence
 1. Phase 5 offline gate is closed; semantic Ragas faithfulness/answer relevance remain `not_run` until `GOOGLE_API_KEY` and `OPENAI_API_KEY` are available and the guarded command in `docs/RUNBOOK.md` is explicitly run.
 2. Verify migration `2026_11_02_0004` directly against PostgreSQL; the previous SQLite-only check could not exercise the PostgreSQL triggers.
 3. Close Phase 4 with actual LayoutLMv3 fine-tuning/inference and an honest held-out evaluation.
-4. Expand Phase 2's document corpus to the specified hundreds and add the missing visual/adversarial variation.
+4. Complete Phase 4 full-corpus LayoutLMv3 training/inference and produce a valid held-out report; the corpus-size/diversity gate is now covered by the 480-PDF v2 dataset.
 
-This audit is updated as fixes land and reports the current conformance evidence. Phase 10
-closed with the real-service gate on 2026-11-03; ADR-019 records the fake-backed local
-workflow and synthetic-risk limitations. The all-revisions SQLite smoke test is currently blocked by
-pre-existing migration `2026_11_02_0003_api_submissions.py`, which uses SQLite-unsupported
-`ALTER COLUMN ... DROP DEFAULT`; the new trigger migration therefore still needs a PostgreSQL
-service-backed check.
-
-The current downloaded checkout has no Git metadata, Docker, or configured PostgreSQL/Redis
-integration services. Its local frontend checks pass, but Chromium is not installed, so
-Playwright E2E remains unverified. These current-checkout limitations are recorded in
-`docs/PROGRESS.md` and `docs/HANDOFF.md`; the historical service-backed gate above must not
-be treated as a fresh result for this environment.
+This audit is updated as fixes land and reports current evidence. The 2026-11-11 continuation
+verified real PostgreSQL/Redis integration tests, frontend lint/typecheck/unit/build/E2E checks,
+and Python tests as recorded in `docs/PROGRESS.md`. Git metadata and Docker are present in the
+restored development checkout. Phase 13 remains partial until the documented quickstart is
+verified from a fresh clone of the synchronized branch. Phase 14 live providers remain
+unimplemented; official endpoint/terms verification is incomplete.

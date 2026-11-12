@@ -74,6 +74,10 @@ def _gate(
 
 def evaluate_reports(reports_dir: Path, verifier: dict[str, Any]) -> list[Gate]:
     extraction = _read_report(reports_dir, "extraction")
+    extraction_model = extraction.get("model_architecture")
+    is_fine_tuned_layoutlm = (
+        extraction_model == "LayoutLMv3 token classification (fine-tuned)"
+    )
     privacy = _read_report(reports_dir, "redaction")
     rag = _read_report(reports_dir, "rag")
     risk = _read_report(reports_dir, "risk")
@@ -91,25 +95,33 @@ def evaluate_reports(reports_dir: Path, verifier: dict[str, Any]) -> list[Gate]:
 
     checks = [
         _gate(
+            "Extraction model provenance",
+            "model_architecture",
+            str(extraction_model or "missing"),
+            "LayoutLMv3 token classification (fine-tuned)",
+            is_fine_tuned_layoutlm,
+        ),
+        _gate(
             "Extraction macro F1",
             "macro_f1",
             _number(extraction, "macro_f1"),
             ">= 0.95",
-            _number(extraction, "macro_f1") >= 0.95,
+            is_fine_tuned_layoutlm and _number(extraction, "macro_f1") >= 0.95,
         ),
         _gate(
             "Extraction bbox IoU",
             "overall_mean_bbox_iou",
             _number(extraction, "overall_mean_bbox_iou"),
             ">= 0.30",
-            _number(extraction, "overall_mean_bbox_iou") >= 0.30,
+            is_fine_tuned_layoutlm
+            and _number(extraction, "overall_mean_bbox_iou") >= 0.30,
         ),
         _gate(
             "Extraction report gate",
             "is_gate_passed",
             str(_boolean(extraction, "is_gate_passed")).lower(),
             "true",
-            _boolean(extraction, "is_gate_passed"),
+            is_fine_tuned_layoutlm and _boolean(extraction, "is_gate_passed"),
         ),
         _gate(
             "Privacy leaked seeds",

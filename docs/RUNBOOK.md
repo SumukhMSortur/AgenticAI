@@ -91,6 +91,14 @@ repository root:
 .\.venv\Scripts\python.exe -m pytest backend\tests -m integration -v
 ```
 
+If the checkout uses a virtual environment stored elsewhere, pass its Python
+executable explicitly:
+
+```powershell
+$python = "C:\path\to\.venv\Scripts\python.exe"
+.\scripts\test_integration.ps1 -PythonPath $python
+```
+
 For the complete backend suite and coverage report, use:
 
 ```powershell

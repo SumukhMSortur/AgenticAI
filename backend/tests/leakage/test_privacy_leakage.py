@@ -10,7 +10,7 @@ from backend.app.privacy.vault import TokenVault
 
 REPORTS_DIR = Path("reports")
 REDACTION_REPORT = REPORTS_DIR / "redaction.json"
-ANNOTATIONS_PATH = Path("data/synthetic/documents/annotations.json")
+ANNOTATIONS_PATH = Path("data/synthetic/documents_v2/annotations.json")
 
 
 def test_no_direct_llm_imports_outside_llm_module() -> None:
@@ -86,7 +86,7 @@ def test_zero_leakage_across_all_privacy_seeds() -> None:
 
     # Test across all 180 documents
     for doc_info in doc_annotations:
-        pdf_path = Path("data/synthetic/documents") / doc_info["filename"]
+        pdf_path = Path("data/synthetic/documents_v2") / doc_info["filename"]
         if not pdf_path.exists():
             continue
 

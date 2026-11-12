@@ -1,9 +1,18 @@
+param(
+    [string]$PythonPath
+)
+
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $repoRoot
 
-$python = Join-Path $repoRoot ".venv\Scripts\python.exe"
+if ([string]::IsNullOrWhiteSpace($PythonPath)) {
+    $python = Join-Path $repoRoot ".venv\Scripts\python.exe"
+} else {
+    $python = $PythonPath
+}
+
 if (-not (Test-Path $python)) {
     throw "Project virtual environment not found: $python"
 }

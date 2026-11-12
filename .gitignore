@@ -1,5 +1,7 @@
 # EcoChain Generated Data
 data/synthetic/documents/*.pdf
+data/synthetic/documents_v2/*.pdf
+ml/weights/
 data/chroma_db/
 data/uploads/
 artifacts/risk/

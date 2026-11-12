@@ -1,7 +1,7 @@
 {
-  "generator_version": "1.0.0",
+  "generator_version": "1.1.0",
   "master_seed": 42,
-  "total_files_tracked": 7,
+  "total_files_tracked": 8,
   "files": {
     "data/registry/approved_issuers.csv": "f9ca017c0c278ba0daae7790f776986b32bf45ab05a854784be658aefe60dc13",
     "data/regulations/csddd_regulations.json": "7ebfc70cdbefeaf6aa91e0918b030a96bbe1b7d354193451215df09f8869378b",
@@ -9,6 +9,7 @@
     "data/synthetic/audit_histories_val.json": "5cb1f055bcf4fa449b8d1a4f6d1ef5ee10f185a8464ff923157cf50dc532b324",
     "data/synthetic/audit_histories_test.json": "96c4df528b71e70078fa8b285a32ad99054ce083d45bec8ba9b07c9115c8ea8f",
     "data/synthetic/documents/annotations.json": "993226e0cef64befcff64300f338d1084d9ce81fcd69026e1a547fe2150f77d0",
+    "data/synthetic/documents_v2/annotations.json": "6d67ae39d3a5286ead3d1409837e53a8f72abcbbefc900661a353d4dd98c3b47",
     "data/golden/golden_set.json": "b03022a6d195729e038ba07f311ebc3b846c33125b8943cb75610af86b5a78a3"
   }
 }

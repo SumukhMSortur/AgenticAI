@@ -45,7 +45,7 @@ def generate_all_data(seed: int = MASTER_SEED) -> dict[str, str]:
     generate_audit_histories(num_factories=450, seed=seed)
 
     # 4. Supplier Documents & Annotations with Privacy Seeds
-    generate_documents(num_clean=120, num_adversarial=60, seed=seed)
+    generate_documents(num_clean=320, num_adversarial=160, seed=seed)
 
     # 5. Golden Evaluation Benchmark Set (150 cases)
     generate_golden_set(num_cases=150, seed=seed)
@@ -61,6 +61,7 @@ def generate_all_data(seed: int = MASTER_SEED) -> dict[str, str]:
         Path("data/synthetic/audit_histories_val.json"),
         Path("data/synthetic/audit_histories_test.json"),
         Path("data/synthetic/documents/annotations.json"),
+        Path("data/synthetic/documents_v2/annotations.json"),
         Path("data/golden/golden_set.json"),
     ]
 
@@ -70,7 +71,7 @@ def generate_all_data(seed: int = MASTER_SEED) -> dict[str, str]:
             manifest_entries[rel_path] = compute_file_sha256(p)
 
     manifest_data = {
-        "generator_version": "1.0.0",
+        "generator_version": "1.1.0",
         "master_seed": seed,
         "total_files_tracked": len(manifest_entries),
         "files": manifest_entries,

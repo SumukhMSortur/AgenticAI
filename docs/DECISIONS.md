@@ -53,11 +53,11 @@ This document tracks all locked design decisions, conflict resolutions, and depe
   3. **Pure Verifier:** The Deterministic Verifier never initiates network calls; external evidence is fetched upstream by the `enrich` node and supplied as standard `EvidenceItem` inputs.
   4. **Human-in-the-Loop for Regulation Updates:** Regulatory changes detected from official gazettes are stored in `regulation_update_proposals` and require explicit human reviewer authorization before ingestion into the active RAG vector index.
   5. **No LSTM Contamination:** External watchlist and directory matches serve as rule-based escalation/fail triggers and UI context; they are strictly excluded as features in the predictive risk LSTM.
-- **Provider Registry & Terms (Verified Build-Time):**
-  - **Open Supply Hub (OS Hub):** Default local snapshot. Live endpoint `https://opensupplyhub.org/api/docs/` (`v1/production-locations`), CC-BY-SA 4.0 / ODbL terms, rate-limited and token-authenticated.
-  - **EU Consolidated Financial Sanctions (FSF):** XML/CSV bulk snapshot from European External Action Service (EEAS) official portal. Public sector reuse license. Local matching only.
-  - **OFAC Consolidated Sanctions (SDN & Non-SDN):** XML/CSV bulk snapshot from U.S. Treasury OFAC official portal. U.S. government public domain. Local matching only.
-  - **EUR-Lex Regulatory Feed:** Official EU Publications Office RSS/ATOM feed for CSDDD/ESPR legal acts. Local candidate ingestion via proposal review.
+- **Provider verification status (checked 2026-11-11):** See `docs/PROVIDER_VERIFICATION.md`. Official pages are not sufficient to verify all current endpoints, authentication, terms, and update cadence. No Phase 14 provider client or live call is enabled. Earlier endpoint and license notes below this ADR are superseded by this status until independently verified.
+  - **Open Supply Hub:** Official API docs page is reachable, but the schema, endpoint, terms, authentication requirements, and rate limits were not confirmed. An unauthenticated production-locations request returned HTTP 401. Live access remains disabled.
+  - **EU sanctions list:** The previously recorded EEAS page returned HTTP 404; an authoritative downloadable feed, format, terms, and cadence remain unverified. Live access remains disabled.
+  - **OFAC:** The official Sanctions List Service confirms SDN and consolidated non-SDN lists are available for download; exact file URLs, formats, refresh cadence, and applicable reuse terms have not been verified for this implementation. No downloader is enabled.
+  - **EUR-Lex:** The official data-reuse help page returned no usable documentation during this check. A current regulation API/feed, query format, terms, and update cadence remain unverified. No watcher is enabled.
 
 ### ADR-008: Canonical Verifier Verdict Contract
 - **Context:** The interrupted Phase 6 rule files used `VerdictLabel`, `label`, `rationale`, and `confidence`, but those names were not defined by the domain model. The existing `Verdict` model and domain tests use `claim_id`, `outcome`, `reason_code`, and structured `details`.

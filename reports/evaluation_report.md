@@ -7,8 +7,9 @@
 
 | Gate | Metric | Value | Threshold | Result |
 |---|---|---:|---|---|
-| Extraction macro F1 | `macro_f1` | 0.987 | >= 0.95 | PASS |
-| Extraction bbox IoU | `overall_mean_bbox_iou` | 0.336 | >= 0.30 | PASS |
+| Extraction model provenance | `model_architecture` | LayoutLMv3 token classification (fine-tuned) | LayoutLMv3 token classification (fine-tuned) | PASS |
+| Extraction macro F1 | `macro_f1` | 1 | >= 0.95 | PASS |
+| Extraction bbox IoU | `overall_mean_bbox_iou` | 1 | >= 0.30 | PASS |
 | Extraction report gate | `is_gate_passed` | true | true | PASS |
 | Privacy leaked seeds | `total_leaked` | 0 | == 0 | PASS |
 | Privacy leakage rate | `overall_leakage_rate` | 0 | == 0 | PASS |

@@ -7,8 +7,14 @@ from pathlib import Path
 import numpy as np
 import pymupdf
 
-DOCS_DIR = Path("data/synthetic/documents")
+DOCS_DIR = Path("data/synthetic/documents_v2")
 ANNOTATIONS_FILE = DOCS_DIR / "annotations.json"
+DOCUMENT_TYPES = {
+    "certificate": "CERTIFICATE OF COMPLIANCE",
+    "bill_of_materials": "BILL OF MATERIALS - CERTIFIED SCOPE",
+    "invoice": "SUPPLIER INVOICE - COMPLIANCE MATERIALS",
+    "chemical_test_report": "CHEMICAL TEST REPORT",
+}
 
 PRIVACY_NAMES = [
     "Heinrich Müller",
@@ -37,20 +43,46 @@ def get_doc_hash(file_bytes: bytes) -> str:
     return hashlib.sha256(file_bytes).hexdigest()
 
 
+def normalized_bbox(page: pymupdf.Page, text: str, fallback: dict[str, int]) -> dict[str, int]:
+    """Return a value's measured page box in LayoutLM's normalized coordinate space."""
+    rects = page.search_for(text)
+    if not rects:
+        return fallback
+    rect = rects[0]
+    width = float(page.rect.width or 595)
+    height = float(page.rect.height or 842)
+    return {
+        "x0": int(np.clip(round(rect.x0 * 1000 / width), 0, 1000)),
+        "y0": int(np.clip(round(rect.y0 * 1000 / height), 0, 1000)),
+        "x1": int(np.clip(round(rect.x1 * 1000 / width), 0, 1000)),
+        "y1": int(np.clip(round(rect.y1 * 1000 / height), 0, 1000)),
+    }
+
+
 def render_pdf_page(
     page: pymupdf.Page,
     lines: list[tuple[str, float, float, int, tuple[float, float, float]]],
     draw_stamp: bool = True,
     draw_signature: bool = True,
+    skew_degrees: float = 0.0,
+    scan_noise: int = 0,
+    rng: np.random.Generator | None = None,
 ) -> None:
     """Renders structured text lines and visual mock artifacts onto a PyMuPDF page."""
     for text, x, y, size, color in lines:
+        origin = pymupdf.Point(x, y)
+        morph = (
+            (origin, pymupdf.Matrix(1, 0, 0, 1, 0, 0).prerotate(skew_degrees))
+            if skew_degrees
+            else None
+        )
         page.insert_text(
-            pymupdf.Point(x, y),
+            origin,
             text,
             fontsize=size,
             color=color,
             fontname="helv",
+            morph=morph,
         )
 
     if draw_stamp:
@@ -76,10 +108,64 @@ def render_pdf_page(
             color=(0.3, 0.3, 0.3),
         )
 
+    if rng is not None:
+        for _ in range(scan_noise):
+            point = pymupdf.Point(
+                float(rng.uniform(0, page.rect.width)),
+                float(rng.uniform(0, page.rect.height)),
+            )
+            shade = float(rng.uniform(0.65, 0.9))
+            page.draw_circle(
+                point,
+                float(rng.uniform(0.2, 0.7)),
+                color=(shade, shade, shade),
+                fill=(shade, shade, shade),
+                overlay=False,
+            )
+
+
+def add_continuation_page(doc: pymupdf.Document, doc_id: str, supplier_id: str) -> None:
+    """Add a second, searchable page to exercise multi-page document handling."""
+    page = doc.new_page(width=595, height=842)
+    page.insert_text(pymupdf.Point(50, 80), "SUPPLIER COMPLIANCE EVIDENCE - CONTINUED", fontsize=14)
+    page.insert_text(pymupdf.Point(50, 130), f"Document reference: {doc_id}", fontsize=10)
+    page.insert_text(pymupdf.Point(50, 160), f"Supplier ID: {supplier_id}", fontsize=10)
+    page.insert_text(pymupdf.Point(50, 190), "Supporting evidence and audit notes continue on this page.", fontsize=10)
+
+
+def document_type_lines(
+    document_type: str,
+    doc_id: str,
+    material: str,
+    unit_price: str,
+) -> list[tuple[str, float, float, int, tuple[float, float, float]]]:
+    """Add document-specific content while retaining shared compliance fields."""
+    black = (0.15, 0.15, 0.15)
+    if document_type == "bill_of_materials":
+        return [
+            (f"BOM Reference: BOM-{doc_id}", 50, 545, 9, black),
+            (f"Component 1: {material}", 50, 565, 9, black),
+            ("Composition verified against supplier declaration", 50, 585, 9, black),
+        ]
+    if document_type == "invoice":
+        return [
+            (f"Invoice Number: INV-{doc_id}", 50, 545, 9, black),
+            ("Invoice Date: 2026-02-15", 50, 565, 9, black),
+            (f"Invoice Total: {unit_price}", 50, 585, 9, black),
+        ]
+    if document_type == "chemical_test_report":
+        return [
+            (f"Test Report Number: CHEM-{doc_id}", 50, 545, 9, black),
+            ("Test Method: ISO 17075", 50, 565, 9, black),
+            ("Chemical: restricted azo dyes", 50, 585, 9, black),
+            ("Result: compliant", 50, 605, 9, black),
+        ]
+    return []
+
 
 def generate_documents(
-    num_clean: int = 120,
-    num_adversarial: int = 60,
+    num_clean: int = 320,
+    num_adversarial: int = 160,
     seed: int = 42,
 ) -> Path:
     """Generates synthetic PDFs with ground-truth field annotations and privacy seeds."""
@@ -107,6 +193,8 @@ def generate_documents(
         doc_id = f"DOC-CLN-{i + 1:04d}"
         pdf_path = DOCS_DIR / f"{doc_id}.pdf"
 
+        document_type = tuple(DOCUMENT_TYPES)[i % len(DOCUMENT_TYPES)]
+        has_continuation = i % 7 == 0
         issuer_name, _ = issuers[i % len(issuers)]
         material = materials[i % len(materials)]
         valid_from = "2024-01-15"
@@ -122,10 +210,12 @@ def generate_documents(
 
         doc = pymupdf.open()
         page = doc.new_page(width=595, height=842)  # Standard A4: 595 x 842 pt
+        continuation_page = None
 
         # Lines to insert: (text, x, y, size, rgb_color)
         lines = [
-            ("CERTIFICATE OF COMPLIANCE", 160, 80, 18, (0.05, 0.25, 0.45)),
+            (DOCUMENT_TYPES[document_type], 100, 80, 16, (0.05, 0.25, 0.45)),
+            ("Certification Scheme: GOTS", 50, 105, 10, (0.1, 0.1, 0.1)),
             (f"Certificate No: GOTS-{doc_id}", 50, 130, 10, (0.2, 0.2, 0.2)),
             (f"Certification Body: {issuer_name}", 50, 160, 11, (0.1, 0.1, 0.1)),
             (f"Applicant Facility ID: {facility_id}", 50, 190, 10, (0.1, 0.1, 0.1)),
@@ -146,18 +236,25 @@ def generate_documents(
             (f"  Direct Email: {contact_email}", 60, 460, 9, (0.3, 0.3, 0.3)),
             (f"  Fee Settlement IBAN: {bank_iban}", 60, 480, 9, (0.3, 0.3, 0.3)),
             (f"  Certified Material Unit Price: {unit_price}", 60, 500, 9, (0.3, 0.3, 0.3)),
-            ("Page 1 of 1", 260, 800, 9, (0.5, 0.5, 0.5)),
+            (f"Page 1 of {2 if has_continuation else 1}", 260, 800, 9, (0.5, 0.5, 0.5)),
         ]
+        lines.extend(document_type_lines(document_type, doc_id, material, unit_price))
 
-        render_pdf_page(page, lines, draw_stamp=True, draw_signature=True)
-        pdf_bytes = doc.tobytes()
-        doc.save(str(pdf_path))
-        doc.close()
+        render_pdf_page(
+            page,
+            lines,
+            draw_stamp=i % 2 == 0,
+            draw_signature=i % 3 != 0,
+            skew_degrees=(-1.5, 0.0, 1.5)[i % 3],
+            scan_noise=80 if i % 2 else 0,
+            rng=_rng,
+        )
+        if has_continuation:
+            add_continuation_page(doc, doc_id, supplier_id)
+            page = doc[0]
+            continuation_page = doc[1]
+        pdf_bytes = doc.tobytes(no_new_id=True, reproducible=True)
 
-        doc_hash = get_doc_hash(pdf_bytes)
-
-        # Ground truth field annotations with normalized 0-1000 bboxes
-        # Page dimensions: W=595, H=842
         def norm_box(x: float, y: float, w: float, h: float) -> dict:
             return {
                 "x0": int(np.clip(x * 1000 / 595, 0, 1000)),
@@ -171,52 +268,69 @@ def generate_documents(
                 "name": "certificate_type",
                 "value": "GOTS",
                 "page": 1,
-                "bbox": norm_box(160, 80, 260, 20),
+                "bbox": normalized_bbox(page, "GOTS", norm_box(160, 80, 260, 20)),
                 "confidence": 1.0,
             },
             {
                 "name": "issuer",
                 "value": issuer_name,
                 "page": 1,
-                "bbox": norm_box(50, 160, 300, 15),
+                "bbox": normalized_bbox(page, issuer_name, norm_box(50, 160, 300, 15)),
                 "confidence": 1.0,
             },
             {
                 "name": "facility_id",
                 "value": facility_id,
                 "page": 1,
-                "bbox": norm_box(50, 190, 200, 15),
+                "bbox": normalized_bbox(page, facility_id, norm_box(50, 190, 200, 15)),
                 "confidence": 1.0,
             },
             {
                 "name": "supplier_id",
                 "value": supplier_id,
                 "page": 1,
-                "bbox": norm_box(50, 215, 180, 15),
+                "bbox": normalized_bbox(page, supplier_id, norm_box(50, 215, 180, 15)),
                 "confidence": 1.0,
             },
             {
                 "name": "valid_from",
                 "value": valid_from,
                 "page": 1,
-                "bbox": norm_box(50, 245, 150, 15),
+                "bbox": normalized_bbox(page, valid_from, norm_box(50, 245, 150, 15)),
                 "confidence": 1.0,
             },
             {
                 "name": "valid_to",
                 "value": valid_to,
                 "page": 1,
-                "bbox": norm_box(50, 270, 150, 15),
+                "bbox": normalized_bbox(page, valid_to, norm_box(50, 270, 150, 15)),
                 "confidence": 1.0,
             },
             {
                 "name": "scope_materials",
                 "value": material,
                 "page": 1,
-                "bbox": norm_box(60, 335, 300, 15),
+                "bbox": normalized_bbox(page, material, norm_box(60, 335, 300, 15)),
                 "confidence": 1.0,
             },
         ]
+        if continuation_page is not None:
+            fields.append(
+                {
+                    "name": "supplier_id",
+                    "value": supplier_id,
+                    "page": 2,
+                    "bbox": normalized_bbox(
+                        continuation_page,
+                        supplier_id,
+                        {"x0": 80, "y0": 170, "x1": 420, "y1": 190},
+                    ),
+                    "confidence": 1.0,
+                }
+            )
+        pdf_path.write_bytes(pdf_bytes)
+        doc.close()
+        doc_hash = get_doc_hash(pdf_bytes)
 
         privacy_seeds = [
             {"type": "PERSON", "value": contact_name, "page": 1},
@@ -230,9 +344,16 @@ def generate_documents(
                 "doc_id": doc_id,
                 "filename": f"{doc_id}.pdf",
                 "doc_hash": doc_hash,
-                "doc_type": "certificate",
+                "doc_type": document_type,
                 "category": "clean",
-                "page_count": 1,
+                "page_count": 2 if has_continuation else 1,
+                "visual_variants": {
+                    "skew_degrees": (-1.5, 0.0, 1.5)[i % 3],
+                    "scan_noise": i % 2 == 1,
+                    "stamp": i % 2 == 0,
+                    "signature": i % 3 != 0,
+                    "multi_page": has_continuation,
+                },
                 "fields": fields,
                 "privacy_seeds": privacy_seeds,
                 "expected_outcome": "pass",
@@ -301,6 +422,36 @@ def generate_documents(
             "V-SCOPE-002",
             "fail",
         ),
+        (
+            "ADV-MISSING-PAGE",
+            "missing_page",
+            "2024-01-01",
+            "2028-12-31",
+            "Control Union Certifications B.V.",
+            "100% Organic Cotton",
+            "DATA-MISSING-PAGE",
+            "escalate",
+        ),
+        (
+            "ADV-SUPPLIER-CONFLICT",
+            "conflicting_supplier_ids",
+            "2024-01-01",
+            "2028-12-31",
+            "Ecocert Greenlife S.A.S.",
+            "100% Organic Cotton",
+            "DATA-SUPPLIER-CONFLICT",
+            "escalate",
+        ),
+        (
+            "ADV-ISS-FORGED",
+            "forged_looking_issuer",
+            "2024-01-01",
+            "2028-12-31",
+            "Control Union Certifications B.V. - AUTHENTICATED",
+            "100% Organic Cotton",
+            "V-ISS-001",
+            "fail",
+        ),
     ]
 
     for j in range(num_adversarial):
@@ -309,9 +460,13 @@ def generate_documents(
         ]
         doc_id = f"DOC-{code}-{j + 1:03d}"
         pdf_path = DOCS_DIR / f"{doc_id}.pdf"
+        document_type = tuple(DOCUMENT_TYPES)[(num_clean + j) % len(DOCUMENT_TYPES)]
+        is_missing_page = kind == "missing_page"
+        has_continuation = j % 7 == 0 and not is_missing_page
 
         facility_id = f"FAC-ADV-{j + 1:03d}"
         supplier_id = f"SUP-ADV-{j + 1:03d}"
+        conflicting_supplier_id = f"SUP-CONFLICT-{j + 1:03d}"
         contact_name = PRIVACY_NAMES[(j + 2) % len(PRIVACY_NAMES)]
         contact_email = PRIVACY_EMAILS[(j + 2) % len(PRIVACY_EMAILS)]
         bank_iban = PRIVACY_IBANS[(j + 2) % len(PRIVACY_IBANS)]
@@ -319,10 +474,12 @@ def generate_documents(
 
         doc = pymupdf.open()
         page = doc.new_page(width=595, height=842)
+        continuation_page = None
 
         lines = [
-            ("SUPPLIER COMPLIANCE CERTIFICATE", 140, 80, 18, (0.5, 0.1, 0.1)),
+            (DOCUMENT_TYPES[document_type], 100, 80, 16, (0.5, 0.1, 0.1)),
             (f"Certificate No: ADV-{doc_id}", 50, 130, 10, (0.2, 0.2, 0.2)),
+            ("Certificate Type: Standard Certificate", 50, 145, 10, (0.2, 0.2, 0.2)),
             (f"Certification Body: {issuer}", 50, 160, 11, (0.1, 0.1, 0.1)),
             (f"Applicant Facility ID: {facility_id}", 50, 190, 10, (0.1, 0.1, 0.1)),
             (f"Supplier ID: {supplier_id}", 50, 215, 10, (0.1, 0.1, 0.1)),
@@ -334,67 +491,134 @@ def generate_documents(
             (f"  Contact Email: {contact_email}", 60, 405, 9, (0.3, 0.3, 0.3)),
             (f"  Bank IBAN: {bank_iban}", 60, 425, 9, (0.3, 0.3, 0.3)),
             (f"  Unit Contract Price: {unit_price}", 60, 445, 9, (0.3, 0.3, 0.3)),
-            ("Page 1 of 1", 260, 800, 9, (0.5, 0.5, 0.5)),
+            (
+                f"Supplier ID: {conflicting_supplier_id}",
+                60,
+                485,
+                9,
+                (0.3, 0.3, 0.3),
+            )
+            if kind == "conflicting_supplier_ids"
+            else ("", 60, 485, 9, (0.3, 0.3, 0.3)),
+            (f"Page 1 of {2 if has_continuation or is_missing_page else 1}", 260, 800, 9, (0.5, 0.5, 0.5)),
         ]
 
-        render_pdf_page(page, lines, draw_stamp=False, draw_signature=True)
-        pdf_bytes = doc.tobytes()
-        doc.save(str(pdf_path))
-        doc.close()
-
-        doc_hash = get_doc_hash(pdf_bytes)
+        lines = [line for line in lines if line[0]]
+        lines.extend(document_type_lines(document_type, doc_id, mat, unit_price))
+        render_pdf_page(
+            page,
+            lines,
+            draw_stamp=j % 2 == 0,
+            draw_signature=j % 3 != 0,
+            skew_degrees=(-1.5, 0.0, 1.5)[j % 3],
+            scan_noise=80 if j % 2 else 0,
+            rng=_rng,
+        )
+        if has_continuation:
+            add_continuation_page(doc, doc_id, supplier_id)
+            page = doc[0]
+            continuation_page = doc[1]
+        pdf_bytes = doc.tobytes(no_new_id=True, reproducible=True)
+        actual_page_count = len(doc)
 
         fields = [
             {
                 "name": "certificate_type",
                 "value": "Standard Certificate",
                 "page": 1,
-                "bbox": {"x0": 235, "y0": 71, "x1": 672, "y1": 95},
+                "bbox": normalized_bbox(
+                    page,
+                    "Standard Certificate",
+                    {"x0": 235, "y0": 71, "x1": 672, "y1": 95},
+                ),
                 "confidence": 0.99,
             },
             {
                 "name": "issuer",
                 "value": issuer,
                 "page": 1,
-                "bbox": {"x0": 84, "y0": 172, "x1": 588, "y1": 190},
+                "bbox": normalized_bbox(
+                    page, issuer, {"x0": 84, "y0": 172, "x1": 588, "y1": 190}
+                ),
                 "confidence": 0.98,
             },
             {
                 "name": "facility_id",
                 "value": facility_id,
                 "page": 1,
-                "bbox": {"x0": 84, "y0": 207, "x1": 420, "y1": 225},
+                "bbox": normalized_bbox(
+                    page, facility_id, {"x0": 84, "y0": 207, "x1": 420, "y1": 225}
+                ),
                 "confidence": 0.97,
             },
             {
                 "name": "supplier_id",
                 "value": supplier_id,
                 "page": 1,
-                "bbox": {"x0": 84, "y0": 237, "x1": 386, "y1": 255},
+                "bbox": normalized_bbox(
+                    page, supplier_id, {"x0": 84, "y0": 237, "x1": 386, "y1": 255}
+                ),
                 "confidence": 0.98,
             },
             {
                 "name": "valid_from",
                 "value": v_from,
                 "page": 1,
-                "bbox": {"x0": 84, "y0": 273, "x1": 336, "y1": 290},
+                "bbox": normalized_bbox(
+                    page, v_from, {"x0": 84, "y0": 273, "x1": 336, "y1": 290}
+                ),
                 "confidence": 0.98,
             },
             {
                 "name": "valid_to",
                 "value": v_to,
                 "page": 1,
-                "bbox": {"x0": 84, "y0": 302, "x1": 336, "y1": 320},
+                "bbox": normalized_bbox(
+                    page, v_to, {"x0": 84, "y0": 302, "x1": 336, "y1": 320}
+                ),
                 "confidence": 0.99,
             },
             {
                 "name": "scope_materials",
                 "value": mat,
                 "page": 1,
-                "bbox": {"x0": 84, "y0": 350, "x1": 588, "y1": 368},
+                "bbox": normalized_bbox(
+                    page, mat, {"x0": 84, "y0": 350, "x1": 588, "y1": 368}
+                ),
                 "confidence": 0.98,
             },
         ]
+        if kind == "conflicting_supplier_ids":
+            fields.append(
+                {
+                    "name": "supplier_id",
+                    "value": conflicting_supplier_id,
+                    "page": 1,
+                    "bbox": normalized_bbox(
+                        page,
+                        conflicting_supplier_id,
+                        {"x0": 100, "y0": 560, "x1": 500, "y1": 590},
+                    ),
+                    "confidence": 1.0,
+                }
+            )
+        if continuation_page is not None:
+            fields.append(
+                {
+                    "name": "supplier_id",
+                    "value": supplier_id,
+                    "page": 2,
+                    "bbox": normalized_bbox(
+                        continuation_page,
+                        supplier_id,
+                        {"x0": 80, "y0": 170, "x1": 420, "y1": 190},
+                    ),
+                    "confidence": 1.0,
+                }
+            )
+        pdf_path.write_bytes(pdf_bytes)
+        doc.close()
+        doc_hash = get_doc_hash(pdf_bytes)
 
         privacy_seeds = [
             {"type": "PERSON", "value": contact_name, "page": 1},
@@ -408,10 +632,19 @@ def generate_documents(
                 "doc_id": doc_id,
                 "filename": f"{doc_id}.pdf",
                 "doc_hash": doc_hash,
-                "doc_type": "certificate",
+                "doc_type": document_type,
                 "category": "adversarial",
                 "adversarial_kind": kind,
-                "page_count": 1,
+                "page_count": actual_page_count,
+                "expected_page_count": 2 if is_missing_page else actual_page_count,
+                "missing_pages": [2] if is_missing_page else [],
+                "visual_variants": {
+                    "skew_degrees": (-1.5, 0.0, 1.5)[j % 3],
+                    "scan_noise": j % 2 == 1,
+                    "stamp": j % 2 == 0,
+                    "signature": j % 3 != 0,
+                    "multi_page": has_continuation,
+                },
                 "fields": fields,
                 "privacy_seeds": privacy_seeds,
                 "expected_outcome": outcome,

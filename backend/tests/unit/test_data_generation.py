@@ -3,6 +3,9 @@
 import json
 from pathlib import Path
 
+import pymupdf
+
+from scripts import generate_documents
 from scripts.generate_synthetic_data import verify_manifest
 
 
@@ -50,26 +53,105 @@ def test_audit_histories_schema_and_split() -> None:
 
 def test_documents_and_annotations() -> None:
     """Verifies generated documents contain valid bboxes and embedded privacy seeds."""
-    ann_path = Path("data/synthetic/documents/annotations.json")
+    ann_path = Path("data/synthetic/documents_v2/annotations.json")
     with open(ann_path, encoding="utf-8") as f:
         annotations = json.load(f)
 
-    assert len(annotations) == 180  # 120 clean + 60 adversarial
+    assert len(annotations) == 480  # 320 clean + 160 adversarial
+    assert {
+        "certificate",
+        "bill_of_materials",
+        "invoice",
+        "chemical_test_report",
+    }.issubset({doc["doc_type"] for doc in annotations})
+    adversarial_kinds = {
+        doc["adversarial_kind"] for doc in annotations if doc["category"] == "adversarial"
+    }
+    assert {
+        "expired_certificate",
+        "unapproved_issuer",
+        "scope_mismatch",
+        "missing_page",
+        "conflicting_supplier_ids",
+        "forged_looking_issuer",
+    }.issubset(adversarial_kinds)
+    assert any(doc["page_count"] > 1 for doc in annotations)
+    assert any(doc["visual_variants"]["scan_noise"] for doc in annotations)
+    assert any(doc["visual_variants"]["skew_degrees"] != 0 for doc in annotations)
+    type_markers = {
+        "certificate": "CERTIFICATE OF COMPLIANCE",
+        "bill_of_materials": "BILL OF MATERIALS",
+        "invoice": "SUPPLIER INVOICE",
+        "chemical_test_report": "CHEMICAL TEST REPORT",
+    }
+    for doc_type, marker in type_markers.items():
+        doc_info = next(doc for doc in annotations if doc["doc_type"] == doc_type)
+        with pymupdf.open(Path("data/synthetic/documents_v2") / doc_info["filename"]) as pdf:
+            assert marker in pdf[0].get_text()
+
+    missing_page = next(doc for doc in annotations if doc.get("adversarial_kind") == "missing_page")
+    assert missing_page["missing_pages"] == [2]
+    assert missing_page["expected_page_count"] > missing_page["page_count"]
+    conflict = next(
+        doc
+        for doc in annotations
+        if doc.get("adversarial_kind") == "conflicting_supplier_ids"
+    )
+    assert len([field for field in conflict["fields"] if field["name"] == "supplier_id"]) >= 2
 
     for doc in annotations:
         assert doc["doc_hash"]
         assert len(doc["fields"]) > 0
+        with pymupdf.open(Path("data/synthetic/documents_v2") / doc["filename"]) as pdf:
+            page_words: dict[int, list[tuple[float, float]]] = {}
+            for page_number, page in enumerate(pdf, start=1):
+                width = float(page.rect.width or 595)
+                height = float(page.rect.height or 842)
+                page_words[page_number] = [
+                    (
+                        (word[0] + word[2]) * 500 / width,
+                        (word[1] + word[3]) * 500 / height,
+                    )
+                    for word in page.get_text("words")
+                ]
         for f in doc["fields"]:
             box = f["bbox"]
             assert 0 <= box["x0"] <= box["x1"] <= 1000
             assert 0 <= box["y0"] <= box["y1"] <= 1000
             assert 0.0 <= f["confidence"] <= 1.0
+            assert any(
+                box["x0"] <= center_x <= box["x1"]
+                and box["y0"] <= center_y <= box["y1"]
+                for center_x, center_y in page_words[f["page"]]
+            ), f"Field {f['name']} in {doc['doc_id']} does not overlap searchable PDF text"
 
         # Privacy seeds must be present in every document
         assert len(doc["privacy_seeds"]) >= 4
         types = {seed["type"] for seed in doc["privacy_seeds"]}
         assert "EMAIL_ADDRESS" in types
         assert "IBAN_CODE" in types
+
+
+def test_document_generator_is_reproducible(tmp_path: Path, monkeypatch) -> None:
+    output = tmp_path / "documents"
+    monkeypatch.setattr(generate_documents, "DOCS_DIR", output)
+    monkeypatch.setattr(generate_documents, "ANNOTATIONS_FILE", output / "annotations.json")
+
+    generate_documents.generate_documents(num_clean=4, num_adversarial=4, seed=17)
+    first_run = {
+        path.name: path.read_bytes()
+        for path in output.iterdir()
+        if path.is_file()
+    }
+
+    generate_documents.generate_documents(num_clean=4, num_adversarial=4, seed=17)
+    second_run = {
+        path.name: path.read_bytes()
+        for path in output.iterdir()
+        if path.is_file()
+    }
+
+    assert first_run == second_run
 
 
 def test_regulations_corpus_versioning() -> None:

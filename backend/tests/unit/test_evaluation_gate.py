@@ -17,6 +17,7 @@ def _write_report(directory: Path, name: str, report: dict[str, object]) -> None
 def _valid_reports(directory: Path) -> dict[str, dict[str, object]]:
     reports: dict[str, dict[str, object]] = {
         "extraction": {
+            "model_architecture": "LayoutLMv3 token classification (fine-tuned)",
             "macro_f1": 0.99,
             "overall_mean_bbox_iou": 0.31,
             "is_gate_passed": True,
@@ -77,6 +78,29 @@ def test_evaluation_gate_fails_closed_when_a_metric_regresses(tmp_path: Path) ->
     )
 
     assert not next(check for check in checks if check.name == "Privacy leaked seeds").passed
+
+
+def test_evaluation_gate_rejects_heuristic_metrics_as_layoutlm_results(
+    tmp_path: Path,
+) -> None:
+    reports = _valid_reports(tmp_path)
+    reports["extraction"]["model_architecture"] = "Heuristic Layout Extractor"
+    _write_report(tmp_path, "extraction", reports["extraction"])
+
+    checks = evaluate_reports(
+        tmp_path,
+        {"expected_verdict_accuracy": 1.0, "escalation_accuracy": 1.0},
+    )
+
+    assert not next(
+        check for check in checks if check.name == "Extraction model provenance"
+    ).passed
+    assert not next(
+        check for check in checks if check.name == "Extraction macro F1"
+    ).passed
+    assert not next(
+        check for check in checks if check.name == "Extraction bbox IoU"
+    ).passed
 
 
 def test_evaluation_gate_rejects_missing_reports(tmp_path: Path) -> None:
