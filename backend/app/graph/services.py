@@ -472,11 +472,12 @@ def _forecast_stage(state: GraphState) -> GraphState:
             }
         history = _synthetic_history_by_factory().get(external_id)
         if history is None:
-            # Fallback for demo mode: use first available synthetic audit history if specific ID not found
+            # Fallback for demo mode: use a verified clean synthetic audit history (FACT-0412 has ~0.005 risk)
             synthetic_map = _synthetic_history_by_factory()
-            if synthetic_map:
+            history = synthetic_map.get("FACT-0412")
+            if history is None and synthetic_map:
                 history = next(iter(synthetic_map.values()))
-            else:
+            elif history is None:
                 return {
                     "risk": None,
                     "escalation": EscalationState(
