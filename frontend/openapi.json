@@ -1,0 +1,1926 @@
+{
+  "components": {
+    "schemas": {
+      "AuditEventRead": {
+        "properties": {
+          "event_hash": {
+            "title": "Event Hash",
+            "type": "string"
+          },
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "payload": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payload"
+          },
+          "prev_hash": {
+            "title": "Prev Hash",
+            "type": "string"
+          },
+          "prompt_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Version"
+          },
+          "reviewer_decision": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewer Decision"
+          },
+          "sequence": {
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "title": "Timestamp",
+            "type": "string"
+          },
+          "verdicts": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdicts"
+          }
+        },
+        "required": [
+          "id",
+          "sequence",
+          "event_type",
+          "timestamp",
+          "prompt_version",
+          "verdicts",
+          "reviewer_decision",
+          "payload",
+          "prev_hash",
+          "event_hash"
+        ],
+        "title": "AuditEventRead",
+        "type": "object"
+      },
+      "Body_issue_token_v1_auth_token_post": {
+        "properties": {
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "client_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "format": "password",
+            "title": "Client Secret"
+          },
+          "grant_type": {
+            "anyOf": [
+              {
+                "pattern": "^password$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grant Type"
+          },
+          "password": {
+            "format": "password",
+            "title": "Password",
+            "type": "string"
+          },
+          "scope": {
+            "default": "",
+            "title": "Scope",
+            "type": "string"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "Body_issue_token_v1_auth_token_post",
+        "type": "object"
+      },
+      "Body_submit_job_v1_jobs_post": {
+        "properties": {
+          "assessment_date": {
+            "format": "date",
+            "title": "Assessment Date",
+            "type": "string"
+          },
+          "files": {
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "query": {
+            "default": "Assess uploaded documents.",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "assessment_date",
+          "files"
+        ],
+        "title": "Body_submit_job_v1_jobs_post",
+        "type": "object"
+      },
+      "DocumentRead": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "doc_hash": {
+            "title": "Doc Hash",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "mime_type": {
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "page_count": {
+            "title": "Page Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "doc_hash",
+          "filename",
+          "mime_type",
+          "page_count",
+          "created_at"
+        ],
+        "title": "DocumentRead",
+        "type": "object"
+      },
+      "FactoryRead": {
+        "properties": {
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "external_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Id"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "country",
+          "external_id"
+        ],
+        "title": "FactoryRead",
+        "type": "object"
+      },
+      "FactoryRiskRead": {
+        "properties": {
+          "baseline_comparison": {
+            "additionalProperties": true,
+            "title": "Baseline Comparison",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "factory_id": {
+            "title": "Factory Id",
+            "type": "string"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "model_tag": {
+            "enum": [
+              "lstm",
+              "xgboost",
+              "logreg"
+            ],
+            "title": "Model Tag",
+            "type": "string"
+          },
+          "risk_score": {
+            "title": "Risk Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "factory_id",
+          "job_id",
+          "risk_score",
+          "model_tag",
+          "baseline_comparison",
+          "created_at"
+        ],
+        "title": "FactoryRiskRead",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "IntegrationStatus": {
+        "properties": {
+          "age_days": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Days"
+          },
+          "as_of": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "health": {
+            "default": "unverified",
+            "enum": [
+              "unverified",
+              "healthy",
+              "stale",
+              "unavailable"
+            ],
+            "title": "Health",
+            "type": "string"
+          },
+          "live_enabled": {
+            "title": "Live Enabled",
+            "type": "boolean"
+          },
+          "record_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Record Count",
+            "type": "integer"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "unverified",
+              "disabled",
+              "snapshot_only",
+              "healthy",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "status",
+          "live_enabled"
+        ],
+        "title": "IntegrationStatus",
+        "type": "object"
+      },
+      "JobDetail": {
+        "properties": {
+          "assessment_date": {
+            "format": "date",
+            "title": "Assessment Date",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "risk_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Score"
+          },
+          "route": {
+            "title": "Route",
+            "type": "string"
+          },
+          "scorecard_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scorecard Data"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "route",
+          "assessment_date",
+          "risk_score",
+          "created_at",
+          "updated_at",
+          "scorecard_data"
+        ],
+        "title": "JobDetail",
+        "type": "object"
+      },
+      "JobRead": {
+        "properties": {
+          "assessment_date": {
+            "format": "date",
+            "title": "Assessment Date",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "risk_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Score"
+          },
+          "route": {
+            "title": "Route",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "route",
+          "assessment_date",
+          "risk_score",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "JobRead",
+        "type": "object"
+      },
+      "LiveLookupSetting": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "title": "LiveLookupSetting",
+        "type": "object"
+      },
+      "RAGPassageRead": {
+        "properties": {
+          "chunk_id": {
+            "title": "Chunk Id",
+            "type": "string"
+          },
+          "jurisdiction": {
+            "title": "Jurisdiction",
+            "type": "string"
+          },
+          "regulation_id": {
+            "title": "Regulation Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "section_number": {
+            "title": "Section Number",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "version_id": {
+            "title": "Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "chunk_id",
+          "text",
+          "regulation_id",
+          "version_id",
+          "jurisdiction",
+          "section_number",
+          "score"
+        ],
+        "title": "RAGPassageRead",
+        "type": "object"
+      },
+      "RAGQueryRead": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/RAGPassageRead"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "supported": {
+            "title": "Supported",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "supported",
+          "results"
+        ],
+        "title": "RAGQueryRead",
+        "type": "object"
+      },
+      "RAGQueryRequest": {
+        "properties": {
+          "assessment_date": {
+            "format": "date",
+            "title": "Assessment Date",
+            "type": "string"
+          },
+          "jurisdiction": {
+            "default": "EU",
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Jurisdiction",
+            "type": "string"
+          },
+          "query": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          },
+          "top_k": {
+            "default": 5,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Top K",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query",
+          "assessment_date"
+        ],
+        "title": "RAGQueryRequest",
+        "type": "object"
+      },
+      "RegulationProposalDecisionRequest": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "approved",
+              "rejected"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "RegulationProposalDecisionRequest",
+        "type": "object"
+      },
+      "RegulationProposalRead": {
+        "properties": {
+          "candidate_version_id": {
+            "title": "Candidate Version Id",
+            "type": "string"
+          },
+          "detected_at": {
+            "format": "date-time",
+            "title": "Detected At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "detected_at",
+          "candidate_version_id",
+          "status"
+        ],
+        "title": "RegulationProposalRead",
+        "type": "object"
+      },
+      "ReviewDecisionRequest": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "approved",
+              "rejected",
+              "more_evidence"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "ReviewDecisionRequest",
+        "type": "object"
+      },
+      "ReviewRead": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision"
+          },
+          "decision_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Notes"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "priority": {
+            "enum": [
+              "normal",
+              "critical"
+            ],
+            "title": "Priority",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "thread_id": {
+            "title": "Thread Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "job_id",
+          "thread_id",
+          "status",
+          "decision",
+          "decision_notes",
+          "created_at",
+          "priority"
+        ],
+        "title": "ReviewRead",
+        "type": "object"
+      },
+      "ScorecardRead": {
+        "properties": {
+          "assessment_date": {
+            "format": "date",
+            "title": "Assessment Date",
+            "type": "string"
+          },
+          "escalation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escalation"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "overall_status": {
+            "enum": [
+              "compliant",
+              "non_compliant",
+              "review_required",
+              "informational"
+            ],
+            "title": "Overall Status",
+            "type": "string"
+          },
+          "re_audit_recommended": {
+            "title": "Re Audit Recommended",
+            "type": "boolean"
+          },
+          "risk_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Score"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "tenant_id": {
+            "title": "Tenant Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "tenant_id",
+          "assessment_date",
+          "overall_status",
+          "risk_score",
+          "lines",
+          "re_audit_recommended",
+          "summary"
+        ],
+        "title": "ScorecardRead",
+        "type": "object"
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "expires_in": {
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "token_type": {
+            "const": "bearer",
+            "default": "bearer",
+            "title": "Token Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "expires_in"
+        ],
+        "title": "TokenResponse",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "/v1/auth/token"
+          }
+        },
+        "type": "oauth2"
+      }
+    }
+  },
+  "info": {
+    "description": "Enterprise multi-agent supply-chain compliance system",
+    "title": "EcoChain Copilot API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/healthz": {
+      "get": {
+        "description": "Basic health check endpoint.",
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Healthz Healthz Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Healthz",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/readyz": {
+      "get": {
+        "description": "Report readiness only when the configured database and Redis are available.",
+        "operationId": "readyz_readyz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Readyz Readyz Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Readyz",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/v1/audit-events": {
+      "get": {
+        "operationId": "get_audit_events_v1_audit_events_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEventRead"
+                  },
+                  "title": "Response Get Audit Events V1 Audit Events Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Audit Events",
+        "tags": [
+          "audit"
+        ]
+      }
+    },
+    "/v1/auth/token": {
+      "post": {
+        "operationId": "issue_token_v1_auth_token_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_issue_token_v1_auth_token_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Issue Token",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/documents/{document_id}": {
+      "get": {
+        "operationId": "get_document_v1_documents__document_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Document",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/{document_id}/pages/{page_number}.png": {
+      "get": {
+        "operationId": "get_document_page_v1_documents__document_id__pages__page_number__png_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "page_number",
+            "required": true,
+            "schema": {
+              "title": "Page Number",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-None-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-None-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "image/png": {}
+            },
+            "description": "Successful Response"
+          },
+          "304": {
+            "description": "Not modified"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Document Page",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/factories": {
+      "get": {
+        "operationId": "get_factories_v1_factories_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FactoryRead"
+                  },
+                  "title": "Response Get Factories V1 Factories Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Factories",
+        "tags": [
+          "factories"
+        ]
+      }
+    },
+    "/v1/factories/{factory_id}": {
+      "get": {
+        "operationId": "get_factory_v1_factories__factory_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "factory_id",
+            "required": true,
+            "schema": {
+              "title": "Factory Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FactoryRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Factory",
+        "tags": [
+          "factories"
+        ]
+      }
+    },
+    "/v1/factories/{factory_id}/risk": {
+      "get": {
+        "operationId": "get_factory_risk_v1_factories__factory_id__risk_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "factory_id",
+            "required": true,
+            "schema": {
+              "title": "Factory Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FactoryRiskRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Factory Risk",
+        "tags": [
+          "factories"
+        ]
+      }
+    },
+    "/v1/integrations": {
+      "get": {
+        "operationId": "get_integrations_v1_integrations_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IntegrationStatus"
+                  },
+                  "title": "Response Get Integrations V1 Integrations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Integrations",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/v1/integrations/status": {
+      "get": {
+        "operationId": "get_integrations_v1_integrations_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IntegrationStatus"
+                  },
+                  "title": "Response Get Integrations V1 Integrations Status Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Integrations",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/v1/jobs": {
+      "get": {
+        "operationId": "get_jobs_v1_jobs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/JobRead"
+                  },
+                  "title": "Response Get Jobs V1 Jobs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Jobs",
+        "tags": [
+          "jobs"
+        ]
+      },
+      "post": {
+        "operationId": "submit_job_v1_jobs_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_submit_job_v1_jobs_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Submit Job",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/v1/jobs/{job_id}": {
+      "get": {
+        "operationId": "get_job_v1_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Job",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/v1/jobs/{job_id}/documents": {
+      "get": {
+        "operationId": "get_job_documents_v1_jobs__job_id__documents_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentRead"
+                  },
+                  "title": "Response Get Job Documents V1 Jobs  Job Id  Documents Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Job Documents",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/jobs/{job_id}/events": {
+      "get": {
+        "operationId": "get_job_events_v1_jobs__job_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Last-Event-ID",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Last-Event-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Job Events",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/v1/jobs/{job_id}/scorecard": {
+      "get": {
+        "operationId": "get_job_scorecard_v1_jobs__job_id__scorecard_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScorecardRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Job Scorecard",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/v1/query": {
+      "post": {
+        "operationId": "query_regulations_v1_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RAGQueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RAGQueryRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Query Regulations",
+        "tags": [
+          "regulations"
+        ]
+      }
+    },
+    "/v1/regulation-proposals": {
+      "get": {
+        "operationId": "get_regulation_proposals_v1_regulation_proposals_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RegulationProposalRead"
+                  },
+                  "title": "Response Get Regulation Proposals V1 Regulation Proposals Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Regulation Proposals",
+        "tags": [
+          "regulations"
+        ]
+      }
+    },
+    "/v1/regulation-proposals/{proposal_id}/decision": {
+      "post": {
+        "operationId": "decide_regulation_proposal_v1_regulation_proposals__proposal_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegulationProposalDecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulationProposalRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Decide Regulation Proposal",
+        "tags": [
+          "regulations"
+        ]
+      }
+    },
+    "/v1/reviews": {
+      "get": {
+        "operationId": "get_reviews_v1_reviews_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewRead"
+                  },
+                  "title": "Response Get Reviews V1 Reviews Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Reviews",
+        "tags": [
+          "reviews"
+        ]
+      }
+    },
+    "/v1/reviews/{review_id}/decision": {
+      "post": {
+        "operationId": "decide_review_v1_reviews__review_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "required": true,
+            "schema": {
+              "title": "Review Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Decide Review",
+        "tags": [
+          "reviews"
+        ]
+      }
+    },
+    "/v1/settings/live-lookup": {
+      "get": {
+        "operationId": "get_live_lookup_v1_settings_live_lookup_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiveLookupSetting"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Live Lookup",
+        "tags": [
+          "settings"
+        ]
+      },
+      "put": {
+        "operationId": "update_live_lookup_v1_settings_live_lookup_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LiveLookupSetting"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiveLookupSetting"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update Live Lookup",
+        "tags": [
+          "settings"
+        ]
+      }
+    }
+  }
+}

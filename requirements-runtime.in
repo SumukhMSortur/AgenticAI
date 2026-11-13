@@ -1,0 +1,44 @@
+# CPU-only production dependencies for the API, worker, and local ML inference.
+--index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://pypi.org/simple
+
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
+sse-starlette==3.6.0
+python-multipart==0.0.33
+pydantic==2.14.2
+pydantic-settings==2.16.2
+celery==5.6.3
+redis==6.4.0
+SQLAlchemy==2.1.6
+alembic==1.20.1
+psycopg[binary,pool]==3.3.6
+langgraph==1.2.19
+langgraph-checkpoint==4.3.1
+langgraph-checkpoint-postgres==3.2.0
+langchain==1.4.7
+langchain-community==0.3.31
+langchain-core==1.7.3
+langsmith==0.14.16
+chromadb==1.5.9
+sentence-transformers==6.2.0
+rank-bm25==0.2.2
+torch==2.15.0+cpu
+xgboost==3.4.1
+scikit-learn==1.9.1
+google-genai==2.34.0
+openai==3.3.0
+transformers==5.22.1
+instructor==1.17.0
+pymupdf==2.0
+pymupdf4llm==2.0
+pytesseract==0.3.13
+presidio-analyzer==2.2.362
+presidio-anonymizer==2.2.366
+phonenumbers==9.0.42
+PyYAML==6.0.3
+httpx==0.28.1
+httpx2==2.16.0
+httpx-sse==0.4.3
+PyJWT==2.15.1
+argon2-cffi==25.1.0

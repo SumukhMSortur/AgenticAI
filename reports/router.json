@@ -1,0 +1,287 @@
+{
+  "artifacts": {
+    "logreg": {
+      "path": "router_logreg_v1.joblib",
+      "sha256": "91c0e6c9dfa4dba7d15e651315ad946d37b87d8c00f9e6ea4c020f9b8fa84134",
+      "version": "1.0.0"
+    }
+  },
+  "config_sha256": "190b2d99d0bc73d9cb299d6e85b87ee2bb66b55042de2994c8e8a7366698728a",
+  "cost_comparison": {
+    "accounting_note": "Fake calls are cost-only references; output token counts use the gold route label and do not imply LLM classification accuracy.",
+    "fake_llm": {
+      "calls": 29,
+      "estimated_api_cost_usd": 0.00037575,
+      "input_tokens": 1213,
+      "output_tokens": 323
+    },
+    "rates_are_illustrative_not_vendor_quotes": true,
+    "reference_rates_usd_per_million_tokens": {
+      "input": 0.15,
+      "output": 0.6
+    },
+    "router_cost_delta_percent": 100.0,
+    "router_external_api_cost_usd": 0.0,
+    "scope": "test queries; token-priced external API only; local compute excluded"
+  },
+  "decision": {
+    "rule": "Promote DNN only if validation macro-F1 improves by the configured margin and validation accuracy does not regress; otherwise serve Logistic Regression.",
+    "selected_model": "logreg",
+    "validation_macro_f1_margin": 0.01
+  },
+  "dnn_training": {
+    "batch_size": 16,
+    "early_stopping_patience": 10,
+    "epochs_trained": 100
+  },
+  "embedding_model": {
+    "device": "cpu",
+    "dimensions": 384,
+    "license": "Apache-2.0",
+    "license_evidence": "Model card metadata declares Apache-2.0; local-only load.",
+    "name": "sentence-transformers/all-MiniLM-L6-v2",
+    "normalization": "L2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+  },
+  "evaluation": "hand_reviewed_stratified_intent_queries",
+  "intents": [
+    "certificate_assessment",
+    "facility_lookup",
+    "general_help",
+    "regulation_retrieval",
+    "risk_forecast",
+    "review_status"
+  ],
+  "is_synthetic": false,
+  "latency": {
+    "dnn": {
+      "p50_ms": 72.75730000037584,
+      "p95_ms": 80.63535999935993,
+      "samples": 29,
+      "scope": "warm, single-query embedding plus classifier on CPU"
+    },
+    "logreg": {
+      "p50_ms": 10.82749999841326,
+      "p95_ms": 13.400799999726587,
+      "samples": 29,
+      "scope": "warm, single-query embedding plus classifier on CPU"
+    }
+  },
+  "limitations": [
+    "Metrics reflect a small, manually authored query set and are not production accuracy claims.",
+    "The pinned embedding model must already be cached; training and inference never access the network.",
+    "Latency is warm single-query CPU inference and excludes process startup.",
+    "The fake-LLM comparison estimates token-priced API spend; local compute and non-token costs are excluded."
+  ],
+  "metrics": {
+    "dnn": {
+      "test": {
+        "accuracy": 0.9655172413793104,
+        "macro_f1": 0.9663299663299663
+      },
+      "validation": {
+        "accuracy": 0.9655172413793104,
+        "macro_f1": 0.9663299663299663
+      }
+    },
+    "logreg": {
+      "test": {
+        "accuracy": 0.9655172413793104,
+        "macro_f1": 0.9663299663299663
+      },
+      "validation": {
+        "accuracy": 0.9655172413793104,
+        "macro_f1": 0.9663299663299663
+      }
+    }
+  },
+  "query_count": 144,
+  "query_data_sha256": "36a3befd62f7042e350b7e2028dc9e6543cea0136bf870fd47d839ef1d65146e",
+  "seed": 42,
+  "source_git_sha": "9a9ab5007e49c63da01b4aeab99512cc713e382e",
+  "splits": {
+    "counts": {
+      "test": 29,
+      "train": 86,
+      "validation": 29
+    },
+    "label_counts": {
+      "test": {
+        "certificate_assessment": 5,
+        "facility_lookup": 4,
+        "general_help": 5,
+        "regulation_retrieval": 5,
+        "review_status": 5,
+        "risk_forecast": 5
+      },
+      "train": {
+        "certificate_assessment": 15,
+        "facility_lookup": 15,
+        "general_help": 14,
+        "regulation_retrieval": 14,
+        "review_status": 14,
+        "risk_forecast": 14
+      },
+      "validation": {
+        "certificate_assessment": 4,
+        "facility_lookup": 5,
+        "general_help": 5,
+        "regulation_retrieval": 5,
+        "review_status": 5,
+        "risk_forecast": 5
+      }
+    },
+    "query_ids": {
+      "test": [
+        "review_status-13",
+        "general_help-02",
+        "risk_forecast-05",
+        "certificate_assessment-07",
+        "certificate_assessment-03",
+        "review_status-09",
+        "risk_forecast-08",
+        "regulation_retrieval-15",
+        "certificate_assessment-06",
+        "risk_forecast-09",
+        "facility_lookup-19",
+        "general_help-12",
+        "certificate_assessment-04",
+        "certificate_assessment-21",
+        "general_help-14",
+        "regulation_retrieval-10",
+        "facility_lookup-15",
+        "regulation_retrieval-12",
+        "general_help-08",
+        "review_status-08",
+        "regulation_retrieval-07",
+        "facility_lookup-16",
+        "regulation_retrieval-20",
+        "general_help-07",
+        "risk_forecast-21",
+        "risk_forecast-07",
+        "facility_lookup-12",
+        "review_status-22",
+        "review_status-15"
+      ],
+      "train": [
+        "general_help-18",
+        "review_status-05",
+        "risk_forecast-22",
+        "risk_forecast-10",
+        "review_status-06",
+        "general_help-05",
+        "regulation_retrieval-03",
+        "facility_lookup-06",
+        "certificate_assessment-14",
+        "regulation_retrieval-13",
+        "general_help-13",
+        "general_help-09",
+        "review_status-20",
+        "risk_forecast-18",
+        "facility_lookup-23",
+        "risk_forecast-04",
+        "facility_lookup-14",
+        "facility_lookup-01",
+        "facility_lookup-11",
+        "certificate_assessment-09",
+        "risk_forecast-17",
+        "regulation_retrieval-17",
+        "certificate_assessment-17",
+        "certificate_assessment-22",
+        "certificate_assessment-12",
+        "regulation_retrieval-23",
+        "facility_lookup-02",
+        "review_status-11",
+        "facility_lookup-08",
+        "regulation_retrieval-05",
+        "risk_forecast-14",
+        "review_status-03",
+        "general_help-17",
+        "review_status-16",
+        "risk_forecast-20",
+        "facility_lookup-13",
+        "regulation_retrieval-21",
+        "general_help-10",
+        "risk_forecast-11",
+        "regulation_retrieval-06",
+        "certificate_assessment-01",
+        "review_status-14",
+        "regulation_retrieval-01",
+        "certificate_assessment-13",
+        "general_help-16",
+        "review_status-19",
+        "risk_forecast-06",
+        "certificate_assessment-20",
+        "general_help-21",
+        "general_help-06",
+        "facility_lookup-04",
+        "regulation_retrieval-24",
+        "certificate_assessment-16",
+        "facility_lookup-07",
+        "facility_lookup-20",
+        "risk_forecast-13",
+        "general_help-04",
+        "review_status-23",
+        "review_status-10",
+        "certificate_assessment-10",
+        "regulation_retrieval-11",
+        "regulation_retrieval-09",
+        "review_status-21",
+        "regulation_retrieval-18",
+        "risk_forecast-15",
+        "review_status-18",
+        "facility_lookup-09",
+        "review_status-04",
+        "general_help-23",
+        "certificate_assessment-18",
+        "general_help-11",
+        "facility_lookup-17",
+        "general_help-24",
+        "risk_forecast-19",
+        "facility_lookup-24",
+        "certificate_assessment-23",
+        "regulation_retrieval-19",
+        "review_status-02",
+        "regulation_retrieval-22",
+        "risk_forecast-23",
+        "general_help-19",
+        "certificate_assessment-05",
+        "risk_forecast-24",
+        "certificate_assessment-15",
+        "facility_lookup-21",
+        "certificate_assessment-02"
+      ],
+      "validation": [
+        "certificate_assessment-19",
+        "general_help-20",
+        "regulation_retrieval-02",
+        "certificate_assessment-08",
+        "general_help-01",
+        "regulation_retrieval-08",
+        "facility_lookup-22",
+        "risk_forecast-03",
+        "general_help-15",
+        "risk_forecast-01",
+        "facility_lookup-05",
+        "general_help-22",
+        "review_status-17",
+        "review_status-07",
+        "regulation_retrieval-16",
+        "facility_lookup-10",
+        "review_status-24",
+        "regulation_retrieval-04",
+        "certificate_assessment-24",
+        "certificate_assessment-11",
+        "facility_lookup-18",
+        "general_help-03",
+        "facility_lookup-03",
+        "risk_forecast-16",
+        "risk_forecast-12",
+        "review_status-12",
+        "risk_forecast-02",
+        "review_status-01",
+        "regulation_retrieval-14"
+      ]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+issuer_id,canonical_name,normalized_name,short_name,accreditation_body,standards,valid_from,valid_to,status,is_mock
+ISS-001,Control Union Certifications B.V.,control union certifications b.v.,Control Union,IOAS / ISO 17065,GOTS;GRS;RCS;OCS;FSC,2015-01-01,2030-12-31,active,TRUE
+ISS-002,Ecocert Greenlife S.A.S.,ecocert greenlife s.a.s.,Ecocert,COFRAC / ISO 17065,GOTS;OCS;COSMOS,2016-01-01,2029-12-31,active,TRUE
+ISS-003,OEKO-TEX Association (Service GmbH),oeko-tex association service gmbh,OEKO-TEX,OEKO-TEX International,STANDARD 100;MADE IN GREEN;LEATHER STANDARD;ECO PASSPORT,2010-01-01,2032-12-31,active,TRUE
+ISS-004,SGS Société Générale de Surveillance SA,sgs societe generale de surveillance sa,SGS,SAS / ISO 17025 / ISO 17065,ISO 14001;ISO 9001;ZDHC;HIGG,2012-01-01,2031-12-31,active,TRUE
+ISS-005,Intertek Group plc,intertek group plc,Intertek,UKAS / ISO 17025,GOTS;ToxClear;ZDHC MRSL;WRAP,2014-01-01,2030-06-30,active,TRUE
+ISS-006,Bureau Veritas SA,bureau veritas sa,Bureau Veritas,COFRAC / ISO 17065,GOTS;GRS;ISO 14001;SA8000,2015-05-01,2028-12-31,active,TRUE
+ISS-007,TÜV Rheinland LGA Products GmbH,tuv rheinland lga products gmbh,TÜV Rheinland,DAkkS / ISO 17065,OEKO-TEX;ZDHC;ISO 14001,2018-01-01,2029-06-30,active,TRUE

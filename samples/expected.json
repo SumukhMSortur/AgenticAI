@@ -1,0 +1,19 @@
+{
+  "valid_cert.pdf": {
+    "expected_status": "Approved",
+    "failing_checks": []
+  },
+  "expired_cert.pdf": {
+    "expected_status": "Failed",
+    "failing_checks": ["expiry"]
+  },
+  "unknown_issuer.pdf": {
+    "expected_status": "Needs review",
+    "failing_checks": ["issuer"]
+  },
+  "scope_mismatch.pdf": {
+    "expected_status": "Needs review",
+    "failing_checks": ["scope"]
+  }
+}
+

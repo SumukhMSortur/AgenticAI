@@ -1,0 +1,94 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecochain-copilot"
+version = "0.1.0"
+description = "Enterprise multi-agent supply-chain compliance intelligence system"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "ARG", # flake8-unused-arguments
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "E501", # line too long (handled by formatter)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_any_generics = false
+ignore_missing_imports = true
+files = ["backend/app"]
+
+[[tool.mypy.overrides]]
+module = [
+    "pymupdf.*",
+    "presidio_analyzer.*",
+    "tldextract.*",
+    "yaml.*",
+    "chromadb.*",
+    "sentence_transformers.*",
+    "rank_bm25.*",
+]
+ignore_missing_imports = true
+disallow_untyped_calls = false
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = [
+    "backend.app.extraction.*",
+    "backend.app.privacy.*",
+]
+disallow_untyped_calls = false
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["backend/tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "integration: marks tests as integration (deselect with '-m \"not integration\"')",
+    "leakage: privacy boundary leakage tests",
+    "e2e: end to end workflow tests",
+]
+
+[tool.coverage.run]
+source = ["backend/app"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "name": "certificate_type",
+    "value": "Standard Certificate",
+    "doc_id": "scope_mismatch.pdf",
+    "doc_hash": "hash123",
+    "page": 1,
+    "bbox": {
+      "x0": 84,
+      "y0": 70,
+      "x1": 216,
+      "y1": 90
+    },
+    "confidence": 0.99
+  },
+  {
+    "name": "issuer",
+    "value": "SGS SA",
+    "doc_id": "scope_mismatch.pdf",
+    "doc_hash": "hash123",
+    "page": 1,
+    "bbox": {
+      "x0": 84,
+      "y0": 90,
+      "x1": 225,
+      "y1": 109
+    },
+    "confidence": 0.98
+  },
+  {
+    "name": "facility_id",
+    "value": "FAC-001",
+    "doc_id": "scope_mismatch.pdf",
+    "doc_hash": "hash123",
+    "page": 1,
+    "bbox": {
+      "x0": 84,
+      "y0": 109,
+      "x1": 264,
+      "y1": 129
+    },
+    "confidence": 0.98
+  },
+  {
+    "name": "valid_from",
+    "value": "2024-01-01",
+    "doc_id": "scope_mismatch.pdf",
+    "doc_hash": "hash123",
+    "page": 1,
+    "bbox": {
+      "x0": 84,
+      "y0": 129,
+      "x1": 296,
+      "y1": 149
+    },
+    "confidence": 0.98
+  },
+  {
+    "name": "valid_to",
+    "value": "2027-09-30",
+    "doc_id": "scope_mismatch.pdf",
+    "doc_hash": "hash123",
+    "page": 1,
+    "bbox": {
+      "x0": 84,
+      "y0": 149,
+      "x1": 272,
+      "y1": 168
+    },
+    "confidence": 0.98
+  },
+  {
+    "name": "scope_materials",
+    "value": "Textile dyeing and finishing",
+    "doc_id": "scope_mismatch.pdf",
+    "doc_hash": "hash123",
+    "page": 1,
+    "bbox": {
+      "x0": 84,
+      "y0": 168,
+      "x1": 347,
+      "y1": 188
+    },
+    "confidence": 0.98
+  }
+]

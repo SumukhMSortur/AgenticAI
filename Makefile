@@ -1,0 +1,72 @@
+.PHONY: setup runtime-lock check test test-int lint fmt data train eval openapi build up down infra-up infra-down infra-reset seed demo
+
+PYTHON ?= .venv/bin/python
+ifeq ($(OS),Windows_NT)
+    PYTHON := .venv\Scripts\python.exe
+    RUFF := .venv\Scripts\ruff.exe
+    MYPY := .venv\Scripts\mypy.exe
+    PYTEST := .venv\Scripts\pytest.exe
+else
+    RUFF := .venv/bin/ruff
+    MYPY := .venv/bin/mypy
+    PYTEST := .venv/bin/pytest
+endif
+
+setup:
+	uv pip install -r requirements.txt --python $(PYTHON)
+
+runtime-lock:
+	uv pip compile requirements-runtime.in --python-version 3.12 --python-platform x86_64-manylinux_2_28 --index-strategy unsafe-best-match --no-emit-package nvidia-nccl-cu13 --no-annotate -o requirements-runtime.txt
+
+check: lint test openapi eval
+
+test:
+	$(PYTEST) backend/tests -v --cov=backend/app --cov-report=term-missing
+
+lint:
+	$(RUFF) check backend
+	$(MYPY) backend/app
+
+fmt:
+	$(RUFF) format backend
+	$(RUFF) check --fix backend
+
+data:
+	$(PYTHON) scripts/generate_synthetic_data.py
+
+train:
+	$(PYTHON) ml/train_risk.py
+	$(PYTHON) ml/train_layoutlm.py
+
+eval:
+	$(PYTHON) scripts/run_evaluations.py
+
+openapi:
+	$(PYTHON) -m scripts.export_openapi
+
+build: openapi
+
+up:
+	docker compose up -d --build --wait
+
+down:
+	docker compose down
+
+infra-up:
+	docker compose --env-file .env -f docker/compose.dev.yml up -d --wait
+
+infra-down:
+	docker compose --env-file .env -f docker/compose.dev.yml down
+
+infra-reset:
+	docker compose --env-file .env -f docker/compose.dev.yml down --volumes --remove-orphans
+	docker compose --env-file .env -f docker/compose.dev.yml up -d --wait
+
+test-int:
+	$(PYTHON) -m pytest backend/tests -m integration -v
+
+seed:
+	$(PYTHON) scripts/seed_database.py
+
+demo:
+	$(PYTHON) scripts/run_demo.py

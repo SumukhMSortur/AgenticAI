@@ -1,0 +1,2158 @@
+{
+  "case_count": 150,
+  "cases": [
+    {
+      "case_id": "GOLDEN-001",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-002",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-003",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-004",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-005",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-006",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-007",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-008",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-009",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-010",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-011",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-012",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-013",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-014",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-015",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-016",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-017",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-018",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-019",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-020",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-021",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-022",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-023",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-024",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-025",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-026",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-027",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-028",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-029",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-030",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-031",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-032",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-033",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-034",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-035",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-036",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-037",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-038",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-039",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-040",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-041",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-042",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-043",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-044",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-045",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-046",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-047",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-048",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-049",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-050",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-051",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-052",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-053",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-054",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-055",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-056",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-057",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-058",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-059",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-060",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-061",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-062",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-063",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-064",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-065",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-066",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-067",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-068",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-069",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-070",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-071",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-072",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-073",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-074",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-075",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-076",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-077",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-078",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-079",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-080",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-081",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-082",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-083",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-084",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-085",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-086",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-087",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-088",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-089",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-090",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-091",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-092",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-093",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-094",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-095",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-096",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-097",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-098",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-099",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-100",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-101",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-102",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-103",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-104",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-105",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-106",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-107",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-108",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-109",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-110",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-111",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-112",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-113",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-114",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-115",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-116",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-117",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-118",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-119",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-120",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-121",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-122",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-123",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-124",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-125",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-126",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-127",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-128",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-129",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-130",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-131",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-132",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-133",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-134",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-135",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-136",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-137",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-138",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-139",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-140",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-141",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-142",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-143",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-XDOC-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "xdoc_supplier_mismatch"
+    },
+    {
+      "case_id": "GOLDEN-144",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-PAGE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "missing_page"
+    },
+    {
+      "case_id": "GOLDEN-145",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "pass",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "clean_pass"
+    },
+    {
+      "case_id": "GOLDEN-146",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-EXP-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "expired_cert"
+    },
+    {
+      "case_id": "GOLDEN-147",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-EXP-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "near_expiry"
+    },
+    {
+      "case_id": "GOLDEN-148",
+      "escalated": false,
+      "escalation_match": true,
+      "expected_escalation": false,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-ISS-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "unapproved_issuer"
+    },
+    {
+      "case_id": "GOLDEN-149",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "escalate",
+          "rule_id": "V-ISS-002"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "fuzzy_issuer"
+    },
+    {
+      "case_id": "GOLDEN-150",
+      "escalated": true,
+      "escalation_match": true,
+      "expected_escalation": true,
+      "expected_verdicts": [
+        {
+          "expected_outcome": "fail",
+          "rule_id": "V-SCOPE-001"
+        }
+      ],
+      "matched_expected_rules": 1,
+      "scenario": "scope_mismatch"
+    }
+  ],
+  "dataset_path": "data/golden/golden_set.json",
+  "dataset_sha256": "b03022a6d195729e038ba07f311ebc3b846c33125b8943cb75610af86b5a78a3",
+  "escalation_accuracy": 1.0,
+  "escalation_cases_correct": 150,
+  "escalation_cases_total": 150,
+  "evaluation": "synthetic_golden_set",
+  "expected_verdict_accuracy": 1.0,
+  "expected_verdicts_correct": 150,
+  "expected_verdicts_total": 150,
+  "limitations": [
+    "All cases and issuer-registry entries are synthetic/mock.",
+    "The golden set does not include V-EXT or V-SANC expected labels."
+  ],
+  "per_rule": {
+    "V-EXP-001": {
+      "accuracy": 1.0,
+      "correct": 38,
+      "total": 38
+    },
+    "V-EXP-002": {
+      "accuracy": 1.0,
+      "correct": 19,
+      "total": 19
+    },
+    "V-ISS-001": {
+      "accuracy": 1.0,
+      "correct": 19,
+      "total": 19
+    },
+    "V-ISS-002": {
+      "accuracy": 1.0,
+      "correct": 19,
+      "total": 19
+    },
+    "V-PAGE-001": {
+      "accuracy": 1.0,
+      "correct": 18,
+      "total": 18
+    },
+    "V-SCOPE-001": {
+      "accuracy": 1.0,
+      "correct": 19,
+      "total": 19
+    },
+    "V-XDOC-001": {
+      "accuracy": 1.0,
+      "correct": 18,
+      "total": 18
+    }
+  },
+  "report_version": "1.0.0",
+  "seed": 42,
+  "source_git_sha": "79e037b934bb26b38fd7778f2573ec16af5c7e32"
+}
