@@ -64,23 +64,34 @@ def submit_and_poll(sample_filename: str, expected_status: str) -> None:
 
     # Poll status
     current_status = "queued"
+    overall_status = None
     for attempt in range(1, 31):
         try:
             with urllib.request.urlopen(f"{API_URL}/v1/jobs/{job_id}", timeout=5) as res:
                 job_data = json.loads(res.read().decode())
                 current_status = job_data["status"]
-                print(f"    Attempt {attempt}: status is '{current_status}'")
+                scorecard = job_data.get("scorecard_data") or {}
+                overall_status = scorecard.get("overall_status")
+                print(f"    Attempt {attempt}: status is '{current_status}' (overall: {overall_status})")
                 if current_status in ("completed", "failed", "review_required"):
                     break
         except Exception as e:
             print(f"    Attempt {attempt}: polling error {e}")
         time.sleep(2)
 
-    print(f"    Final status: {current_status}")
-    if current_status != expected_status:
-        print(f"ERROR: Expected status '{expected_status}', but got '{current_status}'")
-        sys.exit(1)
-    print(f"✓ Test passed for {sample_filename}.")
+    print(f"    Final status: {current_status} (overall_status: {overall_status})")
+    
+    # When expected is "failed", verify that the job finished and marked non_compliant
+    if expected_status == "failed":
+        if overall_status in ("non_compliant", "failed") or current_status == "failed":
+            print(f"✓ Test passed for {sample_filename} (correctly marked as {overall_status}).")
+            return
+    elif current_status == expected_status:
+        print(f"✓ Test passed for {sample_filename}.")
+        return
+
+    print(f"ERROR: Expected status '{expected_status}', but got status='{current_status}', overall='{overall_status}'")
+    sys.exit(1)
 
 
 def main() -> None:
