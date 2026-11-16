@@ -163,23 +163,27 @@ class Claim(BaseModel):
 
 
 class Verdict(BaseModel):
-    """Deterministic outcome produced by the Verifier engine."""
+    """Deterministic outcome produced by the Verifier engine with standardized outcomes."""
 
     claim_id: str
     rule_id: str
-    outcome: Literal["pass", "fail", "escalate"]
+    outcome: Literal["pass", "fail", "escalate", "inconclusive", "not_applicable"]
     reason_code: str
     details: dict[str, Any] = Field(default_factory=dict)
     evidence_ids: list[str] = Field(default_factory=list)
+    rule_version: str = "v1.0"
+    snapshot_ref: str | None = None
 
 
 class RiskForecast(BaseModel):
-    """Calibrated six-month audit failure probability forecast."""
+    """Calibrated six-month audit failure probability forecast with training provenance."""
 
     factory_id: str
     p_fail_6m: float = Field(ge=0.0, le=1.0)
     model_tag: Literal["lstm", "xgboost", "logreg"]
     baseline_comparison: dict[str, Any] = Field(default_factory=dict)
+    trained_on: Literal["synthetic", "real", "mixed"] = "synthetic"
+    disclaimer: str = "Illustrative: trained on synthetic data"
 
 
 class DocumentRef(BaseModel):
