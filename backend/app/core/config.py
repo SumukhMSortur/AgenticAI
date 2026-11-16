@@ -18,11 +18,16 @@ class Settings(BaseSettings):
 
     # General & Environment
     ENVIRONMENT: str = Field(default="development")
+    APP_ENV: Literal["local", "staging", "production"] = Field(default="local")
     LOG_LEVEL: str = Field(default="INFO")
     PROJECT_NAME: str = Field(default="EcoChain Copilot")
 
     # Security & Auth
     AUTH_ENABLED: bool = Field(default=False)
+    SUPABASE_URL: str = Field(default="")
+    SUPABASE_ANON_KEY: str = Field(default="")
+    SUPABASE_JWT_SECRET: str = Field(default="")
+    SUPABASE_SERVICE_ROLE_KEY: str = Field(default="")
     DEMO_USER_ID: str = Field(default="00000000-0000-0000-0000-000000000001")
     DEMO_TENANT_ID: str = Field(default="00000000-0000-0000-0000-000000000002")
     SECRET_KEY: str = Field(
@@ -76,5 +81,16 @@ class Settings(BaseSettings):
     RISK_THRESHOLD_HIGH: float = Field(default=0.60)
     EXPIRY_WARN_DAYS: int = Field(default=60)
 
+    def validate_production_guards(self) -> None:
+        """Fail closed on boot if APP_ENV=production but mocks or insecure demo auth are enabled."""
+        if self.APP_ENV == "production":
+            if not self.AUTH_ENABLED:
+                raise ValueError("FATAL: AUTH_ENABLED cannot be False in production environment.")
+            if self.LLM_PROVIDER == "fake":
+                raise ValueError("FATAL: LLM_PROVIDER cannot be 'fake' in production environment.")
+            if not self.SUPABASE_JWT_SECRET and not self.SECRET_KEY:
+                raise ValueError("FATAL: Valid JWT secret or Supabase JWT secret required in production.")
+
 
 settings = Settings()
+settings.validate_production_guards()

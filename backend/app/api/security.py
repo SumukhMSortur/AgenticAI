@@ -22,6 +22,25 @@ class Principal:
     user_id: str
     tenant_id: str
     role: str
+    org_id: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.org_id:
+            object.__setattr__(self, "org_id", self.tenant_id)
+
+
+def require_role(*allowed_roles: str):
+    """RBAC dependency ensuring the authenticated principal has sufficient permissions."""
+    def _role_checker(principal: Principal = Depends(require_principal)) -> Principal:
+        if principal.role in {"owner", "admin"}:
+            return principal
+        if allowed_roles and principal.role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Insufficient permissions: requires one of {allowed_roles}",
+            )
+        return principal
+    return _role_checker
 
 
 def hash_password(password: str) -> str:
@@ -80,15 +99,17 @@ async def require_principal(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        # Check against Supabase JWT secret if configured, otherwise SECRET_KEY
+        signing_key = settings.SUPABASE_JWT_SECRET or settings.SECRET_KEY
         payload = jwt.decode(
             token,
-            settings.SECRET_KEY,
+            signing_key,
             algorithms=[settings.JWT_ALGORITHM],
-            options={"require": ["sub", "tenant_id", "role", "exp"]},
+            options={"require": ["sub", "exp"]},
         )
         user_id = str(UUID(str(payload["sub"])))
-        tenant_id = str(UUID(str(payload["tenant_id"])))
-        role = payload["role"]
+        tenant_id = str(UUID(str(payload.get("tenant_id") or payload.get("org_id") or settings.DEMO_TENANT_ID)))
+        role = payload.get("role") or payload.get("app_metadata", {}).get("role", "viewer")
     except (jwt.InvalidTokenError, KeyError, TypeError, ValueError):
         raise unauthorized from None
     if not isinstance(role, str) or not role:
