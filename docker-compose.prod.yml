@@ -1,0 +1,108 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ecochain}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-ecochain}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ecochain}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    command: alembic upgrade head
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ecochain}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ecochain}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    restart: always
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --workers 4
+    environment:
+      APP_ENV: production
+      AUTH_ENABLED: "true"
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ecochain}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ecochain}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      SECRET_KEY: ${SECRET_KEY}
+    ports:
+      - "8000:8000"
+    volumes:
+      - uploads_prod_data:/app/data/uploads
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    restart: always
+    command: python -m arq backend.app.workers.tasks.WorkerSettings
+    environment:
+      APP_ENV: production
+      AUTH_ENABLED: "true"
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ecochain}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ecochain}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      SECRET_KEY: ${SECRET_KEY}
+    volumes:
+      - uploads_prod_data:/app/data/uploads
+    depends_on:
+      api:
+        condition: service_started
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_AUTH_ENABLED: "true"
+        NEXT_PUBLIC_SUPABASE_URL: ${SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:
+  uploads_prod_data:
