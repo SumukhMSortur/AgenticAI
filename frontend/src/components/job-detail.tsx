@@ -203,6 +203,16 @@ export function JobDetail({ jobId }: JobDetailProps) {
                 {job.risk_score !== null ? `${Math.round(job.risk_score * 100)}%` : "Pending"}
               </span>
             </div>
+            <p className="mt-1 text-[10px] text-amber-700 dark:text-amber-400 font-medium">Illustrative: trained on synthetic data</p>
+          </Card>
+          <Card>
+            <p className="text-xs uppercase tracking-wider text-[#64736a]">Evidence Dossier</p>
+            <button
+              onClick={() => alert(`Evidence Pack ready for export (Job: ${job.id})`)}
+              className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:opacity-90"
+            >
+              Export Signed Dossier
+            </button>
           </Card>
         </div>
       )}
